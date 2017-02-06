@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"text/template"
+	"time"
 )
 
 // Context for email template
@@ -99,9 +100,16 @@ func main() {
 		m.SetBody("text/plain", body.String())
 
 		fmt.Println("Sending email to ", m.GetHeader("To"))
-		if err := gomail.Send(sender, m); err != nil {
+		if os.Getenv("DRY_RUN") != "" {
+			fmt.Println("---------")
+			m.WriteTo(os.Stdout)
+			fmt.Println("\n---------")
+		} else if err := gomail.Send(sender, m); err != nil {
 			fmt.Println("  Could not send email: ", err)
 		}
+
+		// Throttle to account for quotas, etc
+		time.Sleep(200 * time.Millisecond)
 	}
 }
 
