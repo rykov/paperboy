@@ -6,6 +6,7 @@ import (
 	"github.com/rykov/paperboy/parser"
 	"github.com/ghodss/yaml"
 	"github.com/go-gomail/gomail"
+	"github.com/spf13/viper"
 	"github.com/toorop/go-dkim"
 	"io"
 	"io/ioutil"
@@ -15,6 +16,9 @@ import (
 	"text/template"
 	"time"
 )
+
+// Global viper config
+var Config *viper.Viper
 
 // Context for email template
 type tmplContext struct {
@@ -27,6 +31,22 @@ func main() {
 		printUsageError(fmt.Errorf("Invalid arguments"))
 		return
 	}
+
+	// Initialize configuration
+	v := viper.New()
+	Config = v
+
+	// Tie configuration to ENV
+	v.BindEnv("smtp_url", "SMTP_URL")
+	v.BindEnv("smtp_user", "SMTP_USER")
+	v.BindEnv("smtp_pass", "SMTP_PASS")
+	v.BindEnv("dry_run", "DRY_RUN")
+
+	// Override via config file
+	//if configYAML != "" {
+	//	v.SetConfigType("yaml")
+	//	v.ReadConfig(strings.NewReader(configYAML))
+	//}
 
 	// Load up template with frontmatter
 	email, err := parseTemplate(os.Args[1])
@@ -56,7 +76,7 @@ func main() {
 	}
 
 	// Dial up the sender
-	sender, err := dialSMTPURL(os.Getenv("SMTP_URL"))
+	sender, err := dialSMTPURL(Config.GetString("smtp_url"))
 	if err != nil {
 		printUsageError(err)
 		return
@@ -100,7 +120,7 @@ func main() {
 		m.SetBody("text/plain", body.String())
 
 		fmt.Println("Sending email to ", m.GetHeader("To"))
-		if os.Getenv("DRY_RUN") != "" {
+		if Config.GetBool("dry_run") {
 			fmt.Println("---------")
 			m.WriteTo(os.Stdout)
 			fmt.Println("\n---------")
@@ -121,7 +141,7 @@ func dialSMTPURL(smtpURL string) (gomail.SendCloser, error) {
 	}
 
 	// Authentication
-	user, pass := os.Getenv("SMTP_USER"), os.Getenv("SMTP_PASS")
+	user, pass := Config.GetString("smtp_user"), Config.GetString("smtp_pass")
 	if auth := surl.User; auth != nil {
 		pass, _ = auth.Password()
 		user = auth.Username()
