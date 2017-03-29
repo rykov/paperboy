@@ -5,18 +5,18 @@ _lockFormatVersion = "0.1.0"
   name = "github.com/rykov/paperboy"
   version = "0.1.0"
   dependencies = [
-    "github.com/ghodss/yaml 0.1.0-head.24+m04f313413ffd65ce25f2541bfd2b2ceec5c0908c",
+    "github.com/ghodss/yaml 1.0.0",
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
-    "github.com/pelletier/go-toml 0.4.1-head.6+md1fa2118c12c44e4f5004da216d1efad10cb4924",
-    "github.com/toorop/go-dkim 0.1.0-head.40+m5359189bbeaea04d2221936dc0f4cfe03515d9fa"
+    "github.com/pelletier/go-toml 0.5.1-head.5+mf6e7596e8daafd44dc9e5c208dc73035020c8481",
+    "github.com/toorop/go-dkim 0.1.0-head.41+m43c1bb05e85404d07a5020ad38c6b67b3a039b86"
   ]
 
 [[packages]]
   name = "github.com/ghodss/yaml"
-  version = "0.1.0-head.24+m04f313413ffd65ce25f2541bfd2b2ceec5c0908c"
-  release = "github.com/ghodss/yaml#04f313413ffd65ce25f2541bfd2b2ceec5c0908c"
+  version = "1.0.0"
+  release = "github.com/ghodss/yaml#0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
   dependencies = [
-    "gopkg.in/yaml.v2 0.1.0-head.190+m4c78c975fe7c825c6d1466c42be594d1d6f3aba6"
+    "gopkg.in/yaml.v2 0.1.0-head.191+ma3f3340b5840cee44f372bddb5880fcbc419b46a"
   ]
 
 [[packages]]
@@ -26,23 +26,23 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/pelletier/go-buffruneio"
-  version = "0.1.0-head.6+mdf1e16fde7fc330a0ca68167c23bf7ed6ac31d6d"
-  release = "github.com/pelletier/go-buffruneio#df1e16fde7fc330a0ca68167c23bf7ed6ac31d6d"
+  version = "0.2.0"
+  release = "github.com/pelletier/go-buffruneio#c37440a7cf42ac63b919c752ca73a85067e05992"
 
 [[packages]]
   name = "github.com/pelletier/go-toml"
-  version = "0.4.1-head.6+md1fa2118c12c44e4f5004da216d1efad10cb4924"
-  release = "github.com/pelletier/go-toml#d1fa2118c12c44e4f5004da216d1efad10cb4924"
+  version = "0.5.1-head.5+mf6e7596e8daafd44dc9e5c208dc73035020c8481"
+  release = "github.com/pelletier/go-toml#f6e7596e8daafd44dc9e5c208dc73035020c8481"
   dependencies = [
-    "github.com/pelletier/go-buffruneio 0.1.0-head.6+mdf1e16fde7fc330a0ca68167c23bf7ed6ac31d6d"
+    "github.com/pelletier/go-buffruneio 0.2.0"
   ]
 
 [[packages]]
   name = "github.com/toorop/go-dkim"
-  version = "0.1.0-head.40+m5359189bbeaea04d2221936dc0f4cfe03515d9fa"
-  release = "github.com/toorop/go-dkim#5359189bbeaea04d2221936dc0f4cfe03515d9fa"
+  version = "0.1.0-head.41+m43c1bb05e85404d07a5020ad38c6b67b3a039b86"
+  release = "github.com/toorop/go-dkim#43c1bb05e85404d07a5020ad38c6b67b3a039b86"
 
 [[packages]]
   name = "gopkg.in/yaml.v2"
-  version = "0.1.0-head.190+m4c78c975fe7c825c6d1466c42be594d1d6f3aba6"
-  release = "gopkg.in/yaml.v2#4c78c975fe7c825c6d1466c42be594d1d6f3aba6"
+  version = "0.1.0-head.191+ma3f3340b5840cee44f372bddb5880fcbc419b46a"
+  release = "gopkg.in/yaml.v2#a3f3340b5840cee44f372bddb5880fcbc419b46a"
