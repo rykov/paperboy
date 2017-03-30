@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -11,15 +10,14 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/rykov/paperboy/mail"
 	"github.com/rykov/paperboy/parser"
 	"github.com/ghodss/yaml"
 	"github.com/go-gomail/gomail"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/toorop/go-dkim"
 )
-
-var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -48,36 +46,45 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports Persistent Flags, which, if defined here,
-	// will be global for your application.
-
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.fury-mail.yaml)")
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" { // enable ability to specify config file via flag
-		viper.SetConfigFile(cfgFile)
-	}
-
-	viper.SetConfigName(".fury-mail") // name of config file (without extension)
-	viper.AddConfigPath("$HOME")      // adding home directory as first search path
-	viper.AutomaticEnv()              // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
+	var cfgFile string
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default: ./config.yaml)")
+	cobra.OnInitialize(func() {
+		initConfig(cfgFile)
+	})
 }
 
 // Global viper config
 var Config *viper.Viper
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig(cfgFile string) {
+	v := viper.New()
+	Config = v
+
+	// From --config
+	if cfgFile != "" {
+		v.SetConfigFile(cfgFile)
+	}
+
+	// Tie configuration to ENV
+	v.SetEnvPrefix("fugo")
+	v.AutomaticEnv()
+
+	// Load project's config.*
+	v.SetConfigName("config")
+	v.AddConfigPath(".")
+
+	// Find and read the config file
+	if err := v.ReadInConfig(); err != nil {
+		panic(fmt.Errorf("Config file error: %s \n", err))
+	}
+
+	// Defaults
+	v.SetDefault("smtpURL", "")
+	v.SetDefault("smtpUser", "")
+	v.SetDefault("smtpPass", "")
+	v.SetDefault("dryRun", false)
+}
 
 // Context for email template
 type tmplContext struct {
@@ -90,22 +97,6 @@ func sendCampaign(args []string) {
 		printUsageError(fmt.Errorf("Invalid arguments"))
 		return
 	}
-
-	// Initialize configuration
-	v := viper.New()
-	Config = v
-
-	// Tie configuration to ENV
-	v.BindEnv("smtp_url", "SMTP_URL")
-	v.BindEnv("smtp_user", "SMTP_USER")
-	v.BindEnv("smtp_pass", "SMTP_PASS")
-	v.BindEnv("dry_run", "DRY_RUN")
-
-	// Override via config file
-	//if configYAML != "" {
-	//	v.SetConfigType("yaml")
-	//	v.ReadConfig(strings.NewReader(configYAML))
-	//}
 
 	// Load up template with frontmatter
 	email, err := parseTemplate(args[0])
@@ -135,31 +126,21 @@ func sendCampaign(args []string) {
 	}
 
 	// Dial up the sender
-	sender, err := dialSMTPURL(Config.GetString("smtp_url"))
+	sender, err := dialSMTPURL(Config.GetString("smtpURL"))
 	if err != nil {
 		printUsageError(err)
 		return
 	}
-
-	// Load private key
-	keyBytes, _ := ioutil.ReadFile("dkim.private")
-
-	// Configure with DKIM signing
 	defer sender.Close()
-	dOpts := dkim.NewSigOptions()
-	dOpts.PrivateKey = keyBytes
-	dOpts.Domain = "gemfury.com"
-	dOpts.Selector = "rails"
-	dOpts.SignatureExpireIn = 3600
-	dOpts.AddSignatureTimestamp = true
-	dOpts.Canonicalization = "relaxed/relaxed"
-	dOpts.Headers = []string{
-		"Mime-Version", "To", "From", "Subject", "Reply-To",
-		"Sender", "Content-Transfer-Encoding", "Content-Type",
-	}
 
-	// DKIM-signing sender
-	sender = &dkimSendCloser{Options: dOpts, sc: sender}
+	// DKIM-signing sender, if configuration is present
+	if cfg := Config.GetStringMap("dkim"); len(cfg) > 0 {
+		sender, err = mail.SendCloserWithDKIM(sender, cfg)
+		if err != nil {
+			printUsageError(err)
+			return
+		}
+	}
 
 	// Send emails
 	m := gomail.NewMessage()
@@ -171,15 +152,15 @@ func sendCampaign(args []string) {
 			return
 		}
 
-		toEmail := w["email"].(string)
-		toName, _ := w["username"].(string)
+		toEmail := cast.ToString(w["email"])
+		toName := cast.ToString(w["username"])
 		m.SetAddressHeader("To", toEmail, toName)
-		m.SetHeader("From", fMeta["from"].(string))
-		m.SetHeader("Subject", fMeta["subject"].(string))
+		m.SetHeader("From", cast.ToString(fMeta["from"]))
+		m.SetHeader("Subject", cast.ToString(fMeta["subject"]))
 		m.SetBody("text/plain", body.String())
 
 		fmt.Println("Sending email to ", m.GetHeader("To"))
-		if Config.GetBool("dry_run") {
+		if Config.GetBool("dryRun") {
 			fmt.Println("---------")
 			m.WriteTo(os.Stdout)
 			fmt.Println("\n---------")
@@ -200,7 +181,7 @@ func dialSMTPURL(smtpURL string) (gomail.SendCloser, error) {
 	}
 
 	// Authentication
-	user, pass := Config.GetString("smtp_user"), Config.GetString("smtp_pass")
+	user, pass := Config.GetString("smtpUser"), Config.GetString("smtpPass")
 	if auth := surl.User; auth != nil {
 		pass, _ = auth.Password()
 		user = auth.Username()
@@ -241,37 +222,4 @@ func printUsageError(err error) {
 	base := filepath.Base(os.Args[0])
 	fmt.Printf("USAGE: %s [template] [recipients]\n", base)
 	fmt.Println("Error: ", err)
-}
-
-// ======= DKIM ========
-type dkimSendCloser struct {
-	Options dkim.SigOptions
-	sc      gomail.SendCloser
-}
-
-func (d *dkimSendCloser) Send(from string, to []string, msg io.WriterTo) error {
-	return d.sc.Send(from, to, dkimMessage{d.Options, msg})
-}
-
-func (d *dkimSendCloser) Close() error {
-	return d.sc.Close()
-}
-
-type dkimMessage struct {
-	options dkim.SigOptions
-	msg     io.WriterTo
-}
-
-func (dm dkimMessage) WriteTo(w io.Writer) (n int64, err error) {
-	var b bytes.Buffer
-	if _, err := dm.msg.WriteTo(&b); err != nil {
-		return 0, err
-	}
-
-	email := b.Bytes()
-	if err := dkim.Sign(&email, dm.options); err != nil {
-		return 0, err
-	}
-
-	return bytes.NewBuffer(email).WriteTo(w)
 }

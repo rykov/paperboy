@@ -8,6 +8,7 @@ _lockFormatVersion = "0.1.0"
     "github.com/ghodss/yaml 1.0.0",
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
     "github.com/pelletier/go-toml 0.5.1-head.5+mf6e7596e8daafd44dc9e5c208dc73035020c8481",
+    "github.com/spf13/cast 1.0.0",
     "github.com/spf13/cobra 0.1.0-head.442+m7be4beda01ec05d0b93d80b3facd2b6f44080d94",
     "github.com/spf13/viper 0.1.0-head.184+m84f94806c67f59dd7ae87bc5351f7a9c94a4558d",
     "github.com/toorop/go-dkim 0.1.0-head.41+m43c1bb05e85404d07a5020ad38c6b67b3a039b86"

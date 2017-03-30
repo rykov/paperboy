@@ -22,5 +22,6 @@ version = "0.1.0"
 "github.com/toorop/go-dkim"="head"
 "github.com/spf13/cobra" = "head"
 "github.com/spf13/viper"="head"
+"github.com/spf13/cast"="head"
 
 # "github.com/pkg/errors" = "^0.8.0"
