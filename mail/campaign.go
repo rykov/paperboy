@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"net/url"
 	"os"
 	"text/template"
 	"time"
@@ -51,19 +50,11 @@ func SendCampaign(tmplFile, recipientFile string) error {
 	}
 
 	// Dial up the sender
-	sender, err := dialSMTPURL(Config.GetString("smtpURL"))
+	sender, err := configureSender()
 	if err != nil {
 		return err
 	}
 	defer sender.Close()
-
-	// DKIM-signing sender, if configuration is present
-	if cfg := Config.GetStringMap("dkim"); len(cfg) > 0 {
-		sender, err = SendCloserWithDKIM(sender, cfg)
-		if err != nil {
-			return err
-		}
-	}
 
 	// Send emails
 	m := gomail.NewMessage()
@@ -82,11 +73,7 @@ func SendCampaign(tmplFile, recipientFile string) error {
 		m.SetBody("text/plain", body.String())
 
 		fmt.Println("Sending email to ", m.GetHeader("To"))
-		if Config.GetBool("dryRun") {
-			fmt.Println("---------")
-			m.WriteTo(os.Stdout)
-			fmt.Println("\n---------")
-		} else if err := gomail.Send(sender, m); err != nil {
+		if err := gomail.Send(sender, m); err != nil {
 			fmt.Println("  Could not send email: ", err)
 		}
 
@@ -95,29 +82,6 @@ func SendCampaign(tmplFile, recipientFile string) error {
 	}
 
 	return nil
-}
-
-func dialSMTPURL(smtpURL string) (gomail.SendCloser, error) {
-	// Dial to SMTP server (with SSL)
-	surl, err := url.Parse(smtpURL)
-	if err != nil {
-		return nil, err
-	}
-
-	// Authentication
-	user, pass := Config.GetString("smtpUser"), Config.GetString("smtpPass")
-	if auth := surl.User; auth != nil {
-		pass, _ = auth.Password()
-		user = auth.Username()
-	}
-
-	// TODO: Split & parse port from url.Host
-	host, port := surl.Host, 465
-
-	// Dial SMTP server
-	d := gomail.NewDialer(host, port, user, pass)
-	d.SSL = true // Force SSL (TODO: use schema)
-	return d.Dial()
 }
 
 func parseRecipients(path string) ([]map[string]interface{}, error) {
