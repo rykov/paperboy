@@ -11,6 +11,7 @@ import (
 	"github.com/rykov/paperboy/parser"
 	"github.com/ghodss/yaml"
 	"github.com/go-gomail/gomail"
+	"github.com/russross/blackfriday"
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
 )
@@ -22,6 +23,7 @@ var Config *viper.Viper
 type tmplContext struct {
 	User     map[string]interface{}
 	Campaign map[string]interface{}
+	Content  string // for layouts
 }
 
 type Campaign struct {
@@ -39,11 +41,11 @@ func (c *Campaign) MessageFor(i int) (*gomail.Message, error) {
 }
 
 func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
-	var body bytes.Buffer
+	var content bytes.Buffer
 	w := c.Recipients[i]
 
 	ctx := &tmplContext{User: w, Campaign: c.EmailMeta}
-	if err := c.tText.Execute(&body, ctx); err != nil {
+	if err := c.tText.Execute(&content, ctx); err != nil {
 		return err
 	}
 
@@ -54,7 +56,23 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	m.SetAddressHeader("To", toEmail, toName)
 	m.SetHeader("From", cast.ToString(c.EmailMeta["from"]))
 	m.SetHeader("Subject", cast.ToString(c.EmailMeta["subject"]))
-	m.SetBody("text/plain", body.String())
+
+	// Render plain content into a layout (no Markdown)
+	tLayoutFile := filepath.Join(Config.GetString("layoutDir"), "_default.text")
+	plainBody, err := renderPlain(content.Bytes(), tLayoutFile, ctx)
+	if err != nil {
+		return err
+	}
+	m.SetBody("text/plain", plainBody)
+
+	// Render content through Markdown and into a layout
+	hLayoutFile := filepath.Join(Config.GetString("layoutDir"), "_default.html")
+	htmlBody, err := renderHTML(content.Bytes(), hLayoutFile, ctx)
+	if err != nil {
+		return err
+	}
+	m.AddAlternative("text/html", htmlBody)
+
 	return nil
 }
 
@@ -115,4 +133,39 @@ func parseTemplate(path string) (parser.Email, error) {
 
 	defer file.Close()
 	return parser.ReadFrom(file)
+}
+
+func renderPlain(body []byte, layoutPath string, ctx *tmplContext) (string, error) {
+	return renderIntoLayout(body, layoutPath, []byte{}, ctx)
+}
+
+// TODO: Uses a common text/template renderer, should use html/template instead
+func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error) {
+	bodyMD := blackfriday.MarkdownCommon(body)
+	defaultLayout := []byte("<html><body>{{ .Content }}</body></html>")
+	return renderIntoLayout(bodyMD, layoutPath, defaultLayout, ctx)
+}
+
+func renderIntoLayout(body []byte, layoutPath string, defaultLayout []byte, ctx *tmplContext) (string, error) {
+	layout := defaultLayout
+
+	if s, err := os.Stat(layoutPath); err == nil && !s.IsDir() {
+		layout, err = ioutil.ReadFile(layoutPath)
+		if err != nil {
+			return "", err
+		}
+	} else if len(layout) == 0 {
+		return string(body), nil
+	}
+
+	tmpl, err := template.New("layout").Parse(string(layout))
+	if err != nil {
+		return "", err
+	}
+
+	var out bytes.Buffer
+	var layoutCtx tmplContext = *ctx
+	layoutCtx.Content = string(body)
+	err = tmpl.Execute(&out, layoutCtx)
+	return out.String(), err
 }

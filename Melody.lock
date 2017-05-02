@@ -8,6 +8,7 @@ _lockFormatVersion = "0.1.0"
     "github.com/ghodss/yaml 1.0.0",
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
     "github.com/pelletier/go-toml 0.5.1-head.5+mf6e7596e8daafd44dc9e5c208dc73035020c8481",
+    "github.com/russross/blackfriday 0.1.0-head.395+mb253417e1cb644d645a0a3bb1fa5034c8030127c",
     "github.com/spf13/cast 1.0.0",
     "github.com/spf13/cobra 0.1.0-head.442+m7be4beda01ec05d0b93d80b3facd2b6f44080d94",
     "github.com/spf13/viper 0.1.0-head.184+m84f94806c67f59dd7ae87bc5351f7a9c94a4558d",
@@ -134,6 +135,19 @@ _lockFormatVersion = "0.1.0"
   dependencies = [
     "github.com/pelletier/go-buffruneio 0.2.0"
   ]
+
+[[packages]]
+  name = "github.com/russross/blackfriday"
+  version = "0.1.0-head.395+mb253417e1cb644d645a0a3bb1fa5034c8030127c"
+  release = "github.com/russross/blackfriday#b253417e1cb644d645a0a3bb1fa5034c8030127c"
+  dependencies = [
+    "github.com/shurcooL/sanitized_anchor_name 0.1.0-head.12+m79c90efaf01eddc01945af5bc1797859189b830b"
+  ]
+
+[[packages]]
+  name = "github.com/shurcooL/sanitized_anchor_name"
+  version = "0.1.0-head.12+m79c90efaf01eddc01945af5bc1797859189b830b"
+  release = "github.com/shurcooL/sanitized_anchor_name#79c90efaf01eddc01945af5bc1797859189b830b"
 
 [[packages]]
   name = "github.com/spf13/afero"
