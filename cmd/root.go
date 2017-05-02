@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/cobra"
@@ -20,19 +19,6 @@ examples and usage of using your application. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 2 {
-			printUsageError(fmt.Errorf("Invalid arguments"))
-			return
-		}
-
-		err := mail.SendCampaign(args[0], args[1])
-		if err != nil {
-			printUsageError(err)
-		}
-	},
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
@@ -80,10 +66,4 @@ func initConfig(cfgFile string) {
 	v.SetDefault("smtpUser", "")
 	v.SetDefault("smtpPass", "")
 	v.SetDefault("dryRun", false)
-}
-
-func printUsageError(err error) {
-	base := filepath.Base(os.Args[0])
-	fmt.Printf("USAGE: %s [template] [recipients]\n", base)
-	fmt.Println("Error: ", err)
 }

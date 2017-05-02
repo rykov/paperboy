@@ -5,9 +5,43 @@ import (
 	"io"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/go-gomail/gomail"
 )
+
+func SendCampaign(tmplFile, recipientFile string) error {
+	// Load up template and recipientswith frontmatter
+	c, err := LoadCampaign(tmplFile, recipientFile)
+	if err != nil {
+		return err
+	}
+
+	// Dial up the sender
+	sender, err := configureSender()
+	if err != nil {
+		return err
+	}
+	defer sender.Close()
+
+	// Send emails
+	m := gomail.NewMessage()
+	for i, _ := range c.Recipients {
+		if err := c.renderMessage(m, i); err != nil {
+			return err
+		}
+
+		fmt.Println("Sending email to ", m.GetHeader("To"))
+		if err := gomail.Send(sender, m); err != nil {
+			fmt.Println("  Could not send email: ", err)
+		}
+
+		// Throttle to account for quotas, etc
+		time.Sleep(200 * time.Millisecond)
+	}
+
+	return nil
+}
 
 func configureSender() (sender gomail.SendCloser, err error) {
 	// Dial up the sender or dryRun

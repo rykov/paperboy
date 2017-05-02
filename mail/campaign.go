@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"text/template"
-	"time"
 
 	"github.com/rykov/paperboy/parser"
 	"github.com/ghodss/yaml"
@@ -24,11 +23,45 @@ type tmplContext struct {
 	Campaign map[string]interface{}
 }
 
-func SendCampaign(tmplFile, recipientFile string) error {
+type Campaign struct {
+	Recipients []map[string]interface{}
+	EmailMeta  map[string]interface{}
+	Email      parser.Email
+
+	// Internal templates
+	tText *template.Template
+}
+
+func (c *Campaign) MessageFor(i int) (*gomail.Message, error) {
+	m := gomail.NewMessage()
+	return m, c.renderMessage(m, i)
+}
+
+func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
+	var body bytes.Buffer
+	w := c.Recipients[i]
+
+	ctx := &tmplContext{User: w, Campaign: c.EmailMeta}
+	if err := c.tText.Execute(&body, ctx); err != nil {
+		return err
+	}
+
+	toEmail := cast.ToString(w["email"])
+	toName := cast.ToString(w["username"])
+
+	m.Reset() // Return to NewMessage state
+	m.SetAddressHeader("To", toEmail, toName)
+	m.SetHeader("From", cast.ToString(c.EmailMeta["from"]))
+	m.SetHeader("Subject", cast.ToString(c.EmailMeta["subject"]))
+	m.SetBody("text/plain", body.String())
+	return nil
+}
+
+func LoadCampaign(tmplFile, recipientFile string) (*Campaign, error) {
 	// Load up template with frontmatter
 	email, err := parseTemplate(tmplFile)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Read and cast frontmatter
@@ -40,48 +73,21 @@ func SendCampaign(tmplFile, recipientFile string) error {
 	// Parse email template for processing
 	tmpl, err := template.New("email").Parse(string(email.Content()))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Load up recipient metadata
 	who, err := parseRecipients(recipientFile)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// Dial up the sender
-	sender, err := configureSender()
-	if err != nil {
-		return err
-	}
-	defer sender.Close()
-
-	// Send emails
-	m := gomail.NewMessage()
-	for _, w := range who {
-		var body bytes.Buffer
-		ctx := &tmplContext{User: w, Campaign: fMeta}
-		if err := tmpl.Execute(&body, ctx); err != nil {
-			return err
-		}
-
-		toEmail := cast.ToString(w["email"])
-		toName := cast.ToString(w["username"])
-		m.SetAddressHeader("To", toEmail, toName)
-		m.SetHeader("From", cast.ToString(fMeta["from"]))
-		m.SetHeader("Subject", cast.ToString(fMeta["subject"]))
-		m.SetBody("text/plain", body.String())
-
-		fmt.Println("Sending email to ", m.GetHeader("To"))
-		if err := gomail.Send(sender, m); err != nil {
-			fmt.Println("  Could not send email: ", err)
-		}
-
-		// Throttle to account for quotas, etc
-		time.Sleep(200 * time.Millisecond)
-	}
-
-	return nil
+	return &Campaign{
+		Recipients: who,
+		EmailMeta:  fMeta,
+		Email:      email,
+		tText:      tmpl,
+	}, nil
 }
 
 func parseRecipients(path string) ([]map[string]interface{}, error) {
