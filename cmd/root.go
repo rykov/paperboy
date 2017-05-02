@@ -61,9 +61,13 @@ func initConfig(cfgFile string) {
 		panic(fmt.Errorf("Config file error: %s \n", err))
 	}
 
-	// Defaults
+	// Defaults (General)
 	v.SetDefault("smtpURL", "")
 	v.SetDefault("smtpUser", "")
 	v.SetDefault("smtpPass", "")
 	v.SetDefault("dryRun", false)
+
+	// Defaults (Dirs)
+	v.SetDefault("contentDir", "content")
+	v.SetDefault("listDir", "lists")
 }

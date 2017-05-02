@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"text/template"
 
 	"github.com/rykov/paperboy/parser"
@@ -57,7 +58,11 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	return nil
 }
 
-func LoadCampaign(tmplFile, recipientFile string) (*Campaign, error) {
+func LoadCampaign(tmplID, listID string) (*Campaign, error) {
+	// Translate IDs to files
+	tmplFile := filepath.Join(Config.GetString("contentDir"), tmplID+".md")
+	listFile := filepath.Join(Config.GetString("listDir"), listID+".yml")
+
 	// Load up template with frontmatter
 	email, err := parseTemplate(tmplFile)
 	if err != nil {
@@ -77,7 +82,7 @@ func LoadCampaign(tmplFile, recipientFile string) (*Campaign, error) {
 	}
 
 	// Load up recipient metadata
-	who, err := parseRecipients(recipientFile)
+	who, err := parseRecipients(listFile)
 	if err != nil {
 		return nil, err
 	}

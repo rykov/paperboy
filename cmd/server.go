@@ -48,7 +48,7 @@ func serverPreview(w http.ResponseWriter, r *http.Request) {
 	template, who := parts[0], parts[1]
 	fmt.Fprintf(w, "<p>TEMPLATE: %s, RECIPIENTS: %s</p>", template, who)
 
-	c, err := mail.LoadCampaign("_email/"+template+".md", "_email/"+who+".yml")
+	c, err := mail.LoadCampaign(template, who)
 	if err != nil || len(c.Recipients) == 0 {
 		fmt.Fprintf(w, "Invalid campaign: ", err)
 		return
