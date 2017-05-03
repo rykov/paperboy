@@ -25,5 +25,6 @@ version = "0.1.0"
 "github.com/spf13/cast"="head"
 "github.com/russross/blackfriday"="head"
 "github.com/chris-ramon/douceur/inliner"="head"
+"github.com/spf13/afero"="head"
 
 # "github.com/pkg/errors" = "^0.8.0"

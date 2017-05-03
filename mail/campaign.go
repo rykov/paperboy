@@ -3,8 +3,6 @@ package mail
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
-	"os"
 	"path/filepath"
 	"text/template"
 
@@ -13,12 +11,14 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/go-gomail/gomail"
 	"github.com/russross/blackfriday"
+	"github.com/spf13/afero"
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
 )
 
 // Sender configurationTODO: Move this into a global space
 var Config *viper.Viper
+var AppFs afero.Fs
 
 // Context for email template
 type tmplContext struct {
@@ -56,8 +56,8 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 
 	// Until we support file <style/> tags, load CSS into a variable
 	cssFile := filepath.Join(Config.GetString("layoutDir"), "_default.css")
-	if s, err := os.Stat(cssFile); err == nil && !s.IsDir() {
-		cssBytes, _ := ioutil.ReadFile(cssFile)
+	if s, err := AppFs.Stat(cssFile); err == nil && !s.IsDir() {
+		cssBytes, _ := afero.ReadFile(AppFs, cssFile)
 		ctx.CssContent = string(cssBytes)
 	}
 
@@ -126,7 +126,7 @@ func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 
 func parseRecipients(path string) ([]map[string]interface{}, error) {
 	fmt.Println("Loading recipients: ", path)
-	raw, err := ioutil.ReadFile(path)
+	raw, err := afero.ReadFile(AppFs, path)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +137,7 @@ func parseRecipients(path string) ([]map[string]interface{}, error) {
 
 func parseTemplate(path string) (parser.Email, error) {
 	fmt.Println("Loading template: ", path)
-	file, err := os.Open(path)
+	file, err := AppFs.Open(path)
 	if err != nil {
 		return nil, err
 	}
@@ -164,8 +164,8 @@ func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error
 func renderIntoLayout(body []byte, layoutPath string, defaultLayout []byte, ctx *tmplContext) (string, error) {
 	layout := defaultLayout
 
-	if s, err := os.Stat(layoutPath); err == nil && !s.IsDir() {
-		layout, err = ioutil.ReadFile(layoutPath)
+	if s, err := AppFs.Stat(layoutPath); err == nil && !s.IsDir() {
+		layout, err = afero.ReadFile(AppFs, layoutPath)
 		if err != nil {
 			return "", err
 		}

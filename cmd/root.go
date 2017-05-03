@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/rykov/paperboy/mail"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -41,7 +42,6 @@ func init() {
 // initConfig reads in config file and ENV variables if set.
 func initConfig(cfgFile string) {
 	v := viper.New()
-	mail.Config = v
 
 	// From --config
 	if cfgFile != "" {
@@ -71,4 +71,8 @@ func initConfig(cfgFile string) {
 	v.SetDefault("contentDir", "content")
 	v.SetDefault("layoutDir", "layouts")
 	v.SetDefault("listDir", "lists")
+
+	// Wire everything up...
+	mail.AppFs = afero.NewOsFs()
+	mail.Config = v
 }

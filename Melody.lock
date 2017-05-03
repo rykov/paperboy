@@ -10,6 +10,7 @@ _lockFormatVersion = "0.1.0"
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
     "github.com/pelletier/go-toml 0.5.1-head.7+mfe206efb84b2bc8e8cfafe6b4c1826622be969e3",
     "github.com/russross/blackfriday 0.1.0-head.395+mb253417e1cb644d645a0a3bb1fa5034c8030127c",
+    "github.com/spf13/afero 0.1.0-head.178+m9be650865eab0c12963d8753212f4f9c66cdcf12",
     "github.com/spf13/cast 1.1.0",
     "github.com/spf13/cobra 0.1.0-head.487+m8f0203be891287870100e4af46262cdf4a4261d1",
     "github.com/spf13/viper 0.1.0-head.186+m0967fc9aceab2ce9da34061253ac10fb99bba5b2",

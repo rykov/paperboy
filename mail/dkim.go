@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 
 	"github.com/go-gomail/gomail"
+	"github.com/spf13/afero"
 	"github.com/spf13/cast"
 	"github.com/toorop/go-dkim"
 )
@@ -20,7 +20,7 @@ func SendCloserWithDKIM(sc gomail.SendCloser, conf map[string]interface{}) (goma
 		return nil, fmt.Errorf("DKIM requires a keyFile")
 	}
 
-	keyBytes, err := ioutil.ReadFile(keyFile)
+	keyBytes, err := afero.ReadFile(AppFs, keyFile)
 	if err != nil {
 		return nil, err
 	}
