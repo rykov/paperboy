@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"github.com/rykov/paperboy/parser"
+	"github.com/chris-ramon/douceur/inliner"
 	"github.com/ghodss/yaml"
 	"github.com/go-gomail/gomail"
 	"github.com/russross/blackfriday"
@@ -23,7 +24,10 @@ var Config *viper.Viper
 type tmplContext struct {
 	User     map[string]interface{}
 	Campaign map[string]interface{}
-	Content  string // for layouts
+
+	// For layout rendering
+	CssContent string
+	Content    string
 }
 
 type Campaign struct {
@@ -44,8 +48,30 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	var content bytes.Buffer
 	w := c.Recipients[i]
 
+	// Render template body with text/template
 	ctx := &tmplContext{User: w, Campaign: c.EmailMeta}
 	if err := c.tText.Execute(&content, ctx); err != nil {
+		return err
+	}
+
+	// Until we support file <style/> tags, load CSS into a variable
+	cssFile := filepath.Join(Config.GetString("layoutDir"), "_default.css")
+	if s, err := os.Stat(cssFile); err == nil && !s.IsDir() {
+		cssBytes, _ := ioutil.ReadFile(cssFile)
+		ctx.CssContent = string(cssBytes)
+	}
+
+	// Render plain content into a layout (no Markdown)
+	tLayoutFile := filepath.Join(Config.GetString("layoutDir"), "_default.text")
+	plainBody, err := renderPlain(content.Bytes(), tLayoutFile, ctx)
+	if err != nil {
+		return err
+	}
+
+	// Render content through Markdown and into a layout
+	hLayoutFile := filepath.Join(Config.GetString("layoutDir"), "_default.html")
+	htmlBody, err := renderHTML(content.Bytes(), hLayoutFile, ctx)
+	if err != nil {
 		return err
 	}
 
@@ -56,23 +82,8 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	m.SetAddressHeader("To", toEmail, toName)
 	m.SetHeader("From", cast.ToString(c.EmailMeta["from"]))
 	m.SetHeader("Subject", cast.ToString(c.EmailMeta["subject"]))
-
-	// Render plain content into a layout (no Markdown)
-	tLayoutFile := filepath.Join(Config.GetString("layoutDir"), "_default.text")
-	plainBody, err := renderPlain(content.Bytes(), tLayoutFile, ctx)
-	if err != nil {
-		return err
-	}
 	m.SetBody("text/plain", plainBody)
-
-	// Render content through Markdown and into a layout
-	hLayoutFile := filepath.Join(Config.GetString("layoutDir"), "_default.html")
-	htmlBody, err := renderHTML(content.Bytes(), hLayoutFile, ctx)
-	if err != nil {
-		return err
-	}
 	m.AddAlternative("text/html", htmlBody)
-
 	return nil
 }
 
@@ -143,7 +154,11 @@ func renderPlain(body []byte, layoutPath string, ctx *tmplContext) (string, erro
 func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error) {
 	bodyMD := blackfriday.MarkdownCommon(body)
 	defaultLayout := []byte("<html><body>{{ .Content }}</body></html>")
-	return renderIntoLayout(bodyMD, layoutPath, defaultLayout, ctx)
+	html, err := renderIntoLayout(bodyMD, layoutPath, defaultLayout, ctx)
+	if err != nil {
+		return "", err
+	}
+	return inliner.Inline(html)
 }
 
 func renderIntoLayout(body []byte, layoutPath string, defaultLayout []byte, ctx *tmplContext) (string, error) {
