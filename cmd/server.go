@@ -4,7 +4,10 @@ import (
 	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/cobra"
 
+	"bytes"
 	"fmt"
+	"html"
+	"io"
 	"net/http"
 	"strings"
 )
@@ -61,6 +64,8 @@ func serverPreview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg.WriteTo(w)
+	var buf bytes.Buffer
+	msg.WriteTo(&buf)
+	io.WriteString(w, html.EscapeString(buf.String()))
 	fmt.Fprintf(w, "</pre>")
 }
