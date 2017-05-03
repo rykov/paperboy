@@ -73,6 +73,6 @@ func initConfig(cfgFile string) {
 	v.SetDefault("listDir", "lists")
 
 	// Wire everything up...
-	mail.AppFs = afero.NewOsFs()
+	mail.SetFs(afero.NewOsFs())
 	mail.Config = v
 }

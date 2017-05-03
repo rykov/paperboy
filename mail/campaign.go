@@ -3,7 +3,6 @@ package mail
 import (
 	"bytes"
 	"fmt"
-	"path/filepath"
 	"text/template"
 
 	"github.com/rykov/paperboy/parser"
@@ -16,9 +15,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Sender configurationTODO: Move this into a global space
+// Sender configuration
+// TODO: Move this into a global space
 var Config *viper.Viper
-var AppFs afero.Fs
 
 // Context for email template
 type tmplContext struct {
@@ -55,21 +54,20 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	}
 
 	// Until we support file <style/> tags, load CSS into a variable
-	cssFile := filepath.Join(Config.GetString("layoutDir"), "_default.css")
-	if s, err := AppFs.Stat(cssFile); err == nil && !s.IsDir() {
+	if cssFile := AppFs.layoutPath("_default.css"); AppFs.isFile(cssFile) {
 		cssBytes, _ := afero.ReadFile(AppFs, cssFile)
 		ctx.CssContent = string(cssBytes)
 	}
 
 	// Render plain content into a layout (no Markdown)
-	tLayoutFile := filepath.Join(Config.GetString("layoutDir"), "_default.text")
+	tLayoutFile := AppFs.layoutPath("_default.text")
 	plainBody, err := renderPlain(content.Bytes(), tLayoutFile, ctx)
 	if err != nil {
 		return err
 	}
 
 	// Render content through Markdown and into a layout
-	hLayoutFile := filepath.Join(Config.GetString("layoutDir"), "_default.html")
+	hLayoutFile := AppFs.layoutPath("_default.html")
 	htmlBody, err := renderHTML(content.Bytes(), hLayoutFile, ctx)
 	if err != nil {
 		return err
@@ -89,8 +87,8 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 
 func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 	// Translate IDs to files
-	tmplFile := filepath.Join(Config.GetString("contentDir"), tmplID+".md")
-	listFile := filepath.Join(Config.GetString("listDir"), listID+".yml")
+	tmplFile := AppFs.contentPath(tmplID + ".md")
+	listFile := AppFs.listPath(listID + ".yml")
 
 	// Load up template with frontmatter
 	email, err := parseTemplate(tmplFile)
@@ -163,8 +161,9 @@ func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error
 
 func renderIntoLayout(body []byte, layoutPath string, defaultLayout []byte, ctx *tmplContext) (string, error) {
 	layout := defaultLayout
+	var err error
 
-	if s, err := AppFs.Stat(layoutPath); err == nil && !s.IsDir() {
+	if AppFs.isFile(layoutPath) {
 		layout, err = afero.ReadFile(AppFs, layoutPath)
 		if err != nil {
 			return "", err
