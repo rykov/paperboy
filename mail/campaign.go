@@ -15,6 +15,9 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Like "User-Agent"
+const xMailer = "paperboy/0.1.0 (https://paperboy.email)"
+
 // Sender configuration
 // TODO: Move this into a global space
 var Config *viper.Viper
@@ -80,6 +83,7 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	m.SetAddressHeader("To", toEmail, toName)
 	m.SetHeader("From", cast.ToString(c.EmailMeta["from"]))
 	m.SetHeader("Subject", cast.ToString(c.EmailMeta["subject"]))
+	m.SetHeader("X-Mailer", xMailer)
 	m.SetBody("text/plain", plainBody)
 	m.AddAlternative("text/html", htmlBody)
 	return nil
