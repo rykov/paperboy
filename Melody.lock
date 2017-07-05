@@ -5,6 +5,7 @@ _lockFormatVersion = "0.1.0"
   name = "github.com/rykov/paperboy"
   version = "0.1.0"
   dependencies = [
+    "github.com/PuerkitoBio/goquery 1.1.1-head.6+m8806ada2a4ab225c06e9106f9631be80932db7ce",
     "github.com/chris-ramon/douceur/inliner 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
     "github.com/ghodss/yaml 1.0.0",
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",

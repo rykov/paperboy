@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/chris-ramon/douceur/inliner"
 	"github.com/ghodss/yaml"
 	"github.com/go-gomail/gomail"
 	"github.com/microcosm-cc/bluemonday"
@@ -27,8 +26,7 @@ var Config *viper.Viper
 
 // Context for template rendering
 type tmplContext struct {
-	CssContent string
-	Content    html.HTML
+	Content html.HTML
 	context
 }
 
@@ -57,12 +55,6 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	ctx := &tmplContext{context: context{Recipient: *ctxR, Campaign: *ctxC}}
 	if err := c.tText.Execute(&content, ctx); err != nil {
 		return err
-	}
-
-	// Until we support file <style/> tags, load CSS into a variable
-	if cssFile := AppFs.layoutPath("_default.css"); AppFs.isFile(cssFile) {
-		cssBytes, _ := afero.ReadFile(AppFs, cssFile)
-		ctx.CssContent = string(cssBytes)
 	}
 
 	// Render plain content into a layout (no Markdown)
@@ -202,7 +194,8 @@ func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error
 		return "", err
 	}
 
-	return inliner.Inline(out.String())
+	layoutRoot := filepath.Dir(layoutPath)
+	return inlineStylesheets(layoutRoot, out.String())
 }
 
 func loadTemplate(path string, defaultTemplate string) (string, error) {
