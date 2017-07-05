@@ -165,6 +165,9 @@ func renderPlain(body []byte, layoutPath string, ctx *tmplContext) (string, erro
 		return "", err
 	}
 
+	// Strip all HTML from campaign
+	body = bluemonday.StrictPolicy().SanitizeBytes(body)
+
 	var out bytes.Buffer
 	var layoutCtx tmplContext = *ctx
 	layoutCtx.Content = html.HTML(body)
