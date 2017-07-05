@@ -8,6 +8,7 @@ _lockFormatVersion = "0.1.0"
     "github.com/chris-ramon/douceur/inliner 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
     "github.com/ghodss/yaml 1.0.0",
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
+    "github.com/microcosm-cc/bluemonday 0.1.0-head.156+me79763773ab6222ca1d5a7cbd9d62d83c1f77081",
     "github.com/pelletier/go-toml 1.0.1-head.7+m69d355db5304c0f7f809a2edc054553e7142f016",
     "github.com/russross/blackfriday 0.1.0-head.400+m067529f716f4c3f5e37c8c95ddd59df1007290ae",
     "github.com/spf13/afero 0.1.0-head.178+m9be650865eab0c12963d8753212f4f9c66cdcf12",
@@ -166,6 +167,14 @@ _lockFormatVersion = "0.1.0"
   name = "github.com/magiconair/properties"
   version = "1.7.3-head.7+m51463bfca2576e06c62a8504b5c0f06d61312647"
   release = "github.com/magiconair/properties#51463bfca2576e06c62a8504b5c0f06d61312647"
+
+[[packages]]
+  name = "github.com/microcosm-cc/bluemonday"
+  version = "0.1.0-head.156+me79763773ab6222ca1d5a7cbd9d62d83c1f77081"
+  release = "github.com/microcosm-cc/bluemonday#e79763773ab6222ca1d5a7cbd9d62d83c1f77081"
+  dependencies = [
+    "golang.org/x/net/html 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
+  ]
 
 [[packages]]
   name = "github.com/mitchellh/mapstructure"

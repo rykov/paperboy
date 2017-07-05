@@ -10,6 +10,7 @@ import (
 	"github.com/chris-ramon/douceur/inliner"
 	"github.com/ghodss/yaml"
 	"github.com/go-gomail/gomail"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 	"github.com/rykov/paperboy/parser"
 	"github.com/spf13/afero"
@@ -191,9 +192,12 @@ func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error
 		return "", err
 	}
 
+	unsafe := blackfriday.MarkdownCommon(body)
+	bodyHTML := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+
 	var out bytes.Buffer
 	var layoutCtx tmplContext = *ctx
-	layoutCtx.Content = html.HTML(blackfriday.MarkdownCommon(body))
+	layoutCtx.Content = html.HTML(bodyHTML)
 	if err := tmpl.Execute(&out, layoutCtx); err != nil {
 		return "", err
 	}

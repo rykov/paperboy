@@ -24,6 +24,7 @@ version = "0.1.0"
 "github.com/spf13/viper"="head"
 "github.com/spf13/cast"="head"
 "github.com/russross/blackfriday"="head"
+"github.com/microcosm-cc/bluemonday"="head"
 "github.com/chris-ramon/douceur/inliner"="head"
 "github.com/spf13/afero"="head"
 
