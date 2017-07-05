@@ -3,13 +3,15 @@ package mail
 import (
 	"bytes"
 	"fmt"
+	html "html/template"
+	"path/filepath"
 	"text/template"
 
-	"github.com/rykov/paperboy/parser"
 	"github.com/chris-ramon/douceur/inliner"
 	"github.com/ghodss/yaml"
 	"github.com/go-gomail/gomail"
 	"github.com/russross/blackfriday"
+	"github.com/rykov/paperboy/parser"
 	"github.com/spf13/afero"
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
@@ -22,19 +24,16 @@ const xMailer = "paperboy/0.1.0 (https://paperboy.email)"
 // TODO: Move this into a global space
 var Config *viper.Viper
 
-// Context for email template
+// Context for template rendering
 type tmplContext struct {
-	User     map[string]interface{}
-	Campaign map[string]interface{}
-
-	// For layout rendering
 	CssContent string
-	Content    string
+	Content    html.HTML
+	context
 }
 
 type Campaign struct {
-	Recipients []map[string]interface{}
-	EmailMeta  map[string]interface{}
+	Recipients []*ctxRecipient
+	EmailMeta  *ctxCampaign
 	Email      parser.Email
 
 	// Internal templates
@@ -48,10 +47,13 @@ func (c *Campaign) MessageFor(i int) (*gomail.Message, error) {
 
 func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	var content bytes.Buffer
-	w := c.Recipients[i]
+
+	// Get campaign and recipient
+	ctxR := c.Recipients[i]
+	ctxC := c.EmailMeta
 
 	// Render template body with text/template
-	ctx := &tmplContext{User: w, Campaign: c.EmailMeta}
+	ctx := &tmplContext{context: context{Recipient: *ctxR, Campaign: *ctxC}}
 	if err := c.tText.Execute(&content, ctx); err != nil {
 		return err
 	}
@@ -76,13 +78,13 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 		return err
 	}
 
-	toEmail := cast.ToString(w["email"])
-	toName := cast.ToString(w["username"])
+	toEmail := cast.ToString(ctxR.Email)
+	toName := cast.ToString(ctxR.Name)
 
 	m.Reset() // Return to NewMessage state
 	m.SetAddressHeader("To", toEmail, toName)
-	m.SetHeader("From", cast.ToString(c.EmailMeta["from"]))
-	m.SetHeader("Subject", cast.ToString(c.EmailMeta["subject"]))
+	m.SetHeader("Subject", cast.ToString(ctxC.Subject))
+	m.SetHeader("From", cast.ToString(ctxC.From))
 	m.SetHeader("X-Mailer", xMailer)
 	m.SetBody("text/plain", plainBody)
 	m.AddAlternative("text/html", htmlBody)
@@ -101,13 +103,14 @@ func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 	}
 
 	// Read and cast frontmatter
-	var fMeta map[string]interface{}
+	var fMeta ctxCampaign
 	if meta, err := email.Metadata(); err == nil && meta != nil {
-		fMeta, _ = meta.(map[string]interface{})
+		metadata, _ := meta.(map[string]interface{})
+		fMeta = newCampaign(metadata)
 	}
 
 	// Parse email template for processing
-	tmpl, err := template.New("email").Parse(string(email.Content()))
+	tmpl, err := template.New(tmplID).Parse(string(email.Content()))
 	if err != nil {
 		return nil, err
 	}
@@ -120,21 +123,31 @@ func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 
 	return &Campaign{
 		Recipients: who,
-		EmailMeta:  fMeta,
+		EmailMeta:  &fMeta,
 		Email:      email,
 		tText:      tmpl,
 	}, nil
 }
 
-func parseRecipients(path string) ([]map[string]interface{}, error) {
+func parseRecipients(path string) ([]*ctxRecipient, error) {
 	fmt.Println("Loading recipients: ", path)
 	raw, err := afero.ReadFile(AppFs, path)
 	if err != nil {
 		return nil, err
 	}
 
-	var out []map[string]interface{}
-	return out, yaml.Unmarshal(raw, &out)
+	var data []map[string]interface{}
+	if err := yaml.Unmarshal(raw, &data); err != nil {
+		return nil, err
+	}
+
+	out := make([]*ctxRecipient, len(data))
+	for i, rData := range data {
+		r := newRecipient(rData)
+		out[i] = &r
+	}
+
+	return out, nil
 }
 
 func parseTemplate(path string) (parser.Email, error) {
@@ -149,41 +162,49 @@ func parseTemplate(path string) (parser.Email, error) {
 }
 
 func renderPlain(body []byte, layoutPath string, ctx *tmplContext) (string, error) {
-	return renderIntoLayout(body, layoutPath, []byte{}, ctx)
-}
-
-// TODO: Uses a common text/template renderer, should use html/template instead
-func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error) {
-	bodyMD := blackfriday.MarkdownCommon(body)
-	defaultLayout := []byte("<html><body>{{ .Content }}</body></html>")
-	html, err := renderIntoLayout(bodyMD, layoutPath, defaultLayout, ctx)
+	layout, err := loadTemplate(layoutPath, "{{ .Content }}")
 	if err != nil {
 		return "", err
 	}
-	return inliner.Inline(html)
-}
 
-func renderIntoLayout(body []byte, layoutPath string, defaultLayout []byte, ctx *tmplContext) (string, error) {
-	layout := defaultLayout
-	var err error
-
-	if AppFs.isFile(layoutPath) {
-		layout, err = afero.ReadFile(AppFs, layoutPath)
-		if err != nil {
-			return "", err
-		}
-	} else if len(layout) == 0 {
-		return string(body), nil
-	}
-
-	tmpl, err := template.New("layout").Parse(string(layout))
+	tmpl, err := template.New(filepath.Base(layoutPath)).Parse(layout)
 	if err != nil {
 		return "", err
 	}
 
 	var out bytes.Buffer
 	var layoutCtx tmplContext = *ctx
-	layoutCtx.Content = string(body)
+	layoutCtx.Content = html.HTML(body)
 	err = tmpl.Execute(&out, layoutCtx)
 	return out.String(), err
+}
+
+// TODO: Uses a common text/template renderer, should use html/template instead
+func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error) {
+	layout, err := loadTemplate(layoutPath, "<html><body>{{ .Content }}</body></html>")
+	if err != nil {
+		return "", err
+	}
+
+	tmpl, err := html.New(filepath.Base(layoutPath)).Parse(layout)
+	if err != nil {
+		return "", err
+	}
+
+	var out bytes.Buffer
+	var layoutCtx tmplContext = *ctx
+	layoutCtx.Content = html.HTML(blackfriday.MarkdownCommon(body))
+	if err := tmpl.Execute(&out, layoutCtx); err != nil {
+		return "", err
+	}
+
+	return inliner.Inline(out.String())
+}
+
+func loadTemplate(path string, defaultTemplate string) (string, error) {
+	if !AppFs.isFile(path) {
+		return defaultTemplate, nil
+	}
+	raw, err := afero.ReadFile(AppFs, path)
+	return string(raw), err
 }

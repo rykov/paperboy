@@ -8,22 +8,22 @@ _lockFormatVersion = "0.1.0"
     "github.com/chris-ramon/douceur/inliner 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
     "github.com/ghodss/yaml 1.0.0",
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
-    "github.com/pelletier/go-toml 0.5.1-head.7+mfe206efb84b2bc8e8cfafe6b4c1826622be969e3",
-    "github.com/russross/blackfriday 0.1.0-head.395+mb253417e1cb644d645a0a3bb1fa5034c8030127c",
+    "github.com/pelletier/go-toml 1.0.1-head.7+m69d355db5304c0f7f809a2edc054553e7142f016",
+    "github.com/russross/blackfriday 0.1.0-head.400+m067529f716f4c3f5e37c8c95ddd59df1007290ae",
     "github.com/spf13/afero 0.1.0-head.178+m9be650865eab0c12963d8753212f4f9c66cdcf12",
     "github.com/spf13/cast 1.1.0",
-    "github.com/spf13/cobra 0.1.0-head.487+m8f0203be891287870100e4af46262cdf4a4261d1",
-    "github.com/spf13/viper 0.1.0-head.186+m0967fc9aceab2ce9da34061253ac10fb99bba5b2",
+    "github.com/spf13/cobra 0.1.0-head.550+m8c6fa02d2225de0f9bdcb7ca912556f68d172d8c",
+    "github.com/spf13/viper 0.1.0-head.188+mc1de95864d73a5465492829d7cb2dd422b19ac96",
     "github.com/toorop/go-dkim 0.1.0-head.41+m43c1bb05e85404d07a5020ad38c6b67b3a039b86"
   ]
 
 [[packages]]
   name = "github.com/PuerkitoBio/goquery"
-  version = "1.1.1-head.3+med7d758e9a34ba1f55e8084e0d731448b46921a8"
-  release = "github.com/PuerkitoBio/goquery#ed7d758e9a34ba1f55e8084e0d731448b46921a8"
+  version = "1.1.1-head.6+m8806ada2a4ab225c06e9106f9631be80932db7ce"
+  release = "github.com/PuerkitoBio/goquery#8806ada2a4ab225c06e9106f9631be80932db7ce"
   dependencies = [
     "github.com/andybalholm/cascadia 0.1.0-head.53+m349dd0209470eabd9514242c688c403c0926d266",
-    "golang.org/x/net/html 0.1.0-head.1133+m0819898fb4973868bba6de59b6aaad75beea9a6a"
+    "golang.org/x/net/html 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
   ]
 
 [[packages]]
@@ -31,7 +31,7 @@ _lockFormatVersion = "0.1.0"
   version = "0.1.0-head.53+m349dd0209470eabd9514242c688c403c0926d266"
   release = "github.com/andybalholm/cascadia#349dd0209470eabd9514242c688c403c0926d266"
   dependencies = [
-    "golang.org/x/net/html 0.1.0-head.1133+m0819898fb4973868bba6de59b6aaad75beea9a6a"
+    "golang.org/x/net/html 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
   ]
 
 [[packages]]
@@ -44,10 +44,10 @@ _lockFormatVersion = "0.1.0"
   version = "0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7"
   release = "github.com/chris-ramon/douceur#f3463056cd52886eda904655e1940157bf323bd7"
   dependencies = [
-    "github.com/PuerkitoBio/goquery 1.1.1-head.3+med7d758e9a34ba1f55e8084e0d731448b46921a8",
+    "github.com/PuerkitoBio/goquery 1.1.1-head.6+m8806ada2a4ab225c06e9106f9631be80932db7ce",
     "github.com/chris-ramon/douceur/css 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
     "github.com/chris-ramon/douceur/parser 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
-    "golang.org/x/net/html 0.1.0-head.1133+m0819898fb4973868bba6de59b6aaad75beea9a6a"
+    "golang.org/x/net/html 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
   ]
 
 [[packages]]
@@ -64,7 +64,7 @@ _lockFormatVersion = "0.1.0"
   version = "1.4.3-head.6+m4da3e2cfbabc9f751898f250b49f2439785783a1"
   release = "github.com/fsnotify/fsnotify#4da3e2cfbabc9f751898f250b49f2439785783a1"
   dependencies = [
-    "golang.org/x/sys/unix 0.1.0-head.205+m9ccfe848b9db8435a24c424abbc07a921adf1df5"
+    "golang.org/x/sys/unix 0.1.0-head.231+m94b76065f2d2081d0fef24a6e67c571f51a6408a"
   ]
 
 [[packages]]
@@ -87,79 +87,79 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/hashicorp/hcl"
-  version = "0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
-  release = "github.com/hashicorp/hcl#7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+  version = "0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
+  release = "github.com/hashicorp/hcl#392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/ast 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b",
-    "github.com/hashicorp/hcl/hcl/parser 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b",
-    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b",
-    "github.com/hashicorp/hcl/json/parser 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+    "github.com/hashicorp/hcl/hcl/ast 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca",
+    "github.com/hashicorp/hcl/hcl/parser 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca",
+    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca",
+    "github.com/hashicorp/hcl/json/parser 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/ast"
-  version = "0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
-  release = "github.com/hashicorp/hcl#7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+  version = "0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
+  release = "github.com/hashicorp/hcl#392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/parser"
-  version = "0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
-  release = "github.com/hashicorp/hcl#7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+  version = "0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
+  release = "github.com/hashicorp/hcl#392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/ast 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b",
-    "github.com/hashicorp/hcl/hcl/scanner 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b",
-    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+    "github.com/hashicorp/hcl/hcl/ast 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca",
+    "github.com/hashicorp/hcl/hcl/scanner 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca",
+    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/scanner"
-  version = "0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
-  release = "github.com/hashicorp/hcl#7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+  version = "0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
+  release = "github.com/hashicorp/hcl#392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/strconv"
-  version = "0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
-  release = "github.com/hashicorp/hcl#7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+  version = "0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
+  release = "github.com/hashicorp/hcl#392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/token"
-  version = "0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
-  release = "github.com/hashicorp/hcl#7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+  version = "0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
+  release = "github.com/hashicorp/hcl#392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/strconv 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+    "github.com/hashicorp/hcl/hcl/strconv 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/json/parser"
-  version = "0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
-  release = "github.com/hashicorp/hcl#7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+  version = "0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
+  release = "github.com/hashicorp/hcl#392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/ast 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b",
-    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b",
-    "github.com/hashicorp/hcl/json/scanner 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b",
-    "github.com/hashicorp/hcl/json/token 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+    "github.com/hashicorp/hcl/hcl/ast 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca",
+    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca",
+    "github.com/hashicorp/hcl/json/scanner 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca",
+    "github.com/hashicorp/hcl/json/token 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/json/scanner"
-  version = "0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
-  release = "github.com/hashicorp/hcl#7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+  version = "0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
+  release = "github.com/hashicorp/hcl#392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   dependencies = [
-    "github.com/hashicorp/hcl/json/token 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+    "github.com/hashicorp/hcl/json/token 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/json/token"
-  version = "0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
-  release = "github.com/hashicorp/hcl#7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+  version = "0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
+  release = "github.com/hashicorp/hcl#392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b"
+    "github.com/hashicorp/hcl/hcl/token 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   ]
 
 [[packages]]
@@ -169,34 +169,18 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/mitchellh/mapstructure"
-  version = "0.1.0-head.132+mcc8532a8e9a55ea36402aa21efdf403a60d34096"
-  release = "github.com/mitchellh/mapstructure#cc8532a8e9a55ea36402aa21efdf403a60d34096"
-
-[[packages]]
-  name = "github.com/pelletier/go-buffruneio"
-  version = "0.2.0"
-  release = "github.com/pelletier/go-buffruneio#c37440a7cf42ac63b919c752ca73a85067e05992"
+  version = "0.1.0-head.134+md0303fe809921458f417bcf828397a65db30a7e4"
+  release = "github.com/mitchellh/mapstructure#d0303fe809921458f417bcf828397a65db30a7e4"
 
 [[packages]]
   name = "github.com/pelletier/go-toml"
-  version = "0.5.1-head.7+mfe206efb84b2bc8e8cfafe6b4c1826622be969e3"
-  release = "github.com/pelletier/go-toml#fe206efb84b2bc8e8cfafe6b4c1826622be969e3"
-  dependencies = [
-    "github.com/pelletier/go-buffruneio 0.2.0"
-  ]
+  version = "1.0.1-head.7+m69d355db5304c0f7f809a2edc054553e7142f016"
+  release = "github.com/pelletier/go-toml#69d355db5304c0f7f809a2edc054553e7142f016"
 
 [[packages]]
   name = "github.com/russross/blackfriday"
-  version = "0.1.0-head.395+mb253417e1cb644d645a0a3bb1fa5034c8030127c"
-  release = "github.com/russross/blackfriday#b253417e1cb644d645a0a3bb1fa5034c8030127c"
-  dependencies = [
-    "github.com/shurcooL/sanitized_anchor_name 0.1.0-head.12+m79c90efaf01eddc01945af5bc1797859189b830b"
-  ]
-
-[[packages]]
-  name = "github.com/shurcooL/sanitized_anchor_name"
-  version = "0.1.0-head.12+m79c90efaf01eddc01945af5bc1797859189b830b"
-  release = "github.com/shurcooL/sanitized_anchor_name#79c90efaf01eddc01945af5bc1797859189b830b"
+  version = "0.1.0-head.400+m067529f716f4c3f5e37c8c95ddd59df1007290ae"
+  release = "github.com/russross/blackfriday#067529f716f4c3f5e37c8c95ddd59df1007290ae"
 
 [[packages]]
   name = "github.com/spf13/afero"
@@ -204,8 +188,8 @@ _lockFormatVersion = "0.1.0"
   release = "github.com/spf13/afero#9be650865eab0c12963d8753212f4f9c66cdcf12"
   dependencies = [
     "github.com/spf13/afero/mem 0.1.0-head.178+m9be650865eab0c12963d8753212f4f9c66cdcf12",
-    "golang.org/x/text/transform 0.1.0-head.430+m470f45bf29f4147d6fbd7dfd0a02a848e49f5bf4",
-    "golang.org/x/text/unicode/norm 0.1.0-head.430+m470f45bf29f4147d6fbd7dfd0a02a848e49f5bf4"
+    "golang.org/x/text/transform 0.1.0-head.454+m2bf8f2a19ec09c670e931282edfe6567f6be21c9",
+    "golang.org/x/text/unicode/norm 0.1.0-head.454+m2bf8f2a19ec09c670e931282edfe6567f6be21c9"
   ]
 
 [[packages]]
@@ -220,36 +204,36 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/spf13/cobra"
-  version = "0.1.0-head.487+m8f0203be891287870100e4af46262cdf4a4261d1"
-  release = "github.com/spf13/cobra#8f0203be891287870100e4af46262cdf4a4261d1"
+  version = "0.1.0-head.550+m8c6fa02d2225de0f9bdcb7ca912556f68d172d8c"
+  release = "github.com/spf13/cobra#8c6fa02d2225de0f9bdcb7ca912556f68d172d8c"
   dependencies = [
-    "github.com/spf13/pflag 0.1.0-head.225+mc990990ab4981d84da820b7b00c85139ca150b5f"
+    "github.com/spf13/pflag 0.1.0-head.231+me57e3eeb33f795204c1ca35f56c44f83227c6e66"
   ]
 
 [[packages]]
   name = "github.com/spf13/jwalterweatherman"
-  version = "0.1.0-head.19+mfa7ca7e836cf3a8bb4ebf799f472c12d7e903d66"
-  release = "github.com/spf13/jwalterweatherman#fa7ca7e836cf3a8bb4ebf799f472c12d7e903d66"
+  version = "0.1.0-head.27+m0efa5202c04663c757d84f90f5219c1250baf94f"
+  release = "github.com/spf13/jwalterweatherman#0efa5202c04663c757d84f90f5219c1250baf94f"
 
 [[packages]]
   name = "github.com/spf13/pflag"
-  version = "0.1.0-head.225+mc990990ab4981d84da820b7b00c85139ca150b5f"
-  release = "github.com/spf13/pflag#c990990ab4981d84da820b7b00c85139ca150b5f"
+  version = "0.1.0-head.231+me57e3eeb33f795204c1ca35f56c44f83227c6e66"
+  release = "github.com/spf13/pflag#e57e3eeb33f795204c1ca35f56c44f83227c6e66"
 
 [[packages]]
   name = "github.com/spf13/viper"
-  version = "0.1.0-head.186+m0967fc9aceab2ce9da34061253ac10fb99bba5b2"
-  release = "github.com/spf13/viper#0967fc9aceab2ce9da34061253ac10fb99bba5b2"
+  version = "0.1.0-head.188+mc1de95864d73a5465492829d7cb2dd422b19ac96"
+  release = "github.com/spf13/viper#c1de95864d73a5465492829d7cb2dd422b19ac96"
   dependencies = [
     "github.com/fsnotify/fsnotify 1.4.3-head.6+m4da3e2cfbabc9f751898f250b49f2439785783a1",
-    "github.com/hashicorp/hcl 0.1.0-head.496+m7fa7fff964d035e8a162cce3a164b3ad02ad651b",
+    "github.com/hashicorp/hcl 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca",
     "github.com/magiconair/properties 1.7.3-head.7+m51463bfca2576e06c62a8504b5c0f06d61312647",
-    "github.com/mitchellh/mapstructure 0.1.0-head.132+mcc8532a8e9a55ea36402aa21efdf403a60d34096",
-    "github.com/pelletier/go-toml 0.5.1-head.7+mfe206efb84b2bc8e8cfafe6b4c1826622be969e3",
+    "github.com/mitchellh/mapstructure 0.1.0-head.134+md0303fe809921458f417bcf828397a65db30a7e4",
+    "github.com/pelletier/go-toml 1.0.1-head.7+m69d355db5304c0f7f809a2edc054553e7142f016",
     "github.com/spf13/afero 0.1.0-head.178+m9be650865eab0c12963d8753212f4f9c66cdcf12",
     "github.com/spf13/cast 1.1.0",
-    "github.com/spf13/jwalterweatherman 0.1.0-head.19+mfa7ca7e836cf3a8bb4ebf799f472c12d7e903d66",
-    "github.com/spf13/pflag 0.1.0-head.225+mc990990ab4981d84da820b7b00c85139ca150b5f",
+    "github.com/spf13/jwalterweatherman 0.1.0-head.27+m0efa5202c04663c757d84f90f5219c1250baf94f",
+    "github.com/spf13/pflag 0.1.0-head.231+me57e3eeb33f795204c1ca35f56c44f83227c6e66",
     "gopkg.in/yaml.v2 0.1.0-head.192+mcd8b52f8269e0feb286dfeef29f8fe4d5b397e0b"
   ]
 
@@ -260,33 +244,33 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "golang.org/x/net/html"
-  version = "0.1.0-head.1133+m0819898fb4973868bba6de59b6aaad75beea9a6a"
-  release = "golang.org/x/net#0819898fb4973868bba6de59b6aaad75beea9a6a"
+  version = "0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
+  release = "golang.org/x/net#570fa1c91359c1869590e9cedf3b53162a51a167"
   dependencies = [
-    "golang.org/x/net/html/atom 0.1.0-head.1133+m0819898fb4973868bba6de59b6aaad75beea9a6a"
+    "golang.org/x/net/html/atom 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
   ]
 
 [[packages]]
   name = "golang.org/x/net/html/atom"
-  version = "0.1.0-head.1133+m0819898fb4973868bba6de59b6aaad75beea9a6a"
-  release = "golang.org/x/net#0819898fb4973868bba6de59b6aaad75beea9a6a"
+  version = "0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
+  release = "golang.org/x/net#570fa1c91359c1869590e9cedf3b53162a51a167"
 
 [[packages]]
   name = "golang.org/x/sys/unix"
-  version = "0.1.0-head.205+m9ccfe848b9db8435a24c424abbc07a921adf1df5"
-  release = "golang.org/x/sys#9ccfe848b9db8435a24c424abbc07a921adf1df5"
+  version = "0.1.0-head.231+m94b76065f2d2081d0fef24a6e67c571f51a6408a"
+  release = "golang.org/x/sys#94b76065f2d2081d0fef24a6e67c571f51a6408a"
 
 [[packages]]
   name = "golang.org/x/text/transform"
-  version = "0.1.0-head.430+m470f45bf29f4147d6fbd7dfd0a02a848e49f5bf4"
-  release = "golang.org/x/text#470f45bf29f4147d6fbd7dfd0a02a848e49f5bf4"
+  version = "0.1.0-head.454+m2bf8f2a19ec09c670e931282edfe6567f6be21c9"
+  release = "golang.org/x/text#2bf8f2a19ec09c670e931282edfe6567f6be21c9"
 
 [[packages]]
   name = "golang.org/x/text/unicode/norm"
-  version = "0.1.0-head.430+m470f45bf29f4147d6fbd7dfd0a02a848e49f5bf4"
-  release = "golang.org/x/text#470f45bf29f4147d6fbd7dfd0a02a848e49f5bf4"
+  version = "0.1.0-head.454+m2bf8f2a19ec09c670e931282edfe6567f6be21c9"
+  release = "golang.org/x/text#2bf8f2a19ec09c670e931282edfe6567f6be21c9"
   dependencies = [
-    "golang.org/x/text/transform 0.1.0-head.430+m470f45bf29f4147d6fbd7dfd0a02a848e49f5bf4"
+    "golang.org/x/text/transform 0.1.0-head.454+m2bf8f2a19ec09c670e931282edfe6567f6be21c9"
   ]
 
 [[packages]]
