@@ -197,12 +197,11 @@ func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error
 		return "", err
 	}
 
-	layoutRoot := filepath.Dir(layoutPath)
-	return inlineStylesheets(layoutRoot, out.String())
+	return inlineStylesheets(layoutPath, out.String())
 }
 
 func loadTemplate(path string, defaultTemplate string) (string, error) {
-	if !AppFs.isFile(path) {
+	if path == "" || !AppFs.isFile(path) {
 		return defaultTemplate, nil
 	}
 	raw, err := afero.ReadFile(AppFs, path)

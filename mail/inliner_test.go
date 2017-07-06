@@ -22,18 +22,18 @@ func verifyMemAppFs(t *testing.T) {
 }
 
 func TestInlineStylesheetsSuccess(t *testing.T) {
-	layoutsDir := "/inline-test/"
+	layoutPath := "/inline-test/file.html"
 	verifyMemAppFs(t)
 
 	// Regular no stylesheet template
 	expect := "<body>Hello World</body>"
-	out, err := inlineStylesheets(layoutsDir, expect)
+	out, err := inlineStylesheets(layoutPath, expect)
 	if err != nil || !strings.Contains(out, expect) {
 		t.Errorf("Basic no-inline failed: ", err, out)
 	}
 
 	// Regular inline stylesheet
-	out, err = inlineStylesheets(layoutsDir, `
+	out, err = inlineStylesheets(layoutPath, `
 		<style> h1 { color: #123; }</style>
 		<h1>Hello World</h1>
 	`)
@@ -43,8 +43,9 @@ func TestInlineStylesheetsSuccess(t *testing.T) {
 	}
 
 	// Regular from file stylesheet
-	afero.WriteFile(AppFs, filepath.Join(layoutsDir, "test.css"), []byte("h1 { color: #321; }"), 0644)
-	out, err = inlineStylesheets(layoutsDir, `
+	testCSS := filepath.Join(filepath.Dir(layoutPath), "test.css")
+	afero.WriteFile(AppFs, testCSS, []byte("h1 { color: #321; }"), 0644)
+	out, err = inlineStylesheets(layoutPath, `
 		<link rel="stylesheet" href="test.css"/>
 		<h1>Hello World</h1>
 	`)
@@ -55,18 +56,18 @@ func TestInlineStylesheetsSuccess(t *testing.T) {
 
 	// Ignore <link> tags that's not a stylesheet
 	expect = "<link rel=\"alternate\" href=\"test.css\"/>"
-	out, err = inlineStylesheets(layoutsDir, expect+`<h1>Hello World</h1>`)
+	out, err = inlineStylesheets(layoutPath, expect+`<h1>Hello World</h1>`)
 	if err != nil || !strings.Contains(out, expect) {
 		t.Errorf("Should not inline non-stylesheet <link>: %q contains %q", out, expect)
 	}
 }
 
 func TestInlineStylesheetsFailure(t *testing.T) {
-	layoutsDir := "/inline-test/"
+	layoutPath := "/inline-test/file.html"
 	verifyMemAppFs(t)
 
 	// Should fail if no file specified
-	_, err := inlineStylesheets(layoutsDir, `
+	_, err := inlineStylesheets(layoutPath, `
 		<link rel="stylesheet"/>
 		<h1>Hello World</h1>
 	`)
@@ -75,7 +76,7 @@ func TestInlineStylesheetsFailure(t *testing.T) {
 	}
 
 	// Should fail if file doesn't exist
-	_, err = inlineStylesheets(layoutsDir, `
+	_, err = inlineStylesheets(layoutPath, `
 		<link rel="stylesheet" href="not-here.css"/>
 		<h1>Hello World</h1>
 	`)

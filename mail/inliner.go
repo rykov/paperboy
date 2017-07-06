@@ -10,8 +10,8 @@ import (
 	"strings"
 )
 
-func inlineStylesheets(layoutRoot, body string) (string, error) {
-	if !AppFs.isDir(layoutRoot) {
+func inlineStylesheets(layoutPath, body string) (string, error) {
+	if layoutPath == "" { // Default template (not a file)
 		return inliner.Inline(body)
 	}
 
@@ -31,7 +31,7 @@ func inlineStylesheets(layoutRoot, body string) (string, error) {
 		}
 
 		var cssBytes []byte
-		path := filepath.Join(layoutRoot, str)
+		path := filepath.Join(filepath.Dir(layoutPath), str)
 		if cssBytes, err = afero.ReadFile(AppFs, path); err != nil {
 			return false
 		}

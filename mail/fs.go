@@ -13,8 +13,10 @@ var (
 var AppFs *fs
 
 func SetFs(afs afero.Fs) {
-	Config.SetFs(afs)
 	AppFs = &fs{afs}
+	if Config != nil {
+		Config.SetFs(afs)
+	}
 }
 
 type fs struct {
