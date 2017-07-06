@@ -68,6 +68,7 @@ func initConfig(cfgFile string) {
 	// Defaults (Dirs)
 	v.SetDefault("contentDir", "content")
 	v.SetDefault("layoutDir", "layouts")
+	v.SetDefault("themesDir", "themes")
 	v.SetDefault("listDir", "lists")
 
 	// Prepare for project's config.*
