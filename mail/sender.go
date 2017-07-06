@@ -48,7 +48,7 @@ func configureSender() (sender gomail.SendCloser, err error) {
 	if Config.GetBool("dryRun") {
 		sender = &dryRunSender{}
 	} else {
-		sender, err = dialSMTPURL(Config.GetString("smtpURL"))
+		sender, err = dialSMTPURL(Config.GetString("smtp.url"))
 		if err != nil {
 			return nil, err
 		}
@@ -73,7 +73,7 @@ func dialSMTPURL(smtpURL string) (gomail.SendCloser, error) {
 	}
 
 	// Authentication
-	user, pass := Config.GetString("smtpUser"), Config.GetString("smtpPass")
+	user, pass := Config.GetString("smtp.user"), Config.GetString("smtp.pass")
 	if auth := surl.User; auth != nil {
 		pass, _ = auth.Password()
 		user = auth.Username()

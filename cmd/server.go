@@ -16,26 +16,15 @@ var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Launch a preview server for emails",
 	Long:  `A longer description...`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := loadConfig(); err != nil {
+			return err
+		}
+
 		fmt.Println("Preview server listening at :8080 ... ")
 		http.HandleFunc("/", serverPreview)
-		http.ListenAndServe(":8080", nil)
+		return http.ListenAndServe(":8080", nil)
 	},
-}
-
-func init() {
-	RootCmd.AddCommand(serverCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// {{.cmdName}}Cmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// {{.cmdName}}Cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
 }
 
 func serverPreview(w http.ResponseWriter, r *http.Request) {

@@ -8,6 +8,7 @@ import (
 var AppFs *fs
 
 func SetFs(afs afero.Fs) {
+	Config.SetFs(afs)
 	AppFs = &fs{afs}
 }
 
