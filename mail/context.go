@@ -36,7 +36,10 @@ type ctxCampaign struct {
 func newCampaign(data map[string]interface{}) ctxCampaign {
 	c := ctxCampaign{Params: keysToLower(data)}
 	c.Subject, _ = c.Params["subject"].(string)
-	c.From, _ = c.Params["from"].(string)
+	if c.From, _ = c.Params["from"].(string); c.From == "" {
+		c.From = Config.GetString("from")
+	}
+
 	delete(c.Params, "subject")
 	delete(c.Params, "from")
 	return c
