@@ -86,8 +86,8 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 
 func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 	// Translate IDs to files
-	tmplFile := AppFs.contentPath(tmplID + ".md")
-	listFile := AppFs.listPath(listID + ".yml")
+	tmplFile := AppFs.ContentPath(tmplID + ".md")
+	listFile := AppFs.ListPath(listID + ".yaml")
 
 	// Load up template with frontmatter
 	email, err := parseTemplate(tmplFile)

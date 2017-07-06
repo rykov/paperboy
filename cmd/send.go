@@ -3,8 +3,6 @@ package cmd
 import (
 	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/cobra"
-
-	"fmt"
 )
 
 var sendCmd = &cobra.Command{
@@ -19,7 +17,7 @@ var sendCmd = &cobra.Command{
 		}
 
 		if len(args) != 2 {
-			return fmt.Errorf("Invalid arguments")
+			return newUserError("Invalid arguments")
 		}
 
 		return mail.SendCampaign(args[0], args[1])

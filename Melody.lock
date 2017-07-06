@@ -6,6 +6,7 @@ _lockFormatVersion = "0.1.0"
   version = "0.1.0"
   dependencies = [
     "github.com/PuerkitoBio/goquery 1.1.1-head.6+m8806ada2a4ab225c06e9106f9631be80932db7ce",
+    "github.com/bep/inflect 0.1.0-head.23+mb896c45f5af983b1f416bdf3bb89c4f1f0926f69",
     "github.com/chris-ramon/douceur/inliner 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
     "github.com/ghodss/yaml 1.0.0",
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
@@ -35,6 +36,11 @@ _lockFormatVersion = "0.1.0"
   dependencies = [
     "golang.org/x/net/html 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
   ]
+
+[[packages]]
+  name = "github.com/bep/inflect"
+  version = "0.1.0-head.23+mb896c45f5af983b1f416bdf3bb89c4f1f0926f69"
+  release = "github.com/bep/inflect#b896c45f5af983b1f416bdf3bb89c4f1f0926f69"
 
 [[packages]]
   name = "github.com/chris-ramon/douceur/css"

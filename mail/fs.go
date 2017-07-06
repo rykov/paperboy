@@ -16,11 +16,11 @@ type fs struct {
 	afero.Fs
 }
 
-func (f *fs) contentPath(name string) string {
+func (f *fs) ContentPath(name string) string {
 	return filepath.Join(Config.GetString("contentDir"), name)
 }
 
-func (f *fs) listPath(name string) string {
+func (f *fs) ListPath(name string) string {
 	return filepath.Join(Config.GetString("listDir"), name)
 }
 

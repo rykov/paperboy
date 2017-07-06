@@ -28,5 +28,6 @@ version = "0.1.0"
 "github.com/chris-ramon/douceur/inliner"="head"
 "github.com/PuerkitoBio/goquery"="head"
 "github.com/spf13/afero"="head"
+"github.com/bep/inflect"="head"
 
 # "github.com/pkg/errors" = "^0.8.0"

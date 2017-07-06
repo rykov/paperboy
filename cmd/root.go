@@ -28,6 +28,7 @@ to quickly create a Cobra application.`,
 func Execute() {
 	RootCmd.AddCommand(serverCmd)
 	RootCmd.AddCommand(sendCmd)
+	RootCmd.AddCommand(newCmd)
 
 	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -81,4 +82,9 @@ func initConfig(cfgFile string) {
 // the underlying afero.Fs by calling mail.SetFs
 func loadConfig() error {
 	return mail.Config.ReadInConfig()
+}
+
+// Error helpers
+func newUserError(msg string, a ...interface{}) error {
+	return fmt.Errorf(msg, a...)
 }
