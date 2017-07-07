@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/url"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/go-gomail/gomail"
@@ -44,11 +45,15 @@ func SendCampaign(tmplFile, recipientFile string) error {
 }
 
 func configureSender() (sender gomail.SendCloser, err error) {
-	// Dial up the sender or dryRun
+	// Dial up SMTP or dryRun
 	if Config.DryRun {
 		sender = &dryRunSender{}
 	} else {
-		sender, err = dialSMTPURL(Config.SMTP.URL)
+		dialer, err := smtpDialer(&Config.SMTP)
+		if err != nil {
+			return nil, err
+		}
+		sender, err = dialer.Dial()
 		if err != nil {
 			return nil, err
 		}
@@ -65,27 +70,49 @@ func configureSender() (sender gomail.SendCloser, err error) {
 	return sender, nil
 }
 
-func dialSMTPURL(smtpURL string) (gomail.SendCloser, error) {
+func smtpDialer(cfg *smtpConfig) (*gomail.Dialer, error) {
 	// Dial to SMTP server (with SSL)
-	surl, err := url.Parse(smtpURL)
+	surl, err := url.Parse(cfg.URL)
 	if err != nil {
 		return nil, err
 	}
 
-	// Authentication
-	user, pass := Config.SMTP.User, Config.SMTP.Pass
+	// Populate/validate scheme
+	if s := surl.Scheme; s == "" {
+		surl.Scheme = "smtps"
+	} else if s != "smtp" && s != "smtps" {
+		return nil, fmt.Errorf("Invalid SMTP URL scheme: %s", s)
+	}
+
+	// Authentication from URL
+	var user, pass string
 	if auth := surl.User; auth != nil {
 		pass, _ = auth.Password()
 		user = auth.Username()
 	}
 
-	// TODO: Split & parse port from url.Host
-	host, port := surl.Host, 465
+	// Authentication overrides
+	if cfg.User != "" {
+		user = cfg.User
+	}
+	if cfg.Pass != "" {
+		pass = cfg.Pass
+	}
 
-	// Dial SMTP server
-	d := gomail.NewDialer(host, port, user, pass)
-	d.SSL = true // Force SSL (TODO: use schema)
-	return d.Dial()
+	// Port
+	var port int
+	if i, err := strconv.Atoi(surl.Port()); err == nil {
+		port = i
+	} else if surl.Scheme == "smtp" {
+		port = 25
+	} else {
+		port = 465
+	}
+
+	// Initialize the dialer
+	d := gomail.NewDialer(surl.Hostname(), port, user, pass)
+	d.SSL = (surl.Scheme == "smtps")
+	return d, nil
 }
 
 type dryRunSender struct{}
