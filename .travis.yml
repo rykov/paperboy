@@ -1,0 +1,15 @@
+language: go
+go:
+  - 1.8.x
+  - master
+os:
+  - linux
+  - osx
+matrix:
+  fast_finish: true
+  allow_failures:
+    - go: tip
+install:
+  - make melody-install
+script:
+  - make test
