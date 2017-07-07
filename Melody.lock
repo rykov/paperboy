@@ -26,7 +26,7 @@ _lockFormatVersion = "0.1.0"
   release = "github.com/PuerkitoBio/goquery#8806ada2a4ab225c06e9106f9631be80932db7ce"
   dependencies = [
     "github.com/andybalholm/cascadia 0.1.0-head.53+m349dd0209470eabd9514242c688c403c0926d266",
-    "golang.org/x/net/html 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
+    "golang.org/x/net/html 0.1.0-head.1190+m054b33e6527139ad5b1ec2f6232c3b175bd9a30c"
   ]
 
 [[packages]]
@@ -34,7 +34,7 @@ _lockFormatVersion = "0.1.0"
   version = "0.1.0-head.53+m349dd0209470eabd9514242c688c403c0926d266"
   release = "github.com/andybalholm/cascadia#349dd0209470eabd9514242c688c403c0926d266"
   dependencies = [
-    "golang.org/x/net/html 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
+    "golang.org/x/net/html 0.1.0-head.1190+m054b33e6527139ad5b1ec2f6232c3b175bd9a30c"
   ]
 
 [[packages]]
@@ -55,7 +55,7 @@ _lockFormatVersion = "0.1.0"
     "github.com/PuerkitoBio/goquery 1.1.1-head.6+m8806ada2a4ab225c06e9106f9631be80932db7ce",
     "github.com/chris-ramon/douceur/css 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
     "github.com/chris-ramon/douceur/parser 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
-    "golang.org/x/net/html 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
+    "golang.org/x/net/html 0.1.0-head.1190+m054b33e6527139ad5b1ec2f6232c3b175bd9a30c"
   ]
 
 [[packages]]
@@ -72,7 +72,7 @@ _lockFormatVersion = "0.1.0"
   version = "1.4.3-head.6+m4da3e2cfbabc9f751898f250b49f2439785783a1"
   release = "github.com/fsnotify/fsnotify#4da3e2cfbabc9f751898f250b49f2439785783a1"
   dependencies = [
-    "golang.org/x/sys/unix 0.1.0-head.231+m94b76065f2d2081d0fef24a6e67c571f51a6408a"
+    "golang.org/x/sys/unix 0.1.0-head.232+m6faef541c73732f438fb660a212750a9ba9f9362"
   ]
 
 [[packages]]
@@ -180,7 +180,7 @@ _lockFormatVersion = "0.1.0"
   version = "0.1.0-head.156+me79763773ab6222ca1d5a7cbd9d62d83c1f77081"
   release = "github.com/microcosm-cc/bluemonday#e79763773ab6222ca1d5a7cbd9d62d83c1f77081"
   dependencies = [
-    "golang.org/x/net/html 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
+    "golang.org/x/net/html 0.1.0-head.1190+m054b33e6527139ad5b1ec2f6232c3b175bd9a30c"
   ]
 
 [[packages]]
@@ -204,8 +204,8 @@ _lockFormatVersion = "0.1.0"
   release = "github.com/spf13/afero#9be650865eab0c12963d8753212f4f9c66cdcf12"
   dependencies = [
     "github.com/spf13/afero/mem 0.1.0-head.178+m9be650865eab0c12963d8753212f4f9c66cdcf12",
-    "golang.org/x/text/transform 0.1.0-head.454+m2bf8f2a19ec09c670e931282edfe6567f6be21c9",
-    "golang.org/x/text/unicode/norm 0.1.0-head.454+m2bf8f2a19ec09c670e931282edfe6567f6be21c9"
+    "golang.org/x/text/transform 0.1.0-head.455+mcfdf022e86b4ecfb646e1efbd7db175dd623a8fa",
+    "golang.org/x/text/unicode/norm 0.1.0-head.455+mcfdf022e86b4ecfb646e1efbd7db175dd623a8fa"
   ]
 
 [[packages]]
@@ -260,33 +260,33 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "golang.org/x/net/html"
-  version = "0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
-  release = "golang.org/x/net#570fa1c91359c1869590e9cedf3b53162a51a167"
+  version = "0.1.0-head.1190+m054b33e6527139ad5b1ec2f6232c3b175bd9a30c"
+  release = "golang.org/x/net#054b33e6527139ad5b1ec2f6232c3b175bd9a30c"
   dependencies = [
-    "golang.org/x/net/html/atom 0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
+    "golang.org/x/net/html/atom 0.1.0-head.1190+m054b33e6527139ad5b1ec2f6232c3b175bd9a30c"
   ]
 
 [[packages]]
   name = "golang.org/x/net/html/atom"
-  version = "0.1.0-head.1189+m570fa1c91359c1869590e9cedf3b53162a51a167"
-  release = "golang.org/x/net#570fa1c91359c1869590e9cedf3b53162a51a167"
+  version = "0.1.0-head.1190+m054b33e6527139ad5b1ec2f6232c3b175bd9a30c"
+  release = "golang.org/x/net#054b33e6527139ad5b1ec2f6232c3b175bd9a30c"
 
 [[packages]]
   name = "golang.org/x/sys/unix"
-  version = "0.1.0-head.231+m94b76065f2d2081d0fef24a6e67c571f51a6408a"
-  release = "golang.org/x/sys#94b76065f2d2081d0fef24a6e67c571f51a6408a"
+  version = "0.1.0-head.232+m6faef541c73732f438fb660a212750a9ba9f9362"
+  release = "golang.org/x/sys#6faef541c73732f438fb660a212750a9ba9f9362"
 
 [[packages]]
   name = "golang.org/x/text/transform"
-  version = "0.1.0-head.454+m2bf8f2a19ec09c670e931282edfe6567f6be21c9"
-  release = "golang.org/x/text#2bf8f2a19ec09c670e931282edfe6567f6be21c9"
+  version = "0.1.0-head.455+mcfdf022e86b4ecfb646e1efbd7db175dd623a8fa"
+  release = "golang.org/x/text#cfdf022e86b4ecfb646e1efbd7db175dd623a8fa"
 
 [[packages]]
   name = "golang.org/x/text/unicode/norm"
-  version = "0.1.0-head.454+m2bf8f2a19ec09c670e931282edfe6567f6be21c9"
-  release = "golang.org/x/text#2bf8f2a19ec09c670e931282edfe6567f6be21c9"
+  version = "0.1.0-head.455+mcfdf022e86b4ecfb646e1efbd7db175dd623a8fa"
+  release = "golang.org/x/text#cfdf022e86b4ecfb646e1efbd7db175dd623a8fa"
   dependencies = [
-    "golang.org/x/text/transform 0.1.0-head.454+m2bf8f2a19ec09c670e931282edfe6567f6be21c9"
+    "golang.org/x/text/transform 0.1.0-head.455+mcfdf022e86b4ecfb646e1efbd7db175dd623a8fa"
   ]
 
 [[packages]]

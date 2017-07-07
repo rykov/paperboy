@@ -30,6 +30,9 @@ type Campaign struct {
 	EmailMeta  *ctxCampaign
 	Email      parser.Email
 
+	// For logging, etc
+	ID string
+
 	// Internal templates
 	tText *template.Template
 }
@@ -109,16 +112,23 @@ func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 		return nil, err
 	}
 
+	// Campaign ID
+	id := filepath.Base(tmplID)
+	if ext := filepath.Ext(id); ext != "" {
+		id = id[0 : len(id)-len(ext)]
+	}
+
 	return &Campaign{
 		Recipients: who,
 		EmailMeta:  &fMeta,
 		Email:      email,
 		tText:      tmpl,
+		ID:         id,
 	}, nil
 }
 
 func parseRecipients(path string) ([]*ctxRecipient, error) {
-	fmt.Println("Loading recipients: ", path)
+	fmt.Println("Loading recipients", path)
 	raw, err := afero.ReadFile(AppFs, path)
 	if err != nil {
 		return nil, err
@@ -139,7 +149,7 @@ func parseRecipients(path string) ([]*ctxRecipient, error) {
 }
 
 func parseTemplate(path string) (parser.Email, error) {
-	fmt.Println("Loading template: ", path)
+	fmt.Println("Loading template", path)
 	file, err := AppFs.Open(path)
 	if err != nil {
 		return nil, err

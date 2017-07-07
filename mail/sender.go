@@ -32,7 +32,7 @@ func SendCampaign(tmplFile, recipientFile string) error {
 			return err
 		}
 
-		fmt.Println("Sending email to ", m.GetHeader("To"))
+		fmt.Printf("Sending %s to %s\n", c.ID, m.GetHeader("To"))
 		if err := gomail.Send(sender, m); err != nil {
 			fmt.Println("  Could not send email: ", err)
 		}
