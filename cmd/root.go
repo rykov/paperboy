@@ -44,10 +44,13 @@ func init() {
 	})
 }
 
+// Configuration configuration :)
+var viperConfig *viper.Viper
+
 // initConfig will initialize the configuration
 func initConfig(cfgFile string) {
-	v := viper.New()
-	mail.Config = v
+	viperConfig = viper.New()
+	v := viperConfig
 
 	// From --config
 	if cfgFile != "" {
@@ -68,7 +71,7 @@ func initConfig(cfgFile string) {
 	// Defaults (Dirs)
 	v.SetDefault("contentDir", "content")
 	v.SetDefault("layoutDir", "layouts")
-	v.SetDefault("themesDir", "themes")
+	v.SetDefault("themeDir", "themes")
 	v.SetDefault("listDir", "lists")
 
 	// Prepare for project's config.*
@@ -82,7 +85,10 @@ func initConfig(cfgFile string) {
 // Loading config separately allows us to switch up
 // the underlying afero.Fs by calling mail.SetFs
 func loadConfig() error {
-	return mail.Config.ReadInConfig()
+	if err := viperConfig.ReadInConfig(); err != nil {
+		return err
+	}
+	return viperConfig.Unmarshal(&mail.Config)
 }
 
 // Error helpers

@@ -14,9 +14,6 @@ var AppFs *fs
 
 func SetFs(afs afero.Fs) {
 	AppFs = &fs{afs}
-	if Config != nil {
-		Config.SetFs(afs)
-	}
 }
 
 type fs struct {
@@ -24,17 +21,17 @@ type fs struct {
 }
 
 func (f *fs) ContentPath(name string) string {
-	return filepath.Join(Config.GetString("contentDir"), name)
+	return filepath.Join(Config.ContentDir, name)
 }
 
 func (f *fs) ListPath(name string) string {
-	return filepath.Join(Config.GetString("listDir"), name)
+	return filepath.Join(Config.ListDir, name)
 }
 
 func (f *fs) layoutPath(name string) string {
-	p := []string{filepath.Join(Config.GetString("layoutDir"), name)}
-	if t := Config.GetString("theme"); t != "" {
-		p = append(p, filepath.Join(Config.GetString("themesDir"), t, p[0]))
+	p := []string{filepath.Join(Config.LayoutDir, name)}
+	if t := Config.Theme; t != "" {
+		p = append(p, filepath.Join(Config.ThemeDir, t, p[0]))
 	}
 	return f.findFileWithExtension(p, []string{})
 }

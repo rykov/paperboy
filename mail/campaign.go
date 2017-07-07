@@ -14,15 +14,10 @@ import (
 	"github.com/rykov/paperboy/parser"
 	"github.com/spf13/afero"
 	"github.com/spf13/cast"
-	"github.com/spf13/viper"
 )
 
 // Like "User-Agent"
 const xMailer = "paperboy/0.1.0 (https://paperboy.email)"
-
-// Sender configuration
-// TODO: Move this into a global space
-var Config *viper.Viper
 
 // Context for template rendering
 type tmplContext struct {

@@ -45,17 +45,17 @@ func SendCampaign(tmplFile, recipientFile string) error {
 
 func configureSender() (sender gomail.SendCloser, err error) {
 	// Dial up the sender or dryRun
-	if Config.GetBool("dryRun") {
+	if Config.DryRun {
 		sender = &dryRunSender{}
 	} else {
-		sender, err = dialSMTPURL(Config.GetString("smtp.url"))
+		sender, err = dialSMTPURL(Config.SMTP.URL)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	// DKIM-signing sender, if configuration is present
-	if cfg := Config.GetStringMap("dkim"); len(cfg) > 0 {
+	if cfg := Config.DKIM; len(cfg) > 0 {
 		sender, err = SendCloserWithDKIM(sender, cfg)
 		if err != nil {
 			return nil, err
@@ -73,7 +73,7 @@ func dialSMTPURL(smtpURL string) (gomail.SendCloser, error) {
 	}
 
 	// Authentication
-	user, pass := Config.GetString("smtp.user"), Config.GetString("smtp.pass")
+	user, pass := Config.SMTP.User, Config.SMTP.Pass
 	if auth := surl.User; auth != nil {
 		pass, _ = auth.Password()
 		user = auth.Username()

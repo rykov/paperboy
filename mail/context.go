@@ -37,7 +37,7 @@ func newCampaign(data map[string]interface{}) ctxCampaign {
 	c := ctxCampaign{Params: keysToLower(data)}
 	c.Subject, _ = c.Params["subject"].(string)
 	if c.From, _ = c.Params["from"].(string); c.From == "" {
-		c.From = Config.GetString("from")
+		c.From = Config.From
 	}
 
 	delete(c.Params, "subject")
