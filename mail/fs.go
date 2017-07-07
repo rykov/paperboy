@@ -24,13 +24,11 @@ type fs struct {
 }
 
 func (f *fs) ContentPath(name string) string {
-	p := filepath.Join(Config.GetString("contentDir"), name)
-	return f.findFileWithExtension([]string{p}, contentExts)
+	return filepath.Join(Config.GetString("contentDir"), name)
 }
 
 func (f *fs) ListPath(name string) string {
-	p := filepath.Join(Config.GetString("listDir"), name)
-	return f.findFileWithExtension([]string{p}, listExts)
+	return filepath.Join(Config.GetString("listDir"), name)
 }
 
 func (f *fs) layoutPath(name string) string {
@@ -39,6 +37,16 @@ func (f *fs) layoutPath(name string) string {
 		p = append(p, filepath.Join(Config.GetString("themesDir"), t, p[0]))
 	}
 	return f.findFileWithExtension(p, []string{})
+}
+
+func (f *fs) findContentPath(name string) string {
+	paths := []string{f.ContentPath(name)}
+	return f.findFileWithExtension(paths, contentExts)
+}
+
+func (f *fs) findListPath(name string) string {
+	paths := []string{f.ListPath(name)}
+	return f.findFileWithExtension(paths, listExts)
 }
 
 /* This will look through all paths, match them with all extensions

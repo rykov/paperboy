@@ -8,6 +8,7 @@ import (
 
 	"bytes"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -15,8 +16,19 @@ import (
 )
 
 func init() {
+	// "init" alias for "new project"
+	initCmd := *newProjectCmd
+	initCmd.Use = "init [path]"
+	RootCmd.AddCommand(&initCmd)
+
+	// Subcommands for "new"
+	newCmd.AddCommand(newProjectCmd)
 	newCmd.AddCommand(newListCmd)
 }
+
+var (
+	newProjectDirs = []string{"content", "layouts", "lists", "themes"}
+)
 
 const (
 	contentTemplate = `---
@@ -24,9 +36,31 @@ subject: "{{ .Subject }}"
 date: {{ .Date }}
 ---
 `
+
 	listTemplate = `---
 - email: example@example.com
   name: Nick Example
+`
+
+	configTemplate = `# config.toml
+# See https://www.paperboy.email/docs/configuration/
+from = "Example <example@example.org>"
+
+# SMTP Server
+[smtp]
+  url = "smtp://smtp.example.org"
+`
+
+	newProjectBanner = `Congratulations! Your new project is ready in {{ .Path }}
+
+Your first campaign is only a few steps away:
+
+1. Add campaign content with "paperboy new <FILENAME>.md"
+2. Add a recipient list with "paperboy new list <FILENAME>.yaml"
+3. Configure your SMTP server in config.toml
+3. Send that campaign "paperboy send <CONTENT> <LIST>"
+
+Visit https://www.paperboy.email/ to learn more.
 `
 )
 
@@ -44,12 +78,10 @@ var newCmd = &cobra.Command{
 		}
 
 		path := mail.AppFs.ContentPath(args[0])
-		subj := filepath.Base(path)
-		subj = inflect.Humanize(strings.TrimSuffix(subj, filepath.Ext(subj)))
-
 		return writeTemplate(path, contentTemplate, map[string]string{
-			"Subject": subj, "Date": time.Now().Format(time.RFC3339),
-		})
+			"Date":    time.Now().Format(time.RFC3339),
+			"Subject": pathToName(path),
+		}, false)
 	},
 }
 
@@ -67,27 +99,78 @@ var newListCmd = &cobra.Command{
 		}
 
 		path := mail.AppFs.ListPath(args[0])
-		return writeTemplate(path, listTemplate, nil)
+		return writeTemplate(path, listTemplate, nil, false)
 	},
 }
 
-func writeTemplate(path, content string, data interface{}) error {
+var newProjectCmd = &cobra.Command{
+	Use:   "project [path]",
+	Short: "Create new project directory",
+	Long:  `A longer description...`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := loadConfig(); err != nil {
+			return err
+		}
+
+		path := "."
+		if len(args) > 0 {
+			path = args[0]
+		}
+
+		path, err := filepath.Abs(path)
+		if err != nil {
+			return err
+		} else if ok, _ := afero.Exists(mail.AppFs, path); ok {
+			return newUserError("%s already exists", path)
+		}
+
+		// Create project directories
+		for _, dir := range newProjectDirs {
+			if err := os.MkdirAll(filepath.Join(path, dir), 0755); err != nil {
+				return err
+			}
+		}
+
+		// Write basic configuration
+		configPath := filepath.Join(path, "config.toml")
+		if err := writeTemplate(configPath, configTemplate, nil, true); err != nil {
+			return err
+		}
+
+		// Success message
+		out, _ := renderTemplate(newProjectBanner, map[string]string{"Path": path})
+		fmt.Print(out)
+		return nil
+	},
+}
+
+func pathToName(path string) string {
+	name, ext := filepath.Base(path), filepath.Ext(path)
+	return inflect.Humanize(strings.TrimSuffix(name, ext))
+}
+
+func writeTemplate(path, content string, data interface{}, quiet bool) error {
 	if ex, err := afero.Exists(mail.AppFs, path); ex {
 		return newUserError("%s already exists", path)
 	} else if err != nil {
 		return err
 	}
 
-	var out bytes.Buffer
-	t, _ := template.New("template").Parse(content)
-	if err := t.Execute(&out, data); err != nil {
+	out, err := renderTemplate(content, data)
+	if err != nil {
 		return err
 	}
 
-	err := afero.WriteFile(mail.AppFs, path, out.Bytes(), 0644)
-	if err == nil {
+	err = afero.WriteFile(mail.AppFs, path, out.Bytes(), 0644)
+	if err == nil && !quiet {
 		fmt.Println(path, "created")
 	}
 
 	return err
+}
+
+func renderTemplate(content string, data interface{}) (*bytes.Buffer, error) {
+	var out bytes.Buffer
+	t, _ := template.New("template").Parse(content)
+	return &out, t.Execute(&out, data)
 }
