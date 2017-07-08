@@ -2,3 +2,4 @@
 ./fury-mail
 build/*
 vendor/*
+dist/*

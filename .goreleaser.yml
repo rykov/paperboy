@@ -1,0 +1,14 @@
+project_name: Paperboy
+builds:
+  - binary: paperboy
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - 386
+archive:
+  replacements:
+    386: 32bit
+    amd64: 64bit
+    darwin: macOS
