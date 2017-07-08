@@ -27,7 +27,7 @@ func SendCampaign(tmplFile, recipientFile string) error {
 
 	// Send emails
 	m := gomail.NewMessage()
-	for i, _ := range c.Recipients {
+	for i := range c.Recipients {
 		if err := c.renderMessage(m, i); err != nil {
 			return err
 		}

@@ -29,7 +29,7 @@ func TestInlineStylesheetsSuccess(t *testing.T) {
 	expect := "<body>Hello World</body>"
 	out, err := inlineStylesheets(layoutPath, expect)
 	if err != nil || !strings.Contains(out, expect) {
-		t.Errorf("Basic no-inline failed: ", err, out)
+		t.Errorf("Basic no-inline failed (%s): %s", err, out)
 	}
 
 	// Regular inline stylesheet

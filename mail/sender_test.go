@@ -59,7 +59,7 @@ func TestSmtpDialerSuccess(t *testing.T) {
 			if err != nil {
 				t.Errorf("Dialer initialization error: %s ", err)
 			} else if d.SSL != c.ssl {
-				t.Errorf("Dialer incorrect SSL: %b", d.SSL)
+				t.Errorf("Dialer incorrect SSL: %t", d.SSL)
 			} else if d.Host != c.host {
 				t.Errorf("Dialer has invalid host: %s", d.Host)
 			} else if d.Port != c.port {

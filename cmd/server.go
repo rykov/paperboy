@@ -42,14 +42,14 @@ func serverPreview(w http.ResponseWriter, r *http.Request) {
 
 	c, err := mail.LoadCampaign(template, who)
 	if err != nil || len(c.Recipients) == 0 {
-		fmt.Fprintf(w, "Invalid campaign: ", err)
+		fmt.Fprintf(w, "Invalid campaign: %s", err)
 		return
 	}
 
 	fmt.Fprintf(w, "<pre>")
 	msg, err := c.MessageFor(0)
 	if err != nil {
-		fmt.Fprintf(w, "Campaign error: ", err)
+		fmt.Fprintf(w, "Campaign error: %s", err)
 		return
 	}
 
