@@ -9,6 +9,10 @@ type config struct {
 	Theme string
 	From  string
 
+	// CAN-SPAM
+	Address        string
+	UnsubscribeURL string
+
 	// Delivery
 	SMTP   smtpConfig
 	DryRun bool

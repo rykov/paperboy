@@ -1,6 +1,7 @@
 package mail
 
 import (
+	"encoding/json"
 	"strings"
 )
 
@@ -8,6 +9,17 @@ import (
 type context struct {
 	Recipient ctxRecipient
 	Campaign  ctxCampaign
+
+	UnsubscribeURL string
+	Address        string
+}
+
+// Convert to a map (for uritemplates and debugging)
+func (c *context) toFlatMap() map[string]interface{} {
+	out := map[string]interface{}{}
+	b, _ := json.Marshal(c)
+	json.Unmarshal(b, &out)
+	return flattenMap(out)
 }
 
 // Recipient variable
@@ -49,6 +61,22 @@ func keysToLower(data map[string]interface{}) map[string]interface{} {
 	out := map[string]interface{}{}
 	for k, v := range data {
 		out[strings.ToLower(k)] = v
+	}
+	return out
+}
+
+// Takes nested maps and brings all keys to top level with dot separators
+// We use this to pass context variables to "uritemplate" library
+func flattenMap(input map[string]interface{}) map[string]interface{} {
+	out := make(map[string]interface{})
+	for k, v := range input {
+		if m, ok := v.(map[string]interface{}); ok {
+			for i, j := range flattenMap(m) {
+				out[k+"."+i] = j
+			}
+		} else {
+			out[k] = v
+		}
 	}
 	return out
 }

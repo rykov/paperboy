@@ -9,6 +9,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/go-gomail/gomail"
+	"github.com/jtacoma/uritemplates"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 	"github.com/rykov/paperboy/parser"
@@ -34,7 +35,8 @@ type Campaign struct {
 	ID string
 
 	// Internal templates
-	tText *template.Template
+	bodyTemplate           *template.Template
+	unsubscribeURLTemplate *uritemplates.UriTemplate
 }
 
 func (c *Campaign) MessageFor(i int) (*gomail.Message, error) {
@@ -45,13 +47,14 @@ func (c *Campaign) MessageFor(i int) (*gomail.Message, error) {
 func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	var content bytes.Buffer
 
-	// Get campaign and recipient
-	ctxR := c.Recipients[i]
-	ctxC := c.EmailMeta
+	// Get template context
+	ctx, err := c.templateContextFor(i)
+	if err != nil {
+		return err
+	}
 
 	// Render template body with text/template
-	ctx := &tmplContext{context: context{Recipient: *ctxR, Campaign: *ctxC}}
-	if err := c.tText.Execute(&content, ctx); err != nil {
+	if err := c.bodyTemplate.Execute(&content, ctx); err != nil {
 		return err
 	}
 
@@ -69,17 +72,38 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 		return err
 	}
 
-	toEmail := cast.ToString(ctxR.Email)
-	toName := cast.ToString(ctxR.Name)
+	toEmail := cast.ToString(ctx.Recipient.Email)
+	toName := cast.ToString(ctx.Recipient.Name)
 
 	m.Reset() // Return to NewMessage state
 	m.SetAddressHeader("To", toEmail, toName)
-	m.SetHeader("Subject", cast.ToString(ctxC.Subject))
-	m.SetHeader("From", cast.ToString(ctxC.From))
+	m.SetHeader("Subject", cast.ToString(ctx.Campaign.Subject))
+	m.SetHeader("From", cast.ToString(ctx.Campaign.From))
 	m.SetHeader("X-Mailer", xMailer)
 	m.SetBody("text/plain", plainBody)
 	m.AddAlternative("text/html", htmlBody)
 	return nil
+}
+
+// Create template context for messages and layouts
+func (c *Campaign) templateContextFor(i int) (*tmplContext, error) {
+	ctx := context{
+		Recipient: *c.Recipients[i],
+		Campaign:  *c.EmailMeta,
+		Address:   Config.Address,
+	}
+
+	// Populate UnsubscribeURL using uritemplates
+	if t := c.unsubscribeURLTemplate; t != nil {
+		uu, err := t.Expand(ctx.toFlatMap())
+		if err != nil {
+			return nil, err
+		}
+		ctx.UnsubscribeURL = uu
+	}
+
+	// Render template body with text/template
+	return &tmplContext{context: ctx}, nil
 }
 
 func LoadCampaign(tmplID, listID string) (*Campaign, error) {
@@ -118,12 +142,23 @@ func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 		id = id[0 : len(id)-len(ext)]
 	}
 
+	// Prepare URI template for UnsubscribeURL
+	var unsubscribe *uritemplates.UriTemplate
+	if uu := Config.UnsubscribeURL; uu != "" {
+		unsubscribe, err = uritemplates.Parse(uu)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &Campaign{
 		Recipients: who,
 		EmailMeta:  &fMeta,
 		Email:      email,
-		tText:      tmpl,
 		ID:         id,
+
+		unsubscribeURLTemplate: unsubscribe,
+		bodyTemplate:           tmpl,
 	}, nil
 }
 

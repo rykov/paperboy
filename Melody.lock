@@ -10,6 +10,7 @@ _lockFormatVersion = "0.1.0"
     "github.com/chris-ramon/douceur/inliner 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
     "github.com/ghodss/yaml 1.0.0",
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
+    "github.com/jtacoma/uritemplates 1.0.0",
     "github.com/microcosm-cc/bluemonday 0.1.0-head.156+me79763773ab6222ca1d5a7cbd9d62d83c1f77081",
     "github.com/pelletier/go-toml 1.0.1-head.7+m69d355db5304c0f7f809a2edc054553e7142f016",
     "github.com/russross/blackfriday 0.1.0-head.400+m067529f716f4c3f5e37c8c95ddd59df1007290ae",
@@ -169,6 +170,11 @@ _lockFormatVersion = "0.1.0"
   dependencies = [
     "github.com/hashicorp/hcl/hcl/token 0.1.0-head.502+m392dba7d905ed5d04a5794ba89f558b27e2ba1ca"
   ]
+
+[[packages]]
+  name = "github.com/jtacoma/uritemplates"
+  version = "1.0.0"
+  release = "github.com/jtacoma/uritemplates#307ae868f90f4ee1b73ebe4596e0394237dacce8"
 
 [[packages]]
   name = "github.com/magiconair/properties"
