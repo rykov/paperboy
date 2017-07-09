@@ -45,6 +45,8 @@ date: {{ .Date }}
 	configTemplate = `# config.toml
 # See https://www.paperboy.email/docs/configuration/
 from = "Example <example@example.org>"
+address = "Paperboy Inc, 123 Main St. New York, NY 10010, USA"
+unsubscribeURL = "https://example.org/unsubscribe/{Recipient.Email}"
 
 # SMTP Server
 [smtp]
@@ -108,10 +110,6 @@ var newProjectCmd = &cobra.Command{
 	Short: "Create new project directory",
 	Long:  `A longer description...`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := loadConfig(); err != nil {
-			return err
-		}
-
 		path := "."
 		if len(args) > 0 {
 			path = args[0]
