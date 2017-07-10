@@ -1,4 +1,4 @@
-# Paperboy
+![Paperboy](https://www.paperboy.email/images/banner.jpg)
 
 A Fast & Modern Email Campaign Engine built in [Go][].
 
