@@ -118,8 +118,12 @@ var newProjectCmd = &cobra.Command{
 		path, err := filepath.Abs(path)
 		if err != nil {
 			return err
-		} else if ok, _ := afero.Exists(mail.AppFs, path); ok {
-			return newUserError("%s already exists", path)
+		}
+
+		// Check for config to see if a project exists
+		configPath := filepath.Join(path, "config.toml")
+		if ok, _ := afero.Exists(mail.AppFs, configPath); ok {
+			return newUserError("%s already contains a project", path)
 		}
 
 		// Create project directories
@@ -130,7 +134,6 @@ var newProjectCmd = &cobra.Command{
 		}
 
 		// Write basic configuration
-		configPath := filepath.Join(path, "config.toml")
 		if err := writeTemplate(configPath, configTemplate, nil, true); err != nil {
 			return err
 		}
