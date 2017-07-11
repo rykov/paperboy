@@ -16,6 +16,14 @@ package main
 
 import "github.com/rykov/paperboy/cmd"
 
+// Populated by goreleaser
+var (
+	version = "???"
+	date    = "???"
+)
+
+// Commands managed by Cobra
 func main() {
+	cmd.SetVersion(version, date)
 	cmd.Execute()
 }
