@@ -27,7 +27,7 @@ modern (yet legacy-compatible) newsletters and announcements.
 ## Installing binaries
 
 Currently, we provide [pre-built binaries][releases] for Linux and macOS.
-The Paperboy binary has no external dependencies.
+Paperboy is a single binary with no external dependencies.
 
 Just run `./paperboy help` and you're [ready to go][quickstart].
 
@@ -65,7 +65,17 @@ You can start here:
 - [Improve documentation](https://github.com/rykov/paperboyDocs)
 - [Logos & Design](https://github.com/rykov/paperboyDocs)
 
+## Inspiration and credits
+
+Paperboy aims to bring to email the ease of use and control we love from static
+site generators. We particularly want to thank [Hugo][] authors for much of
+the inspiration and a number of our [dependencies][].
+
+The banner photo is by [Mathyas Kurmann](https://unsplash.com/@mathyaskurmann)
+
 [Go]: https://golang.org/
+[Hugo]: https://gohugo.io/
+[dependencies]: https://github.com/rykov/paperboy/blob/master/Melody.toml
 [quickstart]: https://www.paperboy.email/docs/quick-start/
 [structure]: https://www.paperboy.email/docs/source-structure/
 [releases]: https://github.com/rykov/paperboy/releases
