@@ -16,7 +16,6 @@ version = "0.1.0"
 # will see an error if the root package cannot be imported.
 
 [dependencies]
-"github.com/go-gomail/gomail"="head"
 "github.com/pelletier/go-toml"="head"
 "github.com/ghodss/yaml"="head"
 "github.com/toorop/go-dkim"="head"
@@ -30,5 +29,10 @@ version = "0.1.0"
 "github.com/spf13/afero"="head"
 "github.com/bep/inflect"="head"
 "github.com/jtacoma/uritemplates"="head"
+"github.com/neelance/graphql-go"="head"
+
+# Email libraries for specified purposes
+"github.com/jordan-wright/email"="head" # parse/verify
+"github.com/go-gomail/gomail"="head" # sign/send
 
 # "github.com/pkg/errors" = "^0.8.0"

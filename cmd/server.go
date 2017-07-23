@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/rykov/paperboy/mail"
+	"github.com/rykov/paperboy/server"
 	"github.com/spf13/cobra"
 
 	"bytes"
@@ -23,6 +24,8 @@ var serverCmd = &cobra.Command{
 
 		fmt.Println("Preview server listening at :8080 ... ")
 		http.HandleFunc("/", serverPreview)
+		server.AddGraphQLRoutes()
+
 		return http.ListenAndServe(":8080", nil)
 	},
 }
