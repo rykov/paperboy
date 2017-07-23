@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/google/go-cmp/cmp"
 	"github.com/jordan-wright/email"
 	"github.com/neelance/graphql-go"
 	"github.com/rykov/paperboy/mail"
@@ -9,7 +10,6 @@ import (
 	"context"
 	"encoding/json"
 	"os"
-	"reflect"
 	"strings"
 	"testing"
 )
@@ -66,7 +66,7 @@ func TestSchemaBasicQuery(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Invalid RawMessage: %s", err)
 	}
-	if r := em.To; !reflect.DeepEqual(r, []string{"ex@example.org"}) {
+	if r := em.To; !cmp.Equal(r, []string{"ex@example.org"}) {
 		t.Errorf("Invalid email.To: %+v", r)
 	}
 	if s := string(em.HTML); s != resp.RenderOne.HTML {

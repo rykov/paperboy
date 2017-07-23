@@ -35,4 +35,5 @@ version = "0.1.0"
 "github.com/jordan-wright/email"="head" # parse/verify
 "github.com/go-gomail/gomail"="head" # sign/send
 
-# "github.com/pkg/errors" = "^0.8.0"
+# Testing
+"github.com/google/go-cmp/cmp"="head"

@@ -1,7 +1,7 @@
 package mail
 
 import (
-	"reflect"
+	"github.com/google/go-cmp/cmp"
 	"testing"
 )
 
@@ -22,7 +22,7 @@ func TestContextFlattenMap(t *testing.T) {
 		"Level1b.Level2b.Level3": "3",
 	}
 
-	if out := flattenMap(input); !reflect.DeepEqual(out, expected) {
+	if out := flattenMap(input); !cmp.Equal(out, expected) {
 		t.Errorf("Output mismatch:\nExpected:%v\nActual:%v", expected, out)
 	}
 }

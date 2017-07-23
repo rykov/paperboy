@@ -10,6 +10,7 @@ _lockFormatVersion = "0.1.0"
     "github.com/chris-ramon/douceur/inliner 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
     "github.com/ghodss/yaml 1.0.0",
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
+    "github.com/google/go-cmp/cmp 0.1.0-head.19+ma77394b709bf3eecbbd90fc51bd3d654af78f06b",
     "github.com/jordan-wright/email 0.1.0-head.109+m09f803b133a9229292871a003eb1a5b077fb32b2",
     "github.com/jtacoma/uritemplates 1.0.0",
     "github.com/microcosm-cc/bluemonday 0.1.0-head.156+me79763773ab6222ca1d5a7cbd9d62d83c1f77081",
@@ -90,6 +91,25 @@ _lockFormatVersion = "0.1.0"
   name = "github.com/go-gomail/gomail"
   version = "2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1"
   release = "github.com/go-gomail/gomail#81ebce5c23dfd25c6c67194b37d3dd3f338c98b1"
+
+[[packages]]
+  name = "github.com/google/go-cmp/cmp"
+  version = "0.1.0-head.19+ma77394b709bf3eecbbd90fc51bd3d654af78f06b"
+  release = "github.com/google/go-cmp#a77394b709bf3eecbbd90fc51bd3d654af78f06b"
+  dependencies = [
+    "github.com/google/go-cmp/cmp/internal/diff 0.1.0-head.19+ma77394b709bf3eecbbd90fc51bd3d654af78f06b",
+    "github.com/google/go-cmp/cmp/internal/value 0.1.0-head.19+ma77394b709bf3eecbbd90fc51bd3d654af78f06b"
+  ]
+
+[[packages]]
+  name = "github.com/google/go-cmp/cmp/internal/diff"
+  version = "0.1.0-head.19+ma77394b709bf3eecbbd90fc51bd3d654af78f06b"
+  release = "github.com/google/go-cmp#a77394b709bf3eecbbd90fc51bd3d654af78f06b"
+
+[[packages]]
+  name = "github.com/google/go-cmp/cmp/internal/value"
+  version = "0.1.0-head.19+ma77394b709bf3eecbbd90fc51bd3d654af78f06b"
+  release = "github.com/google/go-cmp#a77394b709bf3eecbbd90fc51bd3d654af78f06b"
 
 [[packages]]
   name = "github.com/gorilla/css/scanner"
