@@ -3,13 +3,23 @@ package server
 import (
 	"github.com/neelance/graphql-go"
 	"github.com/neelance/graphql-go/relay"
+	"github.com/rs/cors"
 
 	"net/http"
 )
 
-func AddGraphQLRoutes() {
+func GraphQLHandler() http.Handler {
+	// CORS allows central preview
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{
+			"http://www.paperboy.email",
+			"http://paperboy.email",
+			"http://localhost:*",
+		},
+	})
+
 	schema := graphql.MustParseSchema(schemaText, &Resolver{})
-	http.Handle("/graphql", &relay.Handler{Schema: schema})
+	return c.Handler(&relay.Handler{Schema: schema})
 }
 
 const schemaText = `

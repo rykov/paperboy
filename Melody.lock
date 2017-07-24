@@ -16,10 +16,11 @@ _lockFormatVersion = "0.1.0"
     "github.com/microcosm-cc/bluemonday 0.1.0-head.156+me79763773ab6222ca1d5a7cbd9d62d83c1f77081",
     "github.com/neelance/graphql-go 0.1.0-head.272+m52080e1f0951c75dd4addba57db27fc4de1d0019",
     "github.com/pelletier/go-toml 1.0.1-head.7+m69d355db5304c0f7f809a2edc054553e7142f016",
+    "github.com/rs/cors 0.1.0-head.61+m8dd4211afb5d08dbb39a533b9bb9e4b486351df6",
     "github.com/russross/blackfriday 0.1.0-head.400+m067529f716f4c3f5e37c8c95ddd59df1007290ae",
     "github.com/spf13/afero 0.1.0-head.178+m9be650865eab0c12963d8753212f4f9c66cdcf12",
     "github.com/spf13/cast 1.1.0",
-    "github.com/spf13/cobra 0.1.0-head.553+m715f41bd7a70b5111f898b71ab484da52ee6266d",
+    "github.com/spf13/cobra 0.1.0-head.555+mf20b4e9c32bb3e9d44773ca208db814f24dcd21b",
     "github.com/spf13/viper 0.1.0-head.195+m25b30aa063fc18e48662b86996252eabdcf2f0c7",
     "github.com/toorop/go-dkim 0.1.0-head.41+m43c1bb05e85404d07a5020ad38c6b67b3a039b86"
   ]
@@ -384,6 +385,11 @@ _lockFormatVersion = "0.1.0"
   release = "github.com/pelletier/go-toml#69d355db5304c0f7f809a2edc054553e7142f016"
 
 [[packages]]
+  name = "github.com/rs/cors"
+  version = "0.1.0-head.61+m8dd4211afb5d08dbb39a533b9bb9e4b486351df6"
+  release = "github.com/rs/cors#8dd4211afb5d08dbb39a533b9bb9e4b486351df6"
+
+[[packages]]
   name = "github.com/russross/blackfriday"
   version = "0.1.0-head.400+m067529f716f4c3f5e37c8c95ddd59df1007290ae"
   release = "github.com/russross/blackfriday#067529f716f4c3f5e37c8c95ddd59df1007290ae"
@@ -410,10 +416,10 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/spf13/cobra"
-  version = "0.1.0-head.553+m715f41bd7a70b5111f898b71ab484da52ee6266d"
-  release = "github.com/spf13/cobra#715f41bd7a70b5111f898b71ab484da52ee6266d"
+  version = "0.1.0-head.555+mf20b4e9c32bb3e9d44773ca208db814f24dcd21b"
+  release = "github.com/spf13/cobra#f20b4e9c32bb3e9d44773ca208db814f24dcd21b"
   dependencies = [
-    "github.com/spf13/pflag 0.1.0-head.231+me57e3eeb33f795204c1ca35f56c44f83227c6e66"
+    "github.com/spf13/pflag 1.0.0"
   ]
 
 [[packages]]
@@ -423,7 +429,7 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/spf13/pflag"
-  version = "0.1.0-head.231+me57e3eeb33f795204c1ca35f56c44f83227c6e66"
+  version = "1.0.0"
   release = "github.com/spf13/pflag#e57e3eeb33f795204c1ca35f56c44f83227c6e66"
 
 [[packages]]
@@ -439,7 +445,7 @@ _lockFormatVersion = "0.1.0"
     "github.com/spf13/afero 0.1.0-head.178+m9be650865eab0c12963d8753212f4f9c66cdcf12",
     "github.com/spf13/cast 1.1.0",
     "github.com/spf13/jwalterweatherman 0.1.0-head.27+m0efa5202c04663c757d84f90f5219c1250baf94f",
-    "github.com/spf13/pflag 0.1.0-head.231+me57e3eeb33f795204c1ca35f56c44f83227c6e66",
+    "github.com/spf13/pflag 1.0.0",
     "gopkg.in/yaml.v2 0.1.0-head.205+m25c4ec802a7d637f88d584ab26798e94ad14c13b"
   ]
 

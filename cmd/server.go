@@ -17,8 +17,8 @@ var serverCmd = &cobra.Command{
 			return err
 		}
 
-		server.AddGraphQLRoutes()
 		fmt.Println("API server listening at :8080 ... ")
+		http.Handle("/graphql", server.GraphQLHandler())
 		return http.ListenAndServe(":8080", nil)
 	},
 }
