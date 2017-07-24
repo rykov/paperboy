@@ -30,6 +30,7 @@ func Execute() {
 	RootCmd.AddCommand(sendCmd)
 	RootCmd.AddCommand(serverCmd)
 	RootCmd.AddCommand(versionCmd)
+	RootCmd.AddCommand(previewCmd)
 
 	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
