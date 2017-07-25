@@ -30,6 +30,7 @@ const schemaText = `
   # The Query type, represents all of the entry points
   type Query {
     renderOne(content: String!, recipient: String!): RenderedEmail
+    paperboyInfo: PaperboyInfo!
   }
 
   # A single rendered email information
@@ -38,6 +39,12 @@ const schemaText = `
     text: String!
     html: String
     # html: HTML
+  }
+
+  # Build/version information
+  type PaperboyInfo {
+    version: String!
+    buildDate: String!
   }
 
   # HTML (same as string)

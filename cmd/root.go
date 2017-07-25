@@ -25,7 +25,8 @@ to quickly create a Cobra application.`,
 
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(build mail.BuildInfo) {
+	mail.Config.Build = build
 	RootCmd.AddCommand(newCmd)
 	RootCmd.AddCommand(sendCmd)
 	RootCmd.AddCommand(serverCmd)
@@ -90,7 +91,7 @@ func loadConfig() error {
 	if err := viperConfig.ReadInConfig(); err != nil {
 		return err
 	}
-	return viperConfig.Unmarshal(&mail.Config)
+	return viperConfig.Unmarshal(&mail.Config.ConfigFile)
 }
 
 // Error helpers

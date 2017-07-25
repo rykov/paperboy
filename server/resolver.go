@@ -78,3 +78,21 @@ func (e *renderedEmail) HTML() *string {
 	out := string(e.msg.HTML)
 	return &out
 }
+
+// ===== Build/Version information =====
+
+func (r *Resolver) PaperboyInfo(ctx context.Context) *paperboyInfo {
+	return &paperboyInfo{mail.Config.Build}
+}
+
+type paperboyInfo struct {
+	b mail.BuildInfo
+}
+
+func (i *paperboyInfo) Version() string {
+	return i.b.Version
+}
+
+func (i *paperboyInfo) BuildDate() string {
+	return i.b.BuildDate
+}
