@@ -1,8 +1,12 @@
 package mail
 
 import (
+	"github.com/spf13/afero"
+	"github.com/spf13/viper"
+
 	"fmt"
 	"runtime"
+	"strings"
 )
 
 // Initial blank config
@@ -54,4 +58,51 @@ type BuildInfo struct {
 
 func (i BuildInfo) String() string {
 	return fmt.Sprintf("v%s %s/%s (%s)", i.Version, runtime.GOOS, runtime.GOARCH, i.BuildDate)
+}
+
+// Configuration configuration :)
+var viperConfig *viper.Viper
+
+// Load configuration with Viper
+func LoadConfig() error {
+	viperConfig.SetFs(AppFs)
+	if err := viperConfig.ReadInConfig(); err != nil {
+		return err
+	}
+	return viperConfig.Unmarshal(&Config.ConfigFile)
+}
+
+// Initialize configuration with Viper
+func InitConfig(cfgFile string) {
+	viperConfig = viper.New()
+	v := viperConfig
+
+	// From --config
+	if cfgFile != "" {
+		v.SetConfigFile(cfgFile)
+	}
+
+	// Tie configuration to ENV
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	v.SetEnvPrefix("paperboy")
+	v.AutomaticEnv()
+
+	// Defaults (General)
+	v.SetDefault("smtp.url", "")
+	v.SetDefault("smtp.user", "")
+	v.SetDefault("smtp.pass", "")
+	v.SetDefault("dryRun", false)
+
+	// Defaults (Dirs)
+	v.SetDefault("contentDir", "content")
+	v.SetDefault("layoutDir", "layouts")
+	v.SetDefault("themeDir", "themes")
+	v.SetDefault("listDir", "lists")
+
+	// Prepare for project's config.*
+	v.SetConfigName("config")
+	v.AddConfigPath(".")
+
+	// Wire up default afero.Fs
+	SetFs(afero.NewOsFs())
 }

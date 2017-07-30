@@ -71,7 +71,7 @@ var newCmd = &cobra.Command{
 	Short: "Create new content for a campaign",
 	Long:  `A longer description...`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := loadConfig(); err != nil {
+		if err := mail.LoadConfig(); err != nil {
 			return err
 		}
 
@@ -92,7 +92,7 @@ var newListCmd = &cobra.Command{
 	Short: "Create a new recipient list",
 	Long:  `A longer description...`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := loadConfig(); err != nil {
+		if err := mail.LoadConfig(); err != nil {
 			return err
 		}
 
