@@ -1,7 +1,6 @@
 package mail
 
 import (
-	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 
 	"fmt"
@@ -102,7 +101,4 @@ func InitConfig(cfgFile string) {
 	// Prepare for project's config.*
 	v.SetConfigName("config")
 	v.AddConfigPath(".")
-
-	// Wire up default afero.Fs
-	SetFs(afero.NewOsFs())
 }

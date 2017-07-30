@@ -29,6 +29,8 @@ const schemaText = `
 
   # The Query type, represents all of the entry points
   type Query {
+    campaigns: [Campaign]!
+    lists: [RecipientList]!
     renderOne(content: String!, recipient: String!): RenderedEmail
     paperboyInfo: PaperboyInfo!
   }
@@ -45,6 +47,18 @@ const schemaText = `
   type PaperboyInfo {
     version: String!
     buildDate: String!
+  }
+
+  # Campaign metadata
+  type Campaign {
+    param: String!
+    subject: String!
+  }
+
+  # Recipient list metadata
+  type RecipientList {
+    param: String!
+    name: String!
   }
 
   # HTML (same as string)
