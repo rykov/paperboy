@@ -227,7 +227,7 @@ func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error
 		return "", err
 	}
 
-	unsafe := blackfriday.MarkdownCommon(body)
+	unsafe := blackfriday.Run(body)
 	bodyHTML := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 	var out bytes.Buffer
