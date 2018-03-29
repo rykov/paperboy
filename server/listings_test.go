@@ -3,7 +3,7 @@ package server
 import (
 	//"github.com/google/go-cmp/cmp"
 	//"github.com/jordan-wright/email"
-	//"github.com/neelance/graphql-go"
+	//"github.com/graph-gophers/graphql-go"
 	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/afero"
 

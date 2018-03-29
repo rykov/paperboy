@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/neelance/graphql-go"
-	"github.com/neelance/graphql-go/relay"
+	"github.com/graph-gophers/graphql-go"
+	"github.com/graph-gophers/graphql-go/relay"
 	"github.com/rs/cors"
 
 	"net/http"

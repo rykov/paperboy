@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/google/go-cmp/cmp"
+	"github.com/graph-gophers/graphql-go"
 	"github.com/jordan-wright/email"
-	"github.com/neelance/graphql-go"
 	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
