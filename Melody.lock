@@ -8,20 +8,20 @@ _lockFormatVersion = "0.1.0"
     "github.com/PuerkitoBio/goquery 1.4.1-head.2+mea1bc64a63088ac2bbf1a2edcae38413794a7710",
     "github.com/bep/inflect 0.0.0-head.23+mb896c45f5af983b1f416bdf3bb89c4f1f0926f69",
     "github.com/chris-ramon/douceur/inliner 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
-    "github.com/ghodss/yaml 1.0.0",
+    "github.com/ghodss/yaml 1.0.1-head.2+me9ed3c6dfb39bb1a32197cb10d527906fe4da4b6",
     "github.com/go-gomail/gomail 2.0.1-head.23+m81ebce5c23dfd25c6c67194b37d3dd3f338c98b1",
     "github.com/google/go-cmp/cmp 0.2.1-head.6+m5411ab924f9ffa6566244a9e504bc347edacffd3",
-    "github.com/graph-gophers/graphql-go 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
+    "github.com/graph-gophers/graphql-go 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
     "github.com/jordan-wright/email 0.0.0-head.119+m94ae17dedda217a49e3b47d68f1b54b3c946e16b",
     "github.com/jtacoma/uritemplates 1.0.0",
     "github.com/microcosm-cc/bluemonday 0.0.0-head.180+m995366fdf961d03629cd17361bddd32745718e2c",
     "github.com/pelletier/go-toml 1.1.1-head.2+m66540cf1fcd2c3aee6f6787dfa32a6ae9a870f12",
-    "github.com/rs/cors 1.3.1-head.3+mff3499d70f672914f2f1518d5713a7f838704b05",
+    "github.com/rs/cors 1.3.1-head.4+m12972ae4e7775151d0d53aaad277be85133ce445",
     "github.com/russross/blackfriday 2.0.0",
-    "github.com/spf13/afero 1.0.3-head.3+ma880a37ed1804d98f64b3b7d58b5e3f8fbf421c4",
+    "github.com/spf13/afero 1.1.0",
     "github.com/spf13/cast 1.2.0",
-    "github.com/spf13/cobra 0.0.2-head.35+ma1f051bc3eba734da4772d60e2d677f47cf93ef4",
-    "github.com/spf13/viper 1.0.2",
+    "github.com/spf13/cobra 0.0.3",
+    "github.com/spf13/viper 1.0.3-head.2+m15738813a09db5c8e5b60a19d67d3f9bd38da3a4",
     "github.com/toorop/go-dkim 0.0.0-head.45+m83672023c79e6b352bf9d4908e6c060c7a24323c"
   ]
 
@@ -31,7 +31,7 @@ _lockFormatVersion = "0.1.0"
   release = "github.com/PuerkitoBio/goquery#ea1bc64a63088ac2bbf1a2edcae38413794a7710"
   dependencies = [
     "github.com/andybalholm/cascadia 1.0.0",
-    "golang.org/x/net/html 0.0.0-head.1276+m6078986fec03a1dcc236c34816c71b0e05018fda"
+    "golang.org/x/net/html 0.0.0-head.1296+m8e0cdda24ed423affc8f35c241e5e9b16180338e"
   ]
 
 [[packages]]
@@ -39,7 +39,7 @@ _lockFormatVersion = "0.1.0"
   version = "1.0.0"
   release = "github.com/andybalholm/cascadia#901648c87902174f774fac311d7f176f8647bdaa"
   dependencies = [
-    "golang.org/x/net/html 0.0.0-head.1276+m6078986fec03a1dcc236c34816c71b0e05018fda"
+    "golang.org/x/net/html 0.0.0-head.1296+m8e0cdda24ed423affc8f35c241e5e9b16180338e"
   ]
 
 [[packages]]
@@ -60,7 +60,7 @@ _lockFormatVersion = "0.1.0"
     "github.com/PuerkitoBio/goquery 1.4.1-head.2+mea1bc64a63088ac2bbf1a2edcae38413794a7710",
     "github.com/chris-ramon/douceur/css 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
     "github.com/chris-ramon/douceur/parser 0.2.1-head.15+mf3463056cd52886eda904655e1940157bf323bd7",
-    "golang.org/x/net/html 0.0.0-head.1276+m6078986fec03a1dcc236c34816c71b0e05018fda"
+    "golang.org/x/net/html 0.0.0-head.1296+m8e0cdda24ed423affc8f35c241e5e9b16180338e"
   ]
 
 [[packages]]
@@ -77,13 +77,13 @@ _lockFormatVersion = "0.1.0"
   version = "1.4.7"
   release = "github.com/fsnotify/fsnotify#c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
   dependencies = [
-    "golang.org/x/sys/unix 0.0.0-head.411+m13d03a9a82fba647c21a0ef8fba44a795d0f0835"
+    "golang.org/x/sys/unix 0.0.0-head.438+m7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
   ]
 
 [[packages]]
   name = "github.com/ghodss/yaml"
-  version = "1.0.0"
-  release = "github.com/ghodss/yaml#0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
+  version = "1.0.1-head.2+me9ed3c6dfb39bb1a32197cb10d527906fe4da4b6"
+  release = "github.com/ghodss/yaml#e9ed3c6dfb39bb1a32197cb10d527906fe4da4b6"
   dependencies = [
     "gopkg.in/yaml.v2 2.2.1"
   ]
@@ -128,225 +128,225 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/exec 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/exec/resolvable 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/exec/selected 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/query 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/validation 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/introspection 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/log 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/trace 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
+    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/exec 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/exec/resolvable 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/exec/selected 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/query 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/validation 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/introspection 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/log 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/trace 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
   ]
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/errors"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/internal/common"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
+    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
   ]
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/internal/exec"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/exec/resolvable 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/exec/selected 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/query 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/log 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/trace 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
+    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/exec/resolvable 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/exec/selected 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/query 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/log 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/trace 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
   ]
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/internal/exec/packer"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
+    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
   ]
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/internal/exec/resolvable"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/exec/packer 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/introspection 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
+    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/exec/packer 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/introspection 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
   ]
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/internal/exec/selected"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/exec/packer 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/exec/resolvable 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/query 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/introspection 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
+    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/exec/packer 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/exec/resolvable 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/query 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/introspection 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
   ]
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/internal/query"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
+    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
   ]
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/internal/schema"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
+    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
   ]
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/internal/validation"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/query 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
+    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/query 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
   ]
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/introspection"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
+    "github.com/graph-gophers/graphql-go/internal/common 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/internal/schema 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
   ]
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/log"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
 
 [[packages]]
   name = "github.com/graph-gophers/graphql-go/trace"
-  version = "0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f"
-  release = "github.com/graph-gophers/graphql-go#ce762577cbd55b7431607a3031cd4a9a1460248f"
+  version = "0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3"
+  release = "github.com/graph-gophers/graphql-go#e698b6abc17ead17ea89d3d22a4b2625299701e3"
   dependencies = [
-    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/graph-gophers/graphql-go/introspection 0.0.0-head.311+mce762577cbd55b7431607a3031cd4a9a1460248f",
-    "github.com/opentracing/opentracing-go 1.0.3-head.10+m328fceb7548c744337cd010914152b74eaf4c4ab",
-    "github.com/opentracing/opentracing-go/ext 1.0.3-head.10+m328fceb7548c744337cd010914152b74eaf4c4ab",
-    "github.com/opentracing/opentracing-go/log 1.0.3-head.10+m328fceb7548c744337cd010914152b74eaf4c4ab"
+    "github.com/graph-gophers/graphql-go/errors 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/graph-gophers/graphql-go/introspection 0.0.0-head.332+me698b6abc17ead17ea89d3d22a4b2625299701e3",
+    "github.com/opentracing/opentracing-go 1.0.3-head.14+m6c572c00d1830223701e155de97408483dfcd14a",
+    "github.com/opentracing/opentracing-go/ext 1.0.3-head.14+m6c572c00d1830223701e155de97408483dfcd14a",
+    "github.com/opentracing/opentracing-go/log 1.0.3-head.14+m6c572c00d1830223701e155de97408483dfcd14a"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl"
-  version = "0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
-  release = "github.com/hashicorp/hcl#f40e974e75af4e271d97ce0fc917af5898ae7bda"
+  version = "0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  release = "github.com/hashicorp/hcl#ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/ast 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/hcl/parser 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/json/parser 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
+    "github.com/hashicorp/hcl/hcl/ast 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/hcl/parser 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/json/parser 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/ast"
-  version = "0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
-  release = "github.com/hashicorp/hcl#f40e974e75af4e271d97ce0fc917af5898ae7bda"
+  version = "0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  release = "github.com/hashicorp/hcl#ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
+    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/parser"
-  version = "0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
-  release = "github.com/hashicorp/hcl#f40e974e75af4e271d97ce0fc917af5898ae7bda"
+  version = "0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  release = "github.com/hashicorp/hcl#ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/ast 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/hcl/scanner 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
+    "github.com/hashicorp/hcl/hcl/ast 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/hcl/scanner 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/printer"
-  version = "0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
-  release = "github.com/hashicorp/hcl#f40e974e75af4e271d97ce0fc917af5898ae7bda"
+  version = "0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  release = "github.com/hashicorp/hcl#ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/ast 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/hcl/parser 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
+    "github.com/hashicorp/hcl/hcl/ast 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/hcl/parser 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/scanner"
-  version = "0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
-  release = "github.com/hashicorp/hcl#f40e974e75af4e271d97ce0fc917af5898ae7bda"
+  version = "0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  release = "github.com/hashicorp/hcl#ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
+    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/strconv"
-  version = "0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
-  release = "github.com/hashicorp/hcl#f40e974e75af4e271d97ce0fc917af5898ae7bda"
+  version = "0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  release = "github.com/hashicorp/hcl#ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
 
 [[packages]]
   name = "github.com/hashicorp/hcl/hcl/token"
-  version = "0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
-  release = "github.com/hashicorp/hcl#f40e974e75af4e271d97ce0fc917af5898ae7bda"
+  version = "0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  release = "github.com/hashicorp/hcl#ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/strconv 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
+    "github.com/hashicorp/hcl/hcl/strconv 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/json/parser"
-  version = "0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
-  release = "github.com/hashicorp/hcl#f40e974e75af4e271d97ce0fc917af5898ae7bda"
+  version = "0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  release = "github.com/hashicorp/hcl#ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/ast 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/json/scanner 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/json/token 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
+    "github.com/hashicorp/hcl/hcl/ast 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/json/scanner 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/json/token 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/json/scanner"
-  version = "0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
-  release = "github.com/hashicorp/hcl#f40e974e75af4e271d97ce0fc917af5898ae7bda"
+  version = "0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  release = "github.com/hashicorp/hcl#ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   dependencies = [
-    "github.com/hashicorp/hcl/json/token 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
+    "github.com/hashicorp/hcl/json/token 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   ]
 
 [[packages]]
   name = "github.com/hashicorp/hcl/json/token"
-  version = "0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
-  release = "github.com/hashicorp/hcl#f40e974e75af4e271d97ce0fc917af5898ae7bda"
+  version = "0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  release = "github.com/hashicorp/hcl#ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   dependencies = [
-    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda"
+    "github.com/hashicorp/hcl/hcl/token 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168"
   ]
 
 [[packages]]
@@ -366,43 +366,42 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/magiconair/properties"
-  version = "1.7.7-head.3+m2c9e9502788518c97fe44e8955cd069417ee89df"
-  release = "github.com/magiconair/properties#2c9e9502788518c97fe44e8955cd069417ee89df"
+  version = "1.8.0"
+  release = "github.com/magiconair/properties#c2353362d570a7bfa228149c62842019201cfb71"
 
 [[packages]]
   name = "github.com/microcosm-cc/bluemonday"
   version = "0.0.0-head.180+m995366fdf961d03629cd17361bddd32745718e2c"
   release = "github.com/microcosm-cc/bluemonday#995366fdf961d03629cd17361bddd32745718e2c"
   dependencies = [
-    "golang.org/x/net/html 0.0.0-head.1276+m6078986fec03a1dcc236c34816c71b0e05018fda"
+    "golang.org/x/net/html 0.0.0-head.1296+m8e0cdda24ed423affc8f35c241e5e9b16180338e"
   ]
 
 [[packages]]
   name = "github.com/mitchellh/mapstructure"
-  version = "0.0.0-head.168+m00c29f56e2386353d58c599509e8dc3801b0d716"
-  release = "github.com/mitchellh/mapstructure#00c29f56e2386353d58c599509e8dc3801b0d716"
+  version = "0.0.0-head.170+mbb74f1db0675b241733089d5a1faa5dd8b0ef57b"
+  release = "github.com/mitchellh/mapstructure#bb74f1db0675b241733089d5a1faa5dd8b0ef57b"
 
 [[packages]]
   name = "github.com/opentracing/opentracing-go"
-  version = "1.0.3-head.10+m328fceb7548c744337cd010914152b74eaf4c4ab"
-  release = "github.com/opentracing/opentracing-go#328fceb7548c744337cd010914152b74eaf4c4ab"
+  version = "1.0.3-head.14+m6c572c00d1830223701e155de97408483dfcd14a"
+  release = "github.com/opentracing/opentracing-go#6c572c00d1830223701e155de97408483dfcd14a"
   dependencies = [
-    "github.com/opentracing/opentracing-go/log 1.0.3-head.10+m328fceb7548c744337cd010914152b74eaf4c4ab",
-    "golang.org/x/net/context 0.0.0-head.1276+m6078986fec03a1dcc236c34816c71b0e05018fda"
+    "github.com/opentracing/opentracing-go/log 1.0.3-head.14+m6c572c00d1830223701e155de97408483dfcd14a"
   ]
 
 [[packages]]
   name = "github.com/opentracing/opentracing-go/ext"
-  version = "1.0.3-head.10+m328fceb7548c744337cd010914152b74eaf4c4ab"
-  release = "github.com/opentracing/opentracing-go#328fceb7548c744337cd010914152b74eaf4c4ab"
+  version = "1.0.3-head.14+m6c572c00d1830223701e155de97408483dfcd14a"
+  release = "github.com/opentracing/opentracing-go#6c572c00d1830223701e155de97408483dfcd14a"
   dependencies = [
-    "github.com/opentracing/opentracing-go 1.0.3-head.10+m328fceb7548c744337cd010914152b74eaf4c4ab"
+    "github.com/opentracing/opentracing-go 1.0.3-head.14+m6c572c00d1830223701e155de97408483dfcd14a"
   ]
 
 [[packages]]
   name = "github.com/opentracing/opentracing-go/log"
-  version = "1.0.3-head.10+m328fceb7548c744337cd010914152b74eaf4c4ab"
-  release = "github.com/opentracing/opentracing-go#328fceb7548c744337cd010914152b74eaf4c4ab"
+  version = "1.0.3-head.14+m6c572c00d1830223701e155de97408483dfcd14a"
+  release = "github.com/opentracing/opentracing-go#6c572c00d1830223701e155de97408483dfcd14a"
 
 [[packages]]
   name = "github.com/pelletier/go-toml"
@@ -411,8 +410,8 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/rs/cors"
-  version = "1.3.1-head.3+mff3499d70f672914f2f1518d5713a7f838704b05"
-  release = "github.com/rs/cors#ff3499d70f672914f2f1518d5713a7f838704b05"
+  version = "1.3.1-head.4+m12972ae4e7775151d0d53aaad277be85133ce445"
+  release = "github.com/rs/cors#12972ae4e7775151d0d53aaad277be85133ce445"
 
 [[packages]]
   name = "github.com/russross/blackfriday"
@@ -429,18 +428,18 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/spf13/afero"
-  version = "1.0.3-head.3+ma880a37ed1804d98f64b3b7d58b5e3f8fbf421c4"
-  release = "github.com/spf13/afero#a880a37ed1804d98f64b3b7d58b5e3f8fbf421c4"
+  version = "1.1.0"
+  release = "github.com/spf13/afero#63644898a8da0bc22138abf860edaf5277b6102e"
   dependencies = [
-    "github.com/spf13/afero/mem 1.0.3-head.3+ma880a37ed1804d98f64b3b7d58b5e3f8fbf421c4",
-    "golang.org/x/text/transform 0.3.1-head.43+mece95c760240037f89ebcbdd7155ac8cb52e38fa",
-    "golang.org/x/text/unicode/norm 0.3.1-head.43+mece95c760240037f89ebcbdd7155ac8cb52e38fa"
+    "github.com/spf13/afero/mem 1.1.0",
+    "golang.org/x/text/transform 0.3.1-head.49+m5c1cf69b5978e5a34c5f9ba09a83e56acc4b7877",
+    "golang.org/x/text/unicode/norm 0.3.1-head.49+m5c1cf69b5978e5a34c5f9ba09a83e56acc4b7877"
   ]
 
 [[packages]]
   name = "github.com/spf13/afero/mem"
-  version = "1.0.3-head.3+ma880a37ed1804d98f64b3b7d58b5e3f8fbf421c4"
-  release = "github.com/spf13/afero#a880a37ed1804d98f64b3b7d58b5e3f8fbf421c4"
+  version = "1.1.0"
+  release = "github.com/spf13/afero#63644898a8da0bc22138abf860edaf5277b6102e"
 
 [[packages]]
   name = "github.com/spf13/cast"
@@ -449,11 +448,11 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/spf13/cobra"
-  version = "0.0.2-head.35+ma1f051bc3eba734da4772d60e2d677f47cf93ef4"
-  release = "github.com/spf13/cobra#a1f051bc3eba734da4772d60e2d677f47cf93ef4"
+  version = "0.0.3"
+  release = "github.com/spf13/cobra#ef82de70bb3f60c65fb8eebacbb2d122ef517385"
   dependencies = [
     "github.com/inconshreveable/mousetrap 0.0.0-head.13+m76626ae9c91c4f2a10f34cad8ce83ea42c93bb75",
-    "github.com/spf13/pflag 1.0.1-head.14+mad68c28ee799163e627e77fcc6e8ecaa866e3535"
+    "github.com/spf13/pflag 1.0.1"
   ]
 
 [[packages]]
@@ -463,24 +462,24 @@ _lockFormatVersion = "0.1.0"
 
 [[packages]]
   name = "github.com/spf13/pflag"
-  version = "1.0.1-head.14+mad68c28ee799163e627e77fcc6e8ecaa866e3535"
-  release = "github.com/spf13/pflag#ad68c28ee799163e627e77fcc6e8ecaa866e3535"
+  version = "1.0.1"
+  release = "github.com/spf13/pflag#583c0c0531f06d5278b7d917446061adc344b5cd"
 
 [[packages]]
   name = "github.com/spf13/viper"
-  version = "1.0.2"
-  release = "github.com/spf13/viper#b5e8006cbee93ec955a89ab31e0e3ce3204f3736"
+  version = "1.0.3-head.2+m15738813a09db5c8e5b60a19d67d3f9bd38da3a4"
+  release = "github.com/spf13/viper#15738813a09db5c8e5b60a19d67d3f9bd38da3a4"
   dependencies = [
     "github.com/fsnotify/fsnotify 1.4.7",
-    "github.com/hashicorp/hcl 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/hashicorp/hcl/hcl/printer 0.0.0-head.520+mf40e974e75af4e271d97ce0fc917af5898ae7bda",
-    "github.com/magiconair/properties 1.7.7-head.3+m2c9e9502788518c97fe44e8955cd069417ee89df",
-    "github.com/mitchellh/mapstructure 0.0.0-head.168+m00c29f56e2386353d58c599509e8dc3801b0d716",
+    "github.com/hashicorp/hcl 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/hashicorp/hcl/hcl/printer 0.0.0-head.537+mef8a98b0bbce4a65b5aa4c368430a80ddc533168",
+    "github.com/magiconair/properties 1.8.0",
+    "github.com/mitchellh/mapstructure 0.0.0-head.170+mbb74f1db0675b241733089d5a1faa5dd8b0ef57b",
     "github.com/pelletier/go-toml 1.1.1-head.2+m66540cf1fcd2c3aee6f6787dfa32a6ae9a870f12",
-    "github.com/spf13/afero 1.0.3-head.3+ma880a37ed1804d98f64b3b7d58b5e3f8fbf421c4",
+    "github.com/spf13/afero 1.1.0",
     "github.com/spf13/cast 1.2.0",
     "github.com/spf13/jwalterweatherman 0.0.0-head.29+m7c0cea34c8ece3fbeb2b27ab9b59511d360fb394",
-    "github.com/spf13/pflag 1.0.1-head.14+mad68c28ee799163e627e77fcc6e8ecaa866e3535",
+    "github.com/spf13/pflag 1.0.1",
     "gopkg.in/yaml.v2 2.2.1"
   ]
 
@@ -490,39 +489,34 @@ _lockFormatVersion = "0.1.0"
   release = "github.com/toorop/go-dkim#83672023c79e6b352bf9d4908e6c060c7a24323c"
 
 [[packages]]
-  name = "golang.org/x/net/context"
-  version = "0.0.0-head.1276+m6078986fec03a1dcc236c34816c71b0e05018fda"
-  release = "golang.org/x/net#6078986fec03a1dcc236c34816c71b0e05018fda"
-
-[[packages]]
   name = "golang.org/x/net/html"
-  version = "0.0.0-head.1276+m6078986fec03a1dcc236c34816c71b0e05018fda"
-  release = "golang.org/x/net#6078986fec03a1dcc236c34816c71b0e05018fda"
+  version = "0.0.0-head.1296+m8e0cdda24ed423affc8f35c241e5e9b16180338e"
+  release = "golang.org/x/net#8e0cdda24ed423affc8f35c241e5e9b16180338e"
   dependencies = [
-    "golang.org/x/net/html/atom 0.0.0-head.1276+m6078986fec03a1dcc236c34816c71b0e05018fda"
+    "golang.org/x/net/html/atom 0.0.0-head.1296+m8e0cdda24ed423affc8f35c241e5e9b16180338e"
   ]
 
 [[packages]]
   name = "golang.org/x/net/html/atom"
-  version = "0.0.0-head.1276+m6078986fec03a1dcc236c34816c71b0e05018fda"
-  release = "golang.org/x/net#6078986fec03a1dcc236c34816c71b0e05018fda"
+  version = "0.0.0-head.1296+m8e0cdda24ed423affc8f35c241e5e9b16180338e"
+  release = "golang.org/x/net#8e0cdda24ed423affc8f35c241e5e9b16180338e"
 
 [[packages]]
   name = "golang.org/x/sys/unix"
-  version = "0.0.0-head.411+m13d03a9a82fba647c21a0ef8fba44a795d0f0835"
-  release = "golang.org/x/sys#13d03a9a82fba647c21a0ef8fba44a795d0f0835"
+  version = "0.0.0-head.438+m7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
+  release = "golang.org/x/sys#7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
 
 [[packages]]
   name = "golang.org/x/text/transform"
-  version = "0.3.1-head.43+mece95c760240037f89ebcbdd7155ac8cb52e38fa"
-  release = "golang.org/x/text#ece95c760240037f89ebcbdd7155ac8cb52e38fa"
+  version = "0.3.1-head.49+m5c1cf69b5978e5a34c5f9ba09a83e56acc4b7877"
+  release = "golang.org/x/text#5c1cf69b5978e5a34c5f9ba09a83e56acc4b7877"
 
 [[packages]]
   name = "golang.org/x/text/unicode/norm"
-  version = "0.3.1-head.43+mece95c760240037f89ebcbdd7155ac8cb52e38fa"
-  release = "golang.org/x/text#ece95c760240037f89ebcbdd7155ac8cb52e38fa"
+  version = "0.3.1-head.49+m5c1cf69b5978e5a34c5f9ba09a83e56acc4b7877"
+  release = "golang.org/x/text#5c1cf69b5978e5a34c5f9ba09a83e56acc4b7877"
   dependencies = [
-    "golang.org/x/text/transform 0.3.1-head.43+mece95c760240037f89ebcbdd7155ac8cb52e38fa"
+    "golang.org/x/text/transform 0.3.1-head.49+m5c1cf69b5978e5a34c5f9ba09a83e56acc4b7877"
   ]
 
 [[packages]]
