@@ -139,6 +139,8 @@ func (d *deliverer) startWorker(id int) error {
 			fmt.Printf("[%d] Sending %s to %s\n", id, c.ID, m.GetHeader("To"))
 			if err := gomail.Send(sender, m); err != nil {
 				fmt.Printf("[%d] Could not send email: %s\n", id, err)
+				sender.Close() // Replace errored connection
+				sender, _ = configureSender(d.campaign.Config)
 			}
 		}
 	}()
