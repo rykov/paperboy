@@ -115,6 +115,11 @@ func (d *deliverer) close() {
 	}
 }
 
+// Note: gomail doesn't expose a connection reset method,
+// so the only way to clear an errored connection is to
+// disconnect, and start over. Maybe we should explore
+// using an alternative library.
+
 func (d *deliverer) startWorker(id int) error {
 	fmt.Printf("[%d] Starting worker...\n", id)
 	d.waiter.Add(1)
@@ -139,6 +144,11 @@ func (d *deliverer) startWorker(id int) error {
 			fmt.Printf("[%d] Sending %s to %s\n", id, c.ID, m.GetHeader("To"))
 			if err := gomail.Send(sender, m); err != nil {
 				fmt.Printf("[%d] Could not send email: %s\n", id, err)
+				sender.Close() // Replace errored connection
+				sender, err = configureSender(d.campaign.Config)
+				if err != nil {
+					break
+				}
 			}
 		}
 	}()
