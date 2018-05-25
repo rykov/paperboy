@@ -41,6 +41,10 @@ type ConfigFile struct {
 	LayoutDir  string
 	ThemeDir   string
 	ListDir    string
+
+	// Delivery
+	SendRate float32
+	Workers  int
 }
 
 type smtpConfig struct {
@@ -97,6 +101,10 @@ func InitConfig(cfgFile string) {
 	v.SetDefault("layoutDir", "layouts")
 	v.SetDefault("themeDir", "themes")
 	v.SetDefault("listDir", "lists")
+
+	// Delivery workers/rate
+	v.SetDefault("sendRate", 1)
+	v.SetDefault("workers", 3)
 
 	// Prepare for project's config.*
 	v.SetConfigName("config")

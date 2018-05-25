@@ -30,7 +30,15 @@ func SendCampaign(tmplFile, recipientFile string) error {
 	// Capture signals for graceful exit
 	engine.setupSignalTrap()
 
+	// Rate configuration
+	throttle, workers := time.Duration(0), Config.Workers
+	if Config.SendRate > 0 {
+		throttle = time.Duration(1000 / Config.SendRate)
+		throttle = throttle * time.Millisecond
+	}
+
 	// Start queueing emails to keep workers from idling
+	fmt.Printf("Sending an email every %s via %d workers\n", throttle, workers)
 	go func() {
 		for i := range c.Recipients {
 			m := gomail.NewMessage()
@@ -48,14 +56,15 @@ func SendCampaign(tmplFile, recipientFile string) error {
 				break
 			} else {
 				engine.tasks <- m
-				time.Sleep(100 * time.Millisecond)
+				if throttle > 0 {
+					time.Sleep(throttle)
+				}
 			}
 		}
 		engine.close()
 	}()
 
 	// Start delivery workers
-	workers := 10 // TODO: config
 	for i := 0; i < workers; i++ {
 		if err := engine.startWorker(i); err != nil {
 			engine.close()
