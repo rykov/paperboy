@@ -14,10 +14,3 @@ install:
 
 test:
 	go test -race $(LDFLAGS) $(shell go list ./... | grep -v /vendor/)
-
-melody-install: install-melody
-	melody install
-
-install-melody:
-	go get -u github.com/mdy/melody
-	go install github.com/mdy/melody
