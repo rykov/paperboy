@@ -34,8 +34,8 @@ Just run `./paperboy help` and you're [ready to go][quickstart].
 ## Installing from source
 
 You can also build and install Paperboy from source. The only requirement is to
-have a working installation of [Go][] 1.8+ and [Melody][melody] dependency manager.
-With those in place, the following commands will install Paperboy to `$GOPATH/bin`:
+have a working installation of [Go][] 1.11+. With those in place, the following
+commands will install Paperboy to `$GOPATH/bin`:
 
 ```bash
 $ git clone https://github.com/rykov/paperboy.git
@@ -43,15 +43,14 @@ $ cd paperboy
 $ make install
 ```
 
-We use [Melody dependency manager][melody] to install project dependencies, so if
-you get a `melody: No such file or directory` error when running `make install`,
-you can install it by running the following:
+And please make sure `$GOPATH/bin` is in your `$PATH`.
+
+If you receive a `go: modules disabled` error due to your project being inside
+of $GOPATH, you will have to force-enable go modules support:
 
 ```bash
-$ make install-melody
+GO111MODULE=on make install
 ```
-
-And please make sure `$GOPATH/bin` is in your `$PATH`.
 
 ## Contributing to Paperboy
 
@@ -75,7 +74,6 @@ The banner photo is by [Mathyas Kurmann](https://unsplash.com/@mathyaskurmann)
 
 [Go]: https://golang.org/
 [Hugo]: https://gohugo.io/
-[dependencies]: https://github.com/rykov/paperboy/blob/master/Melody.toml
 [quickstart]: https://www.paperboy.email/docs/quick-start/
 [structure]: https://www.paperboy.email/docs/source-structure/
 [releases]: https://github.com/rykov/paperboy/releases
