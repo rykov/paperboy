@@ -1,8 +1,9 @@
 package mail
 
 import (
-	"github.com/spf13/afero"
 	"path/filepath"
+
+	"github.com/spf13/afero"
 )
 
 var (
@@ -26,6 +27,10 @@ func (f *fs) ContentPath(name string) string {
 
 func (f *fs) ListPath(name string) string {
 	return filepath.Join(Config.ListDir, name)
+}
+
+func (f *fs) AttachmentPath(name string) string {
+	return filepath.Join(Config.AttachmentDir, name)
 }
 
 func (f *fs) layoutPath(name string) string {

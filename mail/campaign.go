@@ -82,6 +82,12 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	m.SetHeader("X-Mailer", xMailer)
 	m.SetBody("text/plain", plainBody)
 	m.AddAlternative("text/html", htmlBody)
+
+	// Add attachments
+	for _, att := range ctx.Recipient.Attachments {
+		m.Attach(att)
+	}
+
 	return nil
 }
 
@@ -176,8 +182,11 @@ func parseRecipients(path string) ([]*ctxRecipient, error) {
 
 	out := make([]*ctxRecipient, len(data))
 	for i, rData := range data {
-		r := newRecipient(rData)
-		out[i] = &r
+		r, err := newRecipient(rData)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = r
 	}
 
 	return out, nil

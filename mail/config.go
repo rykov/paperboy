@@ -37,10 +37,11 @@ type ConfigFile struct {
 	DKIM map[string]interface{}
 
 	// Directories
-	ContentDir string
-	LayoutDir  string
-	ThemeDir   string
-	ListDir    string
+	ContentDir    string
+	LayoutDir     string
+	ThemeDir      string
+	ListDir       string
+	AttachmentDir string
 
 	// Delivery
 	SendRate float32
@@ -101,6 +102,7 @@ func InitConfig(cfgFile string) {
 	v.SetDefault("layoutDir", "layouts")
 	v.SetDefault("themeDir", "themes")
 	v.SetDefault("listDir", "lists")
+	v.SetDefault("attachmentDir", "attachments")
 
 	// Delivery workers/rate
 	v.SetDefault("sendRate", 1)

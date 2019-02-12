@@ -2,6 +2,8 @@ package mail
 
 import (
 	"encoding/json"
+	"fmt"
+	"path/filepath"
 	"strings"
 )
 
@@ -24,18 +26,41 @@ func (c *context) toFlatMap() map[string]interface{} {
 
 // Recipient variable
 type ctxRecipient struct {
-	Name   string
-	Email  string
-	Params map[string]interface{}
+	Name        string
+	Email       string
+	Attachments []string
+	Params      map[string]interface{}
 }
 
-func newRecipient(data map[string]interface{}) ctxRecipient {
-	r := ctxRecipient{Params: keysToLower(data)}
+func newRecipient(data map[string]interface{}) (*ctxRecipient, error) {
+	r := &ctxRecipient{Params: keysToLower(data)}
 	r.Email, _ = r.Params["email"].(string)
 	r.Name, _ = r.Params["name"].(string)
+	if att, ok := r.Params["attachments"].([]interface{}); ok {
+		a := make([]string, len(att))
+		for i, v := range att {
+			attName, ok := v.(string)
+			if !ok {
+				continue
+			}
+
+			// Validate if the file exists or not
+			p, err := filepath.Abs(AppFs.AttachmentPath(attName))
+			if err != nil {
+				return nil, err
+			}
+			if !AppFs.isFile(p) {
+				return nil, fmt.Errorf("Cannot find attachment in %s", p)
+			}
+
+			a[i] = p
+		}
+		r.Attachments = a
+	}
 	delete(r.Params, "email")
 	delete(r.Params, "name")
-	return r
+	delete(r.Params, "attachments")
+	return r, nil
 }
 
 // Campaign variable
