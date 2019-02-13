@@ -84,6 +84,8 @@ func InitConfig(cfgFile string) {
 	// From --config
 	if cfgFile != "" {
 		v.SetConfigFile(cfgFile)
+	} else {
+		v.SetConfigName("config")
 	}
 
 	// Tie configuration to ENV
@@ -109,6 +111,5 @@ func InitConfig(cfgFile string) {
 	v.SetDefault("workers", 3)
 
 	// Prepare for project's config.*
-	v.SetConfigName("config")
 	v.AddConfigPath(".")
 }
