@@ -66,7 +66,7 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	}
 
 	// Render content through Markdown and into a layout
-	hLayoutFile := AppFs.layoutPath("_default.html")
+	hLayoutFile := AppFs.layoutPath(ctx.Campaign.LayoutFile)
 	htmlBody, err := renderHTML(content.Bytes(), hLayoutFile, ctx)
 	if err != nil {
 		return err

@@ -65,9 +65,10 @@ func newRecipient(data map[string]interface{}) (*ctxRecipient, error) {
 
 // Campaign variable
 type ctxCampaign struct {
-	From    string
-	Subject string
-	Params  map[string]interface{}
+	From       string
+	Subject    string
+	LayoutFile string
+	Params     map[string]interface{}
 }
 
 func newCampaign(data map[string]interface{}) ctxCampaign {
@@ -76,9 +77,13 @@ func newCampaign(data map[string]interface{}) ctxCampaign {
 	if c.From, _ = c.Params["from"].(string); c.From == "" {
 		c.From = Config.From
 	}
+	if c.LayoutFile, _ = c.Params["layout_file"].(string); c.LayoutFile == "" {
+		c.LayoutFile = "_default.html"
+	}
 
 	delete(c.Params, "subject")
 	delete(c.Params, "from")
+	delete(c.Params, "layout_file")
 	return c
 }
 
