@@ -75,9 +75,15 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	toEmail := cast.ToString(ctx.Recipient.Email)
 	toName := cast.ToString(ctx.Recipient.Name)
 
+	// Respect recipient subject is it exists
+	var sub = cast.ToString(ctx.Campaign.Subject)
+	if ctx.Recipient.Subject != "" {
+		sub = cast.ToString(ctx.Recipient.Subject)
+	}
+
 	m.Reset() // Return to NewMessage state
 	m.SetAddressHeader("To", toEmail, toName)
-	m.SetHeader("Subject", cast.ToString(ctx.Campaign.Subject))
+	m.SetHeader("Subject", sub)
 	m.SetHeader("From", cast.ToString(ctx.Campaign.From))
 	m.SetHeader("X-Mailer", xMailer)
 	m.SetBody("text/plain", plainBody)

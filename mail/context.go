@@ -28,6 +28,7 @@ func (c *context) toFlatMap() map[string]interface{} {
 type ctxRecipient struct {
 	Name        string
 	Email       string
+	Subject     string
 	Attachments []string
 	Params      map[string]interface{}
 }
@@ -36,6 +37,7 @@ func newRecipient(data map[string]interface{}) (*ctxRecipient, error) {
 	r := &ctxRecipient{Params: keysToLower(data)}
 	r.Email, _ = r.Params["email"].(string)
 	r.Name, _ = r.Params["name"].(string)
+	r.Subject, _ = r.Params["subject"].(string)
 	if att, ok := r.Params["attachments"].([]interface{}); ok {
 		a := make([]string, len(att))
 		for i, v := range att {
@@ -59,6 +61,7 @@ func newRecipient(data map[string]interface{}) (*ctxRecipient, error) {
 	}
 	delete(r.Params, "email")
 	delete(r.Params, "name")
+	delete(r.Params, "subject")
 	delete(r.Params, "attachments")
 	return r, nil
 }
