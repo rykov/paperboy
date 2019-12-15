@@ -87,8 +87,10 @@ type deliverer struct {
 }
 
 func (d *deliverer) close() {
-	d.stop = true
-	close(d.tasks)
+	if !d.stop {
+		d.stop = true
+		close(d.tasks)
+	}
 }
 
 func (d *deliverer) setupSignalTrap() {

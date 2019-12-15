@@ -11,10 +11,13 @@ import (
 	"github.com/go-gomail/gomail"
 	"github.com/jtacoma/uritemplates"
 	"github.com/microcosm-cc/bluemonday"
-	"github.com/russross/blackfriday"
 	"github.com/rykov/paperboy/parser"
 	"github.com/spf13/afero"
 	"github.com/spf13/cast"
+
+	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
+	gmparser "github.com/yuin/goldmark/parser"
 )
 
 // Like "User-Agent"
@@ -227,8 +230,28 @@ func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error
 		return "", err
 	}
 
-	unsafe := blackfriday.Run(body)
-	bodyHTML := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+	// Configure Goldmark to match GoHugo and GFM
+	md := goldmark.New(
+		goldmark.WithExtensions(
+			extension.GFM,
+			extension.Footnote,
+			extension.Typographer,
+			extension.DefinitionList,
+		),
+		goldmark.WithParserOptions(
+			gmparser.WithAttribute(),
+			gmparser.WithAutoHeadingID(),
+		),
+	)
+
+	// Render Markdown
+	var buf bytes.Buffer
+	if err := md.Convert(body, &buf); err != nil {
+		return "", err
+	}
+
+	// Sanitize HTML, in case "unsafe" Markdown is enabled
+	bodyHTML := bluemonday.UGCPolicy().SanitizeBytes(buf.Bytes())
 
 	var out bytes.Buffer
 	var layoutCtx tmplContext = *ctx

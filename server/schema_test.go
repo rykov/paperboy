@@ -70,7 +70,7 @@ func TestRenderOneQuery(t *testing.T) {
 	if s := resp.RenderOne.Text; s != "# Hello" {
 		t.Errorf("Invalid text: %s", s)
 	}
-	if s := resp.RenderOne.HTML; !strings.Contains(s, "<h1>Hello</h1>") {
+	if s := resp.RenderOne.HTML; !strings.Contains(s, "<h1 id=\"hello\">Hello</h1>") {
 		t.Errorf("Invalid html: %s", s)
 	}
 
