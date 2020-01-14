@@ -1,6 +1,6 @@
 ![Paperboy](https://www.paperboy.email/images/banner.jpg)
 
-A Fast & Modern Email Campaign Engine built in [Go][].
+A fork of a Fast & Modern Email Campaign Engine built in [Go][].
 
 [Website](https://www.paperboy.email/) |
 [Documentation](https://www.paperboy.email/docs/introduction/) |
