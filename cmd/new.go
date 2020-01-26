@@ -35,6 +35,8 @@ const (
 subject: "{{ .Subject }}"
 date: {{ .Date }}
 ---
+
+Email content goes here (Markdown formatted)
 `
 
 	listTemplate = `---
@@ -57,10 +59,10 @@ unsubscribeURL = "https://example.org/unsubscribe/{Recipient.Email}"
 
 Your first campaign is only a few steps away:
 
-1. Add campaign content with "paperboy new <FILENAME>.md"
-2. Add a recipient list with "paperboy new list <FILENAME>.yaml"
+1. Add campaign content with "{{ .Cmd }} new <FILENAME>.md"
+2. Add a recipient list with "{{ .Cmd }} new list <FILENAME>.yaml"
 3. Configure your SMTP server in config.toml
-3. Send that campaign "paperboy send <CONTENT> <LIST>"
+3. Send that campaign "{{ .Cmd }} send <CONTENT> <LIST>"
 
 Visit https://www.paperboy.email/ to learn more.
 `
@@ -144,7 +146,8 @@ var newProjectCmd = &cobra.Command{
 		}
 
 		// Success message
-		out, _ := renderTemplate(newProjectBanner, map[string]string{"Path": path})
+		vars := map[string]string{"Path": path, "Cmd": filepath.Base(os.Args[0])}
+		out, _ := renderTemplate(newProjectBanner, vars)
 		fmt.Print(out)
 		return nil
 	},
