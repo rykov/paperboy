@@ -10,17 +10,11 @@ import (
 
 	"context"
 	"encoding/json"
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 )
-
-func TestMain(m *testing.M) {
-	config.InitConfig("")
-	os.Exit(m.Run())
-}
 
 func TestRenderOneQuery(t *testing.T) {
 	cfg, fs := newTestConfigAndFs()

@@ -9,6 +9,9 @@ import (
 	"strings"
 )
 
+// Viper config file (populated from cmd)
+var ViperConfigFile string = ""
+
 // BuildInfo (populated from cmd)
 var Build BuildInfo
 
@@ -67,9 +70,6 @@ func (i BuildInfo) String() string {
 	return fmt.Sprintf("v%s %s/%s (%s)", i.Version, runtime.GOOS, runtime.GOARCH, i.BuildDate)
 }
 
-// Configuration configuration :)
-var viperConfig *viper.Viper
-
 // Initalize configuration with passed-in VFS
 func NewConfig(afs afero.Fs) *AConfig {
 	cfg := &AConfig{AppFs: &Fs{Fs: afs}}
@@ -85,7 +85,7 @@ func LoadConfig() (*AConfig, error) {
 
 // Configuration helper for tests, etc
 func LoadConfigTo(cfg *AConfig) error {
-	viperConfig.SetFs(cfg.AppFs)
+	viperConfig := newViperConfig(cfg.AppFs)
 	if err := viperConfig.ReadInConfig(); err != nil {
 		return err
 	}
@@ -93,13 +93,17 @@ func LoadConfigTo(cfg *AConfig) error {
 }
 
 // Initialize configuration with Viper
-func InitConfig(cfgFile string) {
-	viperConfig = viper.New()
-	v := viperConfig
+func newViperConfig(fs afero.Fs) *viper.Viper {
+	v := viper.New()
+
+	// Initialize with real or virtual FS
+	if fs != nil {
+		v.SetFs(fs)
+	}
 
 	// From --config
-	if cfgFile != "" {
-		v.SetConfigFile(cfgFile)
+	if ViperConfigFile != "" {
+		v.SetConfigFile(ViperConfigFile)
 	}
 
 	// Tie configuration to ENV
@@ -126,4 +130,7 @@ func InitConfig(cfgFile string) {
 	// Prepare for project's config.*
 	v.SetConfigName("config")
 	v.AddConfigPath(".")
+
+	// 🐍
+	return v
 }

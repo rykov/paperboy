@@ -42,7 +42,7 @@ func init() {
 	var cfgFile string
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default: ./config.yaml)")
 	cobra.OnInitialize(func() {
-		config.InitConfig(cfgFile)
+		config.ViperConfigFile = cfgFile
 	})
 }
 
