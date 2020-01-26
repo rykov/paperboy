@@ -3,7 +3,9 @@ module github.com/rykov/paperboy
 go 1.13
 
 require (
+	github.com/MichaelMure/go-term-markdown v0.1.2
 	github.com/PuerkitoBio/goquery v1.5.0
+	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/bep/inflect v0.0.0-20160408190323-b896c45f5af9
 	github.com/chris-ramon/douceur v0.2.0

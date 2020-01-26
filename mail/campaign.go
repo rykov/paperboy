@@ -20,6 +20,9 @@ import (
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	gmparser "github.com/yuin/goldmark/parser"
+
+	textMarkdown "github.com/MichaelMure/go-term-markdown"
+	"github.com/acarl005/stripansi"
 )
 
 // Aliases to config
@@ -221,6 +224,10 @@ func renderPlain(body []byte, layoutPath string, ctx *tmplContext) (string, erro
 	if err != nil {
 		return "", err
 	}
+
+	// Render markdown as terminal text
+	body = textMarkdown.Render(string(body), 60, 0)
+	body = []byte(stripansi.Strip(string(body)))
 
 	// Strip all HTML from campaign
 	body = bluemonday.StrictPolicy().SanitizeBytes(body)
