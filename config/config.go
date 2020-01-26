@@ -9,7 +9,7 @@ import (
 )
 
 // Initial blank config
-var Config = &config{}
+var Config = &config{AppFs: &fs{}}
 
 type config struct {
 	// Version/build
@@ -17,6 +17,9 @@ type config struct {
 
 	// From config.toml
 	ConfigFile
+
+	// Afero VFS
+	AppFs *fs
 }
 
 // See https://www.paperboy.email/docs/configuration/
@@ -68,7 +71,7 @@ var viperConfig *viper.Viper
 
 // Load configuration with Viper
 func LoadConfig() error {
-	viperConfig.SetFs(AppFs)
+	viperConfig.SetFs(Config.AppFs)
 	if err := viperConfig.ReadInConfig(); err != nil {
 		return err
 	}

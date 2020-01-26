@@ -10,10 +10,8 @@ var (
 	listExts    = []string{"yaml"}
 )
 
-var AppFs *fs = &fs{}
-
 func SetFs(afs afero.Fs) {
-	AppFs.Fs = afs
+	Config.AppFs.Fs = afs
 }
 
 type fs struct {

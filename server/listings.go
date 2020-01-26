@@ -65,7 +65,7 @@ func (c *List) Name() string {
 
 // Iteration helper to find all files with a certain extension in a directory
 func walkFilesByExt(dir, ext string, walkFn func(path, key string, fi os.FileInfo, err error)) error {
-	return afero.Walk(config.AppFs, dir, func(path string, fi os.FileInfo, err error) error {
+	return afero.Walk(config.Config.AppFs, dir, func(path string, fi os.FileInfo, err error) error {
 		if err != nil || fi.IsDir() {
 			return nil
 		}

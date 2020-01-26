@@ -23,8 +23,8 @@ import (
 )
 
 // Aliases to config
+var AppFs = config.Config.AppFs
 var Config = config.Config
-var AppFs = config.AppFs
 
 // Like "User-Agent"
 const xMailer = "paperboy/0.1.0 (https://paperboy.email)"
