@@ -1,6 +1,8 @@
 package mail
 
 import (
+	log "github.com/sirupsen/logrus"
+
 	"encoding/json"
 	"strings"
 )
@@ -40,14 +42,22 @@ func newRecipient(data map[string]interface{}) ctxRecipient {
 
 // Campaign variable
 type ctxCampaign struct {
-	From    string
-	Subject string
-	Params  map[string]interface{}
+	From   string
+	Params map[string]interface{}
+
+	// Original subject from frontmatter
+	// before templating via renderSubject
+	subject string
+}
+
+func (c ctxCampaign) Subject() string {
+	log.Warnf("{{ .Campaign.Subject }} is deprecated, use {{ .Subject }}")
+	return c.subject
 }
 
 func newCampaign(data map[string]interface{}) ctxCampaign {
 	c := ctxCampaign{Params: keysToLower(data)}
-	c.Subject, _ = c.Params["subject"].(string)
+	c.subject, _ = c.Params["subject"].(string)
 	if c.From, _ = c.Params["from"].(string); c.From == "" {
 		c.From = Config.From
 	}

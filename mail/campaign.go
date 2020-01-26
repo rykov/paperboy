@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	html "html/template"
+	"io"
 	"path/filepath"
 	"text/template"
 
@@ -26,6 +27,7 @@ const xMailer = "paperboy/0.1.0 (https://paperboy.email)"
 // Context for template rendering
 type tmplContext struct {
 	Content html.HTML
+	Subject string
 	context
 }
 
@@ -56,6 +58,13 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 		return err
 	}
 
+	// Render subject first so it's available to templates
+	subject := cast.ToString(ctx.Campaign.subject)
+	ctx.Subject, err = renderSubject(subject, ctx)
+	if err != nil {
+		return err
+	}
+
 	// Render template body with text/template
 	if err := c.bodyTemplate.Execute(&content, ctx); err != nil {
 		return err
@@ -80,7 +89,7 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 
 	m.Reset() // Return to NewMessage state
 	m.SetAddressHeader("To", toEmail, toName)
-	m.SetHeader("Subject", cast.ToString(ctx.Campaign.Subject))
+	m.SetHeader("Subject", cast.ToString(ctx.Subject))
 	m.SetHeader("From", cast.ToString(ctx.Campaign.From))
 	m.SetHeader("X-Mailer", xMailer)
 	m.SetBody("text/plain", plainBody)
@@ -211,11 +220,8 @@ func renderPlain(body []byte, layoutPath string, ctx *tmplContext) (string, erro
 	// Strip all HTML from campaign
 	body = bluemonday.StrictPolicy().SanitizeBytes(body)
 
-	var out bytes.Buffer
-	var layoutCtx tmplContext = *ctx
-	layoutCtx.Content = html.HTML(body)
-	err = tmpl.Execute(&out, layoutCtx)
-	return out.String(), err
+	// Apply text/template
+	return executeTemplate(body, tmpl, ctx)
 }
 
 // TODO: Uses a common text/template renderer, should use html/template instead
@@ -253,14 +259,22 @@ func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error
 	// Sanitize HTML, in case "unsafe" Markdown is enabled
 	bodyHTML := bluemonday.UGCPolicy().SanitizeBytes(buf.Bytes())
 
-	var out bytes.Buffer
-	var layoutCtx tmplContext = *ctx
-	layoutCtx.Content = html.HTML(bodyHTML)
-	if err := tmpl.Execute(&out, layoutCtx); err != nil {
+	// Render inner template
+	tmplOut, err := executeTemplate(bodyHTML, tmpl, ctx)
+	if err != nil {
 		return "", err
 	}
 
-	return inlineStylesheets(layoutPath, out.String())
+	// Inline CSS into elements "style" attribute
+	return inlineStylesheets(layoutPath, tmplOut)
+}
+
+func renderSubject(subject string, ctx *tmplContext) (string, error) {
+	tmpl, err := template.New("subject").Parse(subject)
+	if err != nil {
+		return "", err
+	}
+	return executeTemplate(nil, tmpl, ctx)
 }
 
 func loadTemplate(path string, defaultTemplate string) (string, error) {
@@ -269,4 +283,21 @@ func loadTemplate(path string, defaultTemplate string) (string, error) {
 	}
 	raw, err := afero.ReadFile(AppFs, path)
 	return string(raw), err
+}
+
+type Template interface {
+	Execute(wr io.Writer, data interface{}) error
+}
+
+// Execute template with common template context (works for text or HTML)
+// Context is reused (serially) for all the templates, so please clean up
+func executeTemplate(body []byte, tmpl Template, ctx *tmplContext) (string, error) {
+	if body != nil {
+		ctx.Content = html.HTML(body)
+	}
+
+	var out bytes.Buffer
+	err := tmpl.Execute(&out, ctx)
+	ctx.Content = html.HTML("")
+	return out.String(), err
 }
