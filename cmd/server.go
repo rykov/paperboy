@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/rykov/paperboy/mail"
+	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/server"
 	"github.com/spf13/cobra"
 
@@ -14,7 +14,7 @@ var serverCmd = &cobra.Command{
 	Short: "Launch a preview server for emails",
 	Long:  `A longer description...`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := mail.LoadConfig(); err != nil {
+		if err := config.LoadConfig(); err != nil {
 			return err
 		}
 		return startAPIServer()

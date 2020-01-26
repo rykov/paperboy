@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/jordan-wright/email"
+	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/mail"
 
 	"bytes"
@@ -86,7 +87,7 @@ func (r *Resolver) PaperboyInfo(ctx context.Context) *paperboyInfo {
 }
 
 type paperboyInfo struct {
-	b mail.BuildInfo
+	b config.BuildInfo
 }
 
 func (i *paperboyInfo) Version() string {

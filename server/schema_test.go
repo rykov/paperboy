@@ -4,6 +4,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/graph-gophers/graphql-go"
 	"github.com/jordan-wright/email"
+	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
@@ -18,17 +19,17 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	mail.InitConfig("")
-	mail.SetFs(afero.NewMemMapFs())
+	config.InitConfig("")
+	config.SetFs(afero.NewMemMapFs())
 
 	// FIXME: Viper's config loading from non-global
 	// instance is broken, need to file an issue
-	viper.SetFs(mail.AppFs)
+	viper.SetFs(config.AppFs)
 
 	// Write and load fake configuration
 	cPath, _ := filepath.Abs("./config.toml")
-	afero.WriteFile(mail.AppFs, cPath, []byte(""), 0644)
-	if err := mail.LoadConfig(); err != nil {
+	afero.WriteFile(config.AppFs, cPath, []byte(""), 0644)
+	if err := config.LoadConfig(); err != nil {
 		panic(err)
 	}
 
@@ -36,7 +37,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestRenderOneQuery(t *testing.T) {
-	var fs = mail.AppFs
+	var fs = config.AppFs
 	afero.WriteFile(fs, fs.ContentPath("c1.md"), []byte("# Hello"), 0644)
 	afero.WriteFile(fs, fs.ListPath("r1.yaml"), []byte(`---
 - email: ex@example.org

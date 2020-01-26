@@ -1,4 +1,4 @@
-package mail
+package config
 
 import (
 	"github.com/spf13/viper"
@@ -9,7 +9,7 @@ import (
 )
 
 // Initial blank config
-var Config = config{}
+var Config = &config{}
 
 type config struct {
 	// Version/build
@@ -30,7 +30,7 @@ type ConfigFile struct {
 	UnsubscribeURL string
 
 	// Delivery
-	SMTP   smtpConfig
+	SMTP   SMTPConfig
 	DryRun bool
 
 	// Validation
@@ -47,7 +47,7 @@ type ConfigFile struct {
 	Workers  int
 }
 
-type smtpConfig struct {
+type SMTPConfig struct {
 	URL  string
 	User string
 	Pass string

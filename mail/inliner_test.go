@@ -1,7 +1,9 @@
 package mail
 
 import (
+	"github.com/rykov/paperboy/config"
 	"github.com/spf13/afero"
+
 	"os"
 	"path/filepath"
 	"reflect"
@@ -10,7 +12,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	SetFs(afero.NewMemMapFs())
+	config.SetFs(afero.NewMemMapFs())
 	os.Exit(m.Run())
 }
 

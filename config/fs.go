@@ -1,4 +1,4 @@
-package mail
+package config
 
 import (
 	"github.com/spf13/afero"
@@ -10,10 +10,10 @@ var (
 	listExts    = []string{"yaml"}
 )
 
-var AppFs *fs
+var AppFs *fs = &fs{}
 
 func SetFs(afs afero.Fs) {
-	AppFs = &fs{afs}
+	AppFs.Fs = afs
 }
 
 type fs struct {
@@ -28,7 +28,7 @@ func (f *fs) ListPath(name string) string {
 	return filepath.Join(Config.ListDir, name)
 }
 
-func (f *fs) layoutPath(name string) string {
+func (f *fs) LayoutPath(name string) string {
 	p := []string{filepath.Join(Config.LayoutDir, name)}
 	if t := Config.Theme; t != "" {
 		p = append(p, filepath.Join(Config.ThemeDir, t, p[0]))
@@ -36,12 +36,12 @@ func (f *fs) layoutPath(name string) string {
 	return f.findFileWithExtension(p, []string{})
 }
 
-func (f *fs) findContentPath(name string) string {
+func (f *fs) FindContentPath(name string) string {
 	paths := []string{f.ContentPath(name)}
 	return f.findFileWithExtension(paths, contentExts)
 }
 
-func (f *fs) findListPath(name string) string {
+func (f *fs) FindListPath(name string) string {
 	paths := []string{f.ListPath(name)}
 	return f.findFileWithExtension(paths, listExts)
 }
@@ -50,11 +50,11 @@ func (f *fs) findListPath(name string) string {
    and return the first one it finds that exists */
 func (f *fs) findFileWithExtension(paths, exts []string) string {
 	for _, p := range paths {
-		if f.isFile(p) {
+		if f.IsFile(p) {
 			return p
 		}
 		for _, e := range exts {
-			if pe := p + "." + e; f.isFile(pe) {
+			if pe := p + "." + e; f.IsFile(pe) {
 				return pe
 			}
 		}
@@ -62,7 +62,7 @@ func (f *fs) findFileWithExtension(paths, exts []string) string {
 	return ""
 }
 
-func (f *fs) isFile(path string) bool {
+func (f *fs) IsFile(path string) bool {
 	s, err := f.Stat(path)
 	return err == nil && !s.IsDir()
 }

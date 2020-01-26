@@ -12,6 +12,7 @@ import (
 	"github.com/go-gomail/gomail"
 	"github.com/jtacoma/uritemplates"
 	"github.com/microcosm-cc/bluemonday"
+	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/parser"
 	"github.com/spf13/afero"
 	"github.com/spf13/cast"
@@ -20,6 +21,10 @@ import (
 	"github.com/yuin/goldmark/extension"
 	gmparser "github.com/yuin/goldmark/parser"
 )
+
+// Aliases to config
+var Config = config.Config
+var AppFs = config.AppFs
 
 // Like "User-Agent"
 const xMailer = "paperboy/0.1.0 (https://paperboy.email)"
@@ -71,14 +76,14 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	}
 
 	// Render plain content into a layout (no Markdown)
-	tLayoutFile := AppFs.layoutPath("_default.text")
+	tLayoutFile := AppFs.LayoutPath("_default.text")
 	plainBody, err := renderPlain(content.Bytes(), tLayoutFile, ctx)
 	if err != nil {
 		return err
 	}
 
 	// Render content through Markdown and into a layout
-	hLayoutFile := AppFs.layoutPath("_default.html")
+	hLayoutFile := AppFs.LayoutPath("_default.html")
 	htmlBody, err := renderHTML(content.Bytes(), hLayoutFile, ctx)
 	if err != nil {
 		return err
@@ -120,8 +125,8 @@ func (c *Campaign) templateContextFor(i int) (*tmplContext, error) {
 
 func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 	// Translate IDs to files
-	tmplFile := AppFs.findContentPath(tmplID)
-	listFile := AppFs.findListPath(listID)
+	tmplFile := AppFs.FindContentPath(tmplID)
+	listFile := AppFs.FindListPath(listID)
 
 	// Load up template with frontmatter
 	email, err := parseTemplate(tmplFile)
@@ -278,7 +283,7 @@ func renderSubject(subject string, ctx *tmplContext) (string, error) {
 }
 
 func loadTemplate(path string, defaultTemplate string) (string, error) {
-	if path == "" || !AppFs.isFile(path) {
+	if path == "" || !AppFs.IsFile(path) {
 		return defaultTemplate, nil
 	}
 	raw, err := afero.ReadFile(AppFs, path)

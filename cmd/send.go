@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/cobra"
 )
@@ -12,7 +13,7 @@ var sendCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := mail.LoadConfig(); err != nil {
+		if err := config.LoadConfig(); err != nil {
 			return err
 		}
 

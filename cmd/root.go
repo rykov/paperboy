@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/rykov/paperboy/mail"
+	"github.com/rykov/paperboy/config"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -23,9 +23,9 @@ to quickly create a Cobra application.`,
 
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute(build mail.BuildInfo) {
-	mail.SetFs(afero.NewOsFs())
-	mail.Config.Build = build
+func Execute(build config.BuildInfo) {
+	config.SetFs(afero.NewOsFs())
+	config.Config.Build = build
 	RootCmd.AddCommand(newCmd)
 	RootCmd.AddCommand(sendCmd)
 	RootCmd.AddCommand(serverCmd)
@@ -42,7 +42,7 @@ func init() {
 	var cfgFile string
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default: ./config.yaml)")
 	cobra.OnInitialize(func() {
-		mail.InitConfig(cfgFile)
+		config.InitConfig(cfgFile)
 	})
 }
 

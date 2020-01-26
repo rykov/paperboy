@@ -15,7 +15,7 @@
 package main
 
 import "github.com/rykov/paperboy/cmd"
-import "github.com/rykov/paperboy/mail"
+import "github.com/rykov/paperboy/config"
 
 // Populated by goreleaser
 var (
@@ -25,5 +25,5 @@ var (
 
 // Commands managed by Cobra
 func main() {
-	cmd.Execute(mail.BuildInfo{version, date})
+	cmd.Execute(config.BuildInfo{version, date})
 }

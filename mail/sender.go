@@ -1,6 +1,9 @@
 package mail
 
 import (
+	"github.com/go-gomail/gomail"
+	"github.com/rykov/paperboy/config"
+
 	"fmt"
 	"io"
 	"net/url"
@@ -9,8 +12,6 @@ import (
 	"strconv"
 	"sync"
 	"time"
-
-	"github.com/go-gomail/gomail"
 )
 
 func SendCampaign(tmplFile, recipientFile string) error {
@@ -162,7 +163,7 @@ func configureSender() (sender gomail.SendCloser, err error) {
 	return sender, nil
 }
 
-func smtpDialer(cfg *smtpConfig) (*gomail.Dialer, error) {
+func smtpDialer(cfg *config.SMTPConfig) (*gomail.Dialer, error) {
 	// Dial to SMTP server (with SSL)
 	surl, err := url.Parse(cfg.URL)
 	if err != nil {
