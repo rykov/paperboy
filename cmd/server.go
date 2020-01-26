@@ -14,15 +14,16 @@ var serverCmd = &cobra.Command{
 	Short: "Launch a preview server for emails",
 	Long:  `A longer description...`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := config.LoadConfig(); err != nil {
+		cfg, err := config.LoadConfig()
+		if err != nil {
 			return err
 		}
-		return startAPIServer()
+		return startAPIServer(cfg)
 	},
 }
 
-func startAPIServer() error {
+func startAPIServer(cfg *config.AConfig) error {
 	fmt.Println("API server listening at :8080 ... ")
-	http.Handle("/graphql", server.GraphQLHandler(config.Config))
+	http.Handle("/graphql", server.GraphQLHandler(cfg))
 	return http.ListenAndServe(":8080", nil)
 }

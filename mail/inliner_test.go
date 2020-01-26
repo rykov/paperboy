@@ -4,17 +4,11 @@ import (
 	"github.com/rykov/paperboy/config"
 	"github.com/spf13/afero"
 
-	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
 )
-
-func TestMain(m *testing.M) {
-	config.SetFs(afero.NewMemMapFs())
-	os.Exit(m.Run())
-}
 
 func NewTestConfig(t *testing.T) *config.AConfig {
 	cfg := config.NewConfig(afero.NewMemMapFs())

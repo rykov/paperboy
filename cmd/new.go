@@ -71,7 +71,8 @@ var newCmd = &cobra.Command{
 	Short: "Create new content for a campaign",
 	Long:  `A longer description...`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := config.LoadConfig(); err != nil {
+		cfg, err := config.LoadConfig()
+		if err != nil {
 			return err
 		}
 
@@ -79,8 +80,8 @@ var newCmd = &cobra.Command{
 			return newUserError("please provide a path")
 		}
 
-		path := config.Config.AppFs.ContentPath(args[0])
-		return writeTemplate(path, contentTemplate, map[string]string{
+		path := cfg.AppFs.ContentPath(args[0])
+		return writeTemplate(cfg.AppFs, path, contentTemplate, map[string]string{
 			"Date":    time.Now().Format(time.RFC3339),
 			"Subject": pathToName(path),
 		}, false)
@@ -92,7 +93,8 @@ var newListCmd = &cobra.Command{
 	Short: "Create a new recipient list",
 	Long:  `A longer description...`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := config.LoadConfig(); err != nil {
+		cfg, err := config.LoadConfig()
+		if err != nil {
 			return err
 		}
 
@@ -100,8 +102,8 @@ var newListCmd = &cobra.Command{
 			return newUserError("please provide a path")
 		}
 
-		path := config.Config.AppFs.ListPath(args[0])
-		return writeTemplate(path, listTemplate, nil, false)
+		path := cfg.AppFs.ListPath(args[0])
+		return writeTemplate(cfg.AppFs, path, listTemplate, nil, false)
 	},
 }
 
@@ -120,9 +122,12 @@ var newProjectCmd = &cobra.Command{
 			return err
 		}
 
+		// Initalize new configuration
+		cfg := config.NewConfig(afero.NewOsFs())
+
 		// Check for config to see if a project exists
 		configPath := filepath.Join(path, "config.toml")
-		if ok, _ := afero.Exists(config.Config.AppFs, configPath); ok {
+		if ok, _ := afero.Exists(cfg.AppFs, configPath); ok {
 			return newUserError("%s already contains a project", path)
 		}
 
@@ -134,7 +139,7 @@ var newProjectCmd = &cobra.Command{
 		}
 
 		// Write basic configuration
-		if err := writeTemplate(configPath, configTemplate, nil, true); err != nil {
+		if err := writeTemplate(cfg.AppFs, configPath, configTemplate, nil, true); err != nil {
 			return err
 		}
 
@@ -150,8 +155,8 @@ func pathToName(path string) string {
 	return inflect.Humanize(strings.TrimSuffix(name, ext))
 }
 
-func writeTemplate(path, content string, data interface{}, quiet bool) error {
-	if ex, err := afero.Exists(config.Config.AppFs, path); ex {
+func writeTemplate(fs *config.Fs, path, content string, data interface{}, quiet bool) error {
+	if ex, err := afero.Exists(fs, path); ex {
 		return newUserError("%s already exists", path)
 	} else if err != nil {
 		return err
@@ -162,7 +167,7 @@ func writeTemplate(path, content string, data interface{}, quiet bool) error {
 		return err
 	}
 
-	err = afero.WriteFile(config.Config.AppFs, path, out.Bytes(), 0644)
+	err = afero.WriteFile(fs, path, out.Bytes(), 0644)
 	if err == nil && !quiet {
 		fmt.Println(path, "created")
 	}

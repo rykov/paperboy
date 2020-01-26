@@ -20,7 +20,8 @@ var previewCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := config.LoadConfig(); err != nil {
+		cfg, err := config.LoadConfig()
+		if err != nil {
 			return err
 		}
 
@@ -34,7 +35,7 @@ var previewCmd = &cobra.Command{
 			openPreview(args[0], args[1])
 		}()
 
-		return startAPIServer()
+		return startAPIServer(cfg)
 	},
 }
 

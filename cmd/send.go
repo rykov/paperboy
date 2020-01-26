@@ -13,7 +13,8 @@ var sendCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := config.LoadConfig(); err != nil {
+		cfg, err := config.LoadConfig()
+		if err != nil {
 			return err
 		}
 
@@ -21,6 +22,6 @@ var sendCmd = &cobra.Command{
 			return newUserError("Invalid arguments")
 		}
 
-		return mail.SendCampaign(config.Config, args[0], args[1])
+		return mail.SendCampaign(cfg, args[0], args[1])
 	},
 }

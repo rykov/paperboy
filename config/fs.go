@@ -10,10 +10,6 @@ var (
 	listExts    = []string{"yaml"}
 )
 
-func SetFs(afs afero.Fs) {
-	Config.AppFs.Fs = afs
-}
-
 type Fs struct {
 	Config *AConfig
 	afero.Fs

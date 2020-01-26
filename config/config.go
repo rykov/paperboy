@@ -9,15 +9,8 @@ import (
 	"strings"
 )
 
-// Initial blank config
-var Config = NewConfig(nil)
-
-// Initalize configuration with passed-in VFS
-func NewConfig(afs afero.Fs) *AConfig {
-	cfg := &AConfig{AppFs: &Fs{Fs: afs}}
-	cfg.AppFs.Config = cfg
-	return cfg
-}
+// BuildInfo (populated from cmd)
+var Build BuildInfo
 
 type AConfig struct {
 	// Version/build
@@ -77,11 +70,20 @@ func (i BuildInfo) String() string {
 // Configuration configuration :)
 var viperConfig *viper.Viper
 
-// Load configuration with Viper
-func LoadConfig() error {
-	return LoadConfigTo(Config)
+// Initalize configuration with passed-in VFS
+func NewConfig(afs afero.Fs) *AConfig {
+	cfg := &AConfig{AppFs: &Fs{Fs: afs}}
+	cfg.AppFs.Config = cfg
+	return cfg
 }
 
+// Standard configuration with Viper
+func LoadConfig() (*AConfig, error) {
+	cfg := NewConfig(afero.NewOsFs()) // Config
+	return cfg, LoadConfigTo(cfg)
+}
+
+// Configuration helper for tests, etc
 func LoadConfigTo(cfg *AConfig) error {
 	viperConfig.SetFs(cfg.AppFs)
 	if err := viperConfig.ReadInConfig(); err != nil {
