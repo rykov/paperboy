@@ -23,6 +23,6 @@ var serverCmd = &cobra.Command{
 
 func startAPIServer() error {
 	fmt.Println("API server listening at :8080 ... ")
-	http.Handle("/graphql", server.GraphQLHandler())
+	http.Handle("/graphql", server.GraphQLHandler(config.Config))
 	return http.ListenAndServe(":8080", nil)
 }

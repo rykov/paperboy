@@ -14,9 +14,9 @@ import (
 	"time"
 )
 
-func SendCampaign(tmplFile, recipientFile string) error {
+func SendCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
 	// Load up template and recipientswith frontmatter
-	c, err := LoadCampaign(tmplFile, recipientFile)
+	c, err := LoadCampaign(cfg, tmplFile, recipientFile)
 	if err != nil {
 		return err
 	}
@@ -32,9 +32,9 @@ func SendCampaign(tmplFile, recipientFile string) error {
 	engine.setupSignalTrap()
 
 	// Rate configuration
-	throttle, workers := time.Duration(0), Config.Workers
-	if Config.SendRate > 0 {
-		throttle = time.Duration(1000 / Config.SendRate)
+	throttle, workers := time.Duration(0), cfg.Workers
+	if cfg.SendRate > 0 {
+		throttle = time.Duration(1000 / cfg.SendRate)
 		throttle = throttle * time.Millisecond
 	}
 
@@ -111,7 +111,7 @@ func (d *deliverer) startWorker(id int) error {
 	d.waiter.Add(1)
 
 	// Dial up the sender
-	sender, err := configureSender()
+	sender, err := configureSender(d.campaign.Config)
 	if err != nil {
 		return err
 	}
@@ -137,12 +137,12 @@ func (d *deliverer) startWorker(id int) error {
 	return nil
 }
 
-func configureSender() (sender gomail.SendCloser, err error) {
+func configureSender(cfg *config.AConfig) (sender gomail.SendCloser, err error) {
 	// Dial up SMTP or dryRun
-	if Config.DryRun {
+	if cfg.DryRun {
 		sender = &dryRunSender{}
 	} else {
-		dialer, err := smtpDialer(&Config.SMTP)
+		dialer, err := smtpDialer(&cfg.SMTP)
 		if err != nil {
 			return nil, err
 		}
@@ -153,8 +153,8 @@ func configureSender() (sender gomail.SendCloser, err error) {
 	}
 
 	// DKIM-signing sender, if configuration is present
-	if cfg := Config.DKIM; len(cfg) > 0 {
-		sender, err = SendCloserWithDKIM(sender, cfg)
+	if dCfg := cfg.DKIM; len(dCfg) > 0 {
+		sender, err = SendCloserWithDKIM(cfg.AppFs, sender, dCfg)
 		if err != nil {
 			return nil, err
 		}

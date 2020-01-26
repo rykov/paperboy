@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 
 	"fmt"
@@ -9,9 +10,16 @@ import (
 )
 
 // Initial blank config
-var Config = &config{AppFs: &fs{}}
+var Config = NewConfig(nil)
 
-type config struct {
+// Initalize configuration with passed-in VFS
+func NewConfig(afs afero.Fs) *AConfig {
+	cfg := &AConfig{AppFs: &Fs{Fs: afs}}
+	cfg.AppFs.Config = cfg
+	return cfg
+}
+
+type AConfig struct {
 	// Version/build
 	Build BuildInfo
 
@@ -19,7 +27,7 @@ type config struct {
 	ConfigFile
 
 	// Afero VFS
-	AppFs *fs
+	AppFs *Fs
 }
 
 // See https://www.paperboy.email/docs/configuration/
@@ -71,11 +79,15 @@ var viperConfig *viper.Viper
 
 // Load configuration with Viper
 func LoadConfig() error {
-	viperConfig.SetFs(Config.AppFs)
+	return LoadConfigTo(Config)
+}
+
+func LoadConfigTo(cfg *AConfig) error {
+	viperConfig.SetFs(cfg.AppFs)
 	if err := viperConfig.ReadInConfig(); err != nil {
 		return err
 	}
-	return viperConfig.Unmarshal(&Config.ConfigFile)
+	return viperConfig.Unmarshal(&cfg.ConfigFile)
 }
 
 // Initialize configuration with Viper

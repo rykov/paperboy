@@ -5,7 +5,6 @@ import (
 	"github.com/graph-gophers/graphql-go"
 	"github.com/jordan-wright/email"
 	"github.com/rykov/paperboy/config"
-	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 
@@ -92,7 +91,7 @@ func TestRenderOneQuery(t *testing.T) {
 }
 
 func TestPaperboyInfoQuery(t *testing.T) {
-	expected := &mail.Config.Build
+	expected := &config.Config.Build
 	expected.BuildDate = time.Now().String()
 	expected.Version = "1.2.3"
 

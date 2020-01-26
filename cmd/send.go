@@ -21,6 +21,6 @@ var sendCmd = &cobra.Command{
 			return newUserError("Invalid arguments")
 		}
 
-		return mail.SendCampaign(args[0], args[1])
+		return mail.SendCampaign(config.Config, args[0], args[1])
 	},
 }

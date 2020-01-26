@@ -1,6 +1,7 @@
 package mail
 
 import (
+	"github.com/rykov/paperboy/config"
 	log "github.com/sirupsen/logrus"
 
 	"encoding/json"
@@ -55,11 +56,11 @@ func (c ctxCampaign) Subject() string {
 	return c.subject
 }
 
-func newCampaign(data map[string]interface{}) ctxCampaign {
+func newCampaign(cfg *config.AConfig, data map[string]interface{}) ctxCampaign {
 	c := ctxCampaign{Params: keysToLower(data)}
 	c.subject, _ = c.Params["subject"].(string)
 	if c.From, _ = c.Params["from"].(string); c.From == "" {
-		c.From = Config.From
+		c.From = cfg.From
 	}
 
 	delete(c.Params, "subject")

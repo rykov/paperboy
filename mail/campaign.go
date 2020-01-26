@@ -22,10 +22,6 @@ import (
 	gmparser "github.com/yuin/goldmark/parser"
 )
 
-// Aliases to config
-var AppFs = config.Config.AppFs
-var Config = config.Config
-
 // Like "User-Agent"
 const xMailer = "paperboy/0.1.0 (https://paperboy.email)"
 
@@ -47,6 +43,9 @@ type Campaign struct {
 	// Internal templates
 	bodyTemplate           *template.Template
 	unsubscribeURLTemplate *uritemplates.UriTemplate
+
+	// Configuration for everything else
+	Config *config.AConfig
 }
 
 func (c *Campaign) MessageFor(i int) (*gomail.Message, error) {
@@ -56,6 +55,7 @@ func (c *Campaign) MessageFor(i int) (*gomail.Message, error) {
 
 func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	var content bytes.Buffer
+	appFs := c.Config.AppFs
 
 	// Get template context
 	ctx, err := c.templateContextFor(i)
@@ -76,15 +76,15 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	}
 
 	// Render plain content into a layout (no Markdown)
-	tLayoutFile := AppFs.LayoutPath("_default.text")
-	plainBody, err := renderPlain(content.Bytes(), tLayoutFile, ctx)
+	tLayoutFile := appFs.LayoutPath("_default.text")
+	plainBody, err := c.renderPlain(content.Bytes(), tLayoutFile, ctx)
 	if err != nil {
 		return err
 	}
 
 	// Render content through Markdown and into a layout
-	hLayoutFile := AppFs.LayoutPath("_default.html")
-	htmlBody, err := renderHTML(content.Bytes(), hLayoutFile, ctx)
+	hLayoutFile := appFs.LayoutPath("_default.html")
+	htmlBody, err := c.renderHTML(content.Bytes(), hLayoutFile, ctx)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (c *Campaign) templateContextFor(i int) (*tmplContext, error) {
 	ctx := context{
 		Recipient: *c.Recipients[i],
 		Campaign:  *c.EmailMeta,
-		Address:   Config.Address,
+		Address:   c.Config.Address,
 	}
 
 	// Populate UnsubscribeURL using uritemplates
@@ -123,13 +123,13 @@ func (c *Campaign) templateContextFor(i int) (*tmplContext, error) {
 	return &tmplContext{context: ctx}, nil
 }
 
-func LoadCampaign(tmplID, listID string) (*Campaign, error) {
+func LoadCampaign(cfg *config.AConfig, tmplID, listID string) (*Campaign, error) {
 	// Translate IDs to files
-	tmplFile := AppFs.FindContentPath(tmplID)
-	listFile := AppFs.FindListPath(listID)
+	tmplFile := cfg.AppFs.FindContentPath(tmplID)
+	listFile := cfg.AppFs.FindListPath(listID)
 
 	// Load up template with frontmatter
-	email, err := parseTemplate(tmplFile)
+	email, err := parseTemplate(cfg.AppFs, tmplFile)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 	var fMeta ctxCampaign
 	if meta, err := email.Metadata(); err == nil && meta != nil {
 		metadata, _ := meta.(map[string]interface{})
-		fMeta = newCampaign(metadata)
+		fMeta = newCampaign(cfg, metadata)
 	}
 
 	// Parse email template for processing
@@ -148,7 +148,7 @@ func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 	}
 
 	// Load up recipient metadata
-	who, err := parseRecipients(listFile)
+	who, err := parseRecipients(cfg.AppFs, listFile)
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 
 	// Prepare URI template for UnsubscribeURL
 	var unsubscribe *uritemplates.UriTemplate
-	if uu := Config.UnsubscribeURL; uu != "" {
+	if uu := cfg.UnsubscribeURL; uu != "" {
 		unsubscribe, err = uritemplates.Parse(uu)
 		if err != nil {
 			return nil, err
@@ -172,16 +172,18 @@ func LoadCampaign(tmplID, listID string) (*Campaign, error) {
 		Recipients: who,
 		EmailMeta:  &fMeta,
 		Email:      email,
-		ID:         id,
+
+		ID:     id,
+		Config: cfg,
 
 		unsubscribeURLTemplate: unsubscribe,
 		bodyTemplate:           tmpl,
 	}, nil
 }
 
-func parseRecipients(path string) ([]*ctxRecipient, error) {
+func parseRecipients(appFs *config.Fs, path string) ([]*ctxRecipient, error) {
 	fmt.Println("Loading recipients", path)
-	raw, err := afero.ReadFile(AppFs, path)
+	raw, err := afero.ReadFile(appFs, path)
 	if err != nil {
 		return nil, err
 	}
@@ -200,9 +202,9 @@ func parseRecipients(path string) ([]*ctxRecipient, error) {
 	return out, nil
 }
 
-func parseTemplate(path string) (parser.Email, error) {
+func parseTemplate(appFs *config.Fs, path string) (parser.Email, error) {
 	fmt.Println("Loading template", path)
-	file, err := AppFs.Open(path)
+	file, err := appFs.Open(path)
 	if err != nil {
 		return nil, err
 	}
@@ -211,8 +213,8 @@ func parseTemplate(path string) (parser.Email, error) {
 	return parser.ReadFrom(file)
 }
 
-func renderPlain(body []byte, layoutPath string, ctx *tmplContext) (string, error) {
-	layout, err := loadTemplate(layoutPath, "{{ .Content }}")
+func (c *Campaign) renderPlain(body []byte, layoutPath string, ctx *tmplContext) (string, error) {
+	layout, err := loadTemplate(c.Config.AppFs, layoutPath, "{{ .Content }}")
 	if err != nil {
 		return "", err
 	}
@@ -230,8 +232,8 @@ func renderPlain(body []byte, layoutPath string, ctx *tmplContext) (string, erro
 }
 
 // TODO: Uses a common text/template renderer, should use html/template instead
-func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error) {
-	layout, err := loadTemplate(layoutPath, "<html><body>{{ .Content }}</body></html>")
+func (c *Campaign) renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error) {
+	layout, err := loadTemplate(c.Config.AppFs, layoutPath, "<html><body>{{ .Content }}</body></html>")
 	if err != nil {
 		return "", err
 	}
@@ -271,7 +273,7 @@ func renderHTML(body []byte, layoutPath string, ctx *tmplContext) (string, error
 	}
 
 	// Inline CSS into elements "style" attribute
-	return inlineStylesheets(layoutPath, tmplOut)
+	return c.inlineStylesheets(layoutPath, tmplOut)
 }
 
 func renderSubject(subject string, ctx *tmplContext) (string, error) {
@@ -282,11 +284,11 @@ func renderSubject(subject string, ctx *tmplContext) (string, error) {
 	return executeTemplate(nil, tmpl, ctx)
 }
 
-func loadTemplate(path string, defaultTemplate string) (string, error) {
-	if path == "" || !AppFs.IsFile(path) {
+func loadTemplate(appFs *config.Fs, path string, defaultTemplate string) (string, error) {
+	if path == "" || !appFs.IsFile(path) {
 		return defaultTemplate, nil
 	}
-	raw, err := afero.ReadFile(AppFs, path)
+	raw, err := afero.ReadFile(appFs, path)
 	return string(raw), err
 }
 

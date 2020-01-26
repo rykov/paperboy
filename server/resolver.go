@@ -83,7 +83,7 @@ func (e *renderedEmail) HTML() *string {
 // ===== Build/Version information =====
 
 func (r *Resolver) PaperboyInfo(ctx context.Context) *paperboyInfo {
-	return &paperboyInfo{mail.Config.Build}
+	return &paperboyInfo{config.Config.Build}
 }
 
 type paperboyInfo struct {

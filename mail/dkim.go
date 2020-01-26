@@ -6,12 +6,13 @@ import (
 	"io"
 
 	"github.com/go-gomail/gomail"
+	"github.com/rykov/paperboy/config"
 	"github.com/spf13/afero"
 	"github.com/spf13/cast"
 	"github.com/toorop/go-dkim"
 )
 
-func SendCloserWithDKIM(sc gomail.SendCloser, conf map[string]interface{}) (gomail.SendCloser, error) {
+func SendCloserWithDKIM(appFs *config.Fs, sc gomail.SendCloser, conf map[string]interface{}) (gomail.SendCloser, error) {
 	dOpts := dkim.NewSigOptions()
 
 	// Required: Read private key from keyFile
@@ -20,7 +21,7 @@ func SendCloserWithDKIM(sc gomail.SendCloser, conf map[string]interface{}) (goma
 		return nil, fmt.Errorf("DKIM requires a keyFile")
 	}
 
-	keyBytes, err := afero.ReadFile(AppFs, keyFile)
+	keyBytes, err := afero.ReadFile(appFs, keyFile)
 	if err != nil {
 		return nil, err
 	}
