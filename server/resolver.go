@@ -14,7 +14,9 @@ import (
 
 // ===== ROOT QUERY RESOLVER ======
 
-type Resolver struct{}
+type Resolver struct {
+	cfg *config.AConfig
+}
 
 func (r *Resolver) RenderOne(ctx context.Context, args *RenderOneArgs) (*renderedEmail, error) {
 	i := strings.LastIndex(args.Recipient, "#")
@@ -28,7 +30,7 @@ func (r *Resolver) RenderOne(ctx context.Context, args *RenderOneArgs) (*rendere
 		return nil, fmt.Errorf("Specifier should be a number: %s", recIDstr)
 	}
 
-	campaign, err := mail.LoadCampaign(args.Content, listID)
+	campaign, err := mail.LoadCampaign(r.cfg, args.Content, listID)
 	if err != nil {
 		return nil, err
 	} else if len(campaign.Recipients) == 0 {
@@ -83,7 +85,7 @@ func (e *renderedEmail) HTML() *string {
 // ===== Build/Version information =====
 
 func (r *Resolver) PaperboyInfo(ctx context.Context) *paperboyInfo {
-	return &paperboyInfo{config.Config.Build}
+	return &paperboyInfo{r.cfg.Build}
 }
 
 type paperboyInfo struct {

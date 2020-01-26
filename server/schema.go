@@ -4,11 +4,12 @@ import (
 	"github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
 	"github.com/rs/cors"
+	"github.com/rykov/paperboy/config"
 
 	"net/http"
 )
 
-func GraphQLHandler() http.Handler {
+func GraphQLHandler(cfg *config.AConfig) http.Handler {
 	// CORS allows central preview
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{
@@ -18,7 +19,7 @@ func GraphQLHandler() http.Handler {
 		},
 	})
 
-	schema := graphql.MustParseSchema(schemaText, &Resolver{})
+	schema := graphql.MustParseSchema(schemaText, &Resolver{cfg: cfg})
 	return c.Handler(&relay.Handler{Schema: schema})
 }
 

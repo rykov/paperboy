@@ -19,30 +19,17 @@ import (
 
 func TestMain(m *testing.M) {
 	config.InitConfig("")
-	config.SetFs(afero.NewMemMapFs())
-
-	// FIXME: Viper's config loading from non-global
-	// instance is broken, need to file an issue
-	viper.SetFs(config.Config.AppFs)
-
-	// Write and load fake configuration
-	cPath, _ := filepath.Abs("./config.toml")
-	afero.WriteFile(config.Config.AppFs, cPath, []byte(""), 0644)
-	if err := config.LoadConfig(); err != nil {
-		panic(err)
-	}
-
 	os.Exit(m.Run())
 }
 
 func TestRenderOneQuery(t *testing.T) {
-	var fs = config.Config.AppFs
+	cfg, fs := newTestConfigAndFs()
 	afero.WriteFile(fs, fs.ContentPath("c1.md"), []byte("# Hello"), 0644)
 	afero.WriteFile(fs, fs.ListPath("r1.yaml"), []byte(`---
 - email: ex@example.org
 `), 0644)
 
-	response := issueGraphQLQuery(`{
+	response := issueGraphQLQuery(cfg, `{
 		renderOne(content: "c1", recipient: "r1#0") {
 			rawMessage
 			text
@@ -91,11 +78,13 @@ func TestRenderOneQuery(t *testing.T) {
 }
 
 func TestPaperboyInfoQuery(t *testing.T) {
-	expected := &config.Config.Build
+	cfg, _ := newTestConfigAndFs()
+
+	expected := &cfg.Build
 	expected.BuildDate = time.Now().String()
 	expected.Version = "1.2.3"
 
-	response := issueGraphQLQuery(`{
+	response := issueGraphQLQuery(cfg, `{
 		paperboyInfo {
 			version
 			buildDate
@@ -126,7 +115,24 @@ func TestPaperboyInfoQuery(t *testing.T) {
 	}
 }
 
-func issueGraphQLQuery(query string) *graphql.Response {
-	schema := graphql.MustParseSchema(schemaText, &Resolver{})
+func issueGraphQLQuery(cfg *config.AConfig, query string) *graphql.Response {
+	schema := graphql.MustParseSchema(schemaText, &Resolver{cfg: cfg})
 	return schema.Exec(context.TODO(), query, "", map[string]interface{}{})
+}
+
+func newTestConfigAndFs() (*config.AConfig, *config.Fs) {
+	cfg := config.NewConfig(afero.NewMemMapFs())
+
+	// FIXME: Viper's config loading from non-global
+	// instance is broken, need to file an issue
+	viper.SetFs(cfg.AppFs)
+
+	// Write and load fake configuration
+	cPath, _ := filepath.Abs("./config.toml")
+	afero.WriteFile(cfg.AppFs, cPath, []byte(""), 0644)
+	if err := config.LoadConfigTo(cfg); err != nil {
+		panic(err)
+	}
+
+	return cfg, cfg.AppFs
 }

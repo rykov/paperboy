@@ -19,7 +19,7 @@ func (r *Resolver) Campaigns(ctx context.Context) ([]*Campaign, error) {
 			param:   key,
 		})
 	}
-	err := walkFilesByExt(config.Config.ContentDir, ".md", walkFn)
+	err := walkFilesByExt(r.cfg.AppFs, r.cfg.ContentDir, ".md", walkFn)
 	return campaigns, err
 }
 
@@ -46,7 +46,7 @@ func (r *Resolver) Lists(ctx context.Context) ([]*List, error) {
 			param: key,
 		})
 	}
-	err := walkFilesByExt(config.Config.ListDir, ".yaml", walkFn)
+	err := walkFilesByExt(r.cfg.AppFs, r.cfg.ListDir, ".yaml", walkFn)
 	return lists, err
 }
 
@@ -64,8 +64,8 @@ func (c *List) Name() string {
 }
 
 // Iteration helper to find all files with a certain extension in a directory
-func walkFilesByExt(dir, ext string, walkFn func(path, key string, fi os.FileInfo, err error)) error {
-	return afero.Walk(config.Config.AppFs, dir, func(path string, fi os.FileInfo, err error) error {
+func walkFilesByExt(fs *config.Fs, dir, ext string, walkFn func(path, key string, fi os.FileInfo, err error)) error {
+	return afero.Walk(fs, dir, func(path string, fi os.FileInfo, err error) error {
 		if err != nil || fi.IsDir() {
 			return nil
 		}

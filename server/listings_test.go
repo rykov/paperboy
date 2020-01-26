@@ -4,7 +4,6 @@ import (
 	//"github.com/google/go-cmp/cmp"
 	//"github.com/jordan-wright/email"
 	//"github.com/graph-gophers/graphql-go"
-	"github.com/rykov/paperboy/config"
 	"github.com/spf13/afero"
 
 	//"context"
@@ -21,12 +20,12 @@ type gqlCampaign struct {
 }
 
 func TestCampaignsQuery(t *testing.T) {
-	fs := config.Config.AppFs
+	cfg, fs := newTestConfigAndFs()
 	afero.WriteFile(fs, fs.ContentPath("c1.md"), []byte("# Hello"), 0644)
 	afero.WriteFile(fs, fs.ContentPath("sub/c2.md"), []byte("# World"), 0644)
 	afero.WriteFile(fs, fs.ContentPath("skip.txt"), []byte("Not-content"), 0644)
 
-	response := issueGraphQLQuery(`{
+	response := issueGraphQLQuery(cfg, `{
 		campaigns {
 			subject
 			param
@@ -71,12 +70,12 @@ type gqlList struct {
 }
 
 func TestListsQuery(t *testing.T) {
-	fs := config.Config.AppFs
+	cfg, fs := newTestConfigAndFs()
 	afero.WriteFile(fs, fs.ListPath("l1.yaml"), []byte("---"), 0644)
 	afero.WriteFile(fs, fs.ListPath("sub/l2.yaml"), []byte("---"), 0644)
 	afero.WriteFile(fs, fs.ListPath("skip.txt"), []byte("Not-content"), 0644)
 
-	response := issueGraphQLQuery(`{
+	response := issueGraphQLQuery(cfg, `{
 		lists {
 			name
 			param
