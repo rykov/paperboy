@@ -4,6 +4,11 @@ import (
 	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/cobra"
+
+	"context"
+	"fmt"
+	"os"
+	"os/signal"
 )
 
 var sendCmd = &cobra.Command{
@@ -22,6 +27,23 @@ var sendCmd = &cobra.Command{
 			return newUserError("Invalid arguments")
 		}
 
-		return mail.LoadAndSendCampaign(cfg, args[0], args[1])
+		ctx := withSignalTrap(context.Background())
+		return mail.LoadAndSendCampaign(ctx, cfg, args[0], args[1])
 	},
+}
+
+func withSignalTrap(ctx context.Context) context.Context {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		for sig := range c {
+			fmt.Printf("Stopping on %s\n", sig)
+			cancel()
+			return
+		}
+	}()
+
+	return ctx
 }

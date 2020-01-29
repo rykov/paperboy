@@ -59,6 +59,6 @@ func (r *Resolver) SendBeta(ctx context.Context, args SendOneArgs) (int32, error
 
 	// Populate recipients and fire away
 	campaign.Recipients = recipients
-	err = mail.SendCampaign(r.cfg, campaign)
+	err = mail.SendCampaign(ctx, r.cfg, campaign)
 	return int32(len(recipients)), err
 }

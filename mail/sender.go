@@ -4,28 +4,28 @@ import (
 	"github.com/go-gomail/gomail"
 	"github.com/rykov/paperboy/config"
 
+	c "context" // FIXME
+
 	"bytes"
 	"fmt"
 	"io"
 	"net/url"
-	"os"
-	"os/signal"
 	"strconv"
 	"sync"
 	"time"
 )
 
-func LoadAndSendCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
+func LoadAndSendCampaign(ctx c.Context, cfg *config.AConfig, tmplFile, recipientFile string) error {
 	// Load up template and recipientswith frontmatter
 	c, err := LoadCampaign(cfg, tmplFile, recipientFile)
 	if err != nil {
 		return err
 	}
 
-	return SendCampaign(cfg, c)
+	return SendCampaign(ctx, cfg, c)
 }
 
-func SendCampaign(cfg *config.AConfig, c *Campaign) error {
+func SendCampaign(ctx c.Context, cfg *config.AConfig, c *Campaign) error {
 	// Initialize deliverer
 	engine := &deliverer{
 		tasks:    make(chan *gomail.Message, 10),
@@ -33,8 +33,13 @@ func SendCampaign(cfg *config.AConfig, c *Campaign) error {
 		campaign: c,
 	}
 
-	// Capture signals for graceful exit
-	engine.setupSignalTrap()
+	// Capture context cancellation for graceful exit
+	if done := ctx.Done(); done != nil {
+		go func() {
+			<-done
+			engine.close()
+		}()
+	}
 
 	// Rate configuration
 	throttle, workers := time.Duration(0), cfg.Workers
@@ -108,18 +113,6 @@ func (d *deliverer) close() {
 		d.stop = true
 		close(d.tasks)
 	}
-}
-
-func (d *deliverer) setupSignalTrap() {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		for sig := range c {
-			fmt.Printf("Stopping on %s\n", sig)
-			d.stop = true
-			return
-		}
-	}()
 }
 
 func (d *deliverer) startWorker(id int) error {
