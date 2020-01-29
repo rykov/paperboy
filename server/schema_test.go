@@ -110,8 +110,12 @@ func TestPaperboyInfoQuery(t *testing.T) {
 }
 
 func issueGraphQLQuery(cfg *config.AConfig, query string) *graphql.Response {
+	return issueGraphQL(cfg, query, map[string]interface{}{})
+}
+
+func issueGraphQL(cfg *config.AConfig, query string, vars map[string]interface{}) *graphql.Response {
 	schema := graphql.MustParseSchema(schemaText, &Resolver{cfg: cfg})
-	return schema.Exec(context.TODO(), query, "", map[string]interface{}{})
+	return schema.Exec(context.TODO(), query, "", vars)
 }
 
 func newTestConfigAndFs() (*config.AConfig, *config.Fs) {
@@ -127,6 +131,11 @@ func newTestConfigAndFs() (*config.AConfig, *config.Fs) {
 	if err := config.LoadConfigTo(cfg); err != nil {
 		panic(err)
 	}
+
+	// Ensure that sender is in dryRun mode for testing
+	cfg.From = "sender@example.com"
+	cfg.DryRun = true
+	cfg.Workers = 1
 
 	return cfg, cfg.AppFs
 }

@@ -9,6 +9,7 @@
 - Campaign subject is now also a template
 - Removed usage of global configurations
 - Preview UI proxying & config
+- Added sendBeta API
 
 ## 0.2.0 (25 Jul 2017)
 

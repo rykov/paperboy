@@ -4,6 +4,7 @@ import (
 	"github.com/go-gomail/gomail"
 	"github.com/rykov/paperboy/config"
 
+	"bytes"
 	"fmt"
 	"io"
 	"net/url"
@@ -14,13 +15,17 @@ import (
 	"time"
 )
 
-func SendCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
+func LoadAndSendCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
 	// Load up template and recipientswith frontmatter
 	c, err := LoadCampaign(cfg, tmplFile, recipientFile)
 	if err != nil {
 		return err
 	}
 
+	return SendCampaign(cfg, c)
+}
+
+func SendCampaign(cfg *config.AConfig, c *Campaign) error {
 	// Initialize deliverer
 	engine := &deliverer{
 		tasks:    make(chan *gomail.Message, 10),
@@ -70,7 +75,13 @@ func SendCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
 		if err := engine.startWorker(i); err != nil {
 			engine.close()
 			return err
-		} else if engine.stop {
+		}
+
+		// HACK: Avoid race warning
+		engine.stopL.Lock()
+		stopped := engine.stop
+		engine.stopL.Unlock()
+		if stopped {
 			break
 		}
 	}
@@ -84,10 +95,15 @@ type deliverer struct {
 	campaign *Campaign
 	waiter   *sync.WaitGroup
 	tasks    chan *gomail.Message
-	stop     bool
+
+	stop  bool
+	stopL sync.Mutex
 }
 
 func (d *deliverer) close() {
+	d.stopL.Lock()
+	defer d.stopL.Unlock()
+
 	if !d.stop {
 		d.stop = true
 		close(d.tasks)
@@ -140,7 +156,7 @@ func (d *deliverer) startWorker(id int) error {
 func configureSender(cfg *config.AConfig) (sender gomail.SendCloser, err error) {
 	// Dial up SMTP or dryRun
 	if cfg.DryRun {
-		sender = &dryRunSender{}
+		sender = &dryRunSender{Mails: [][]byte{}}
 	} else {
 		dialer, err := smtpDialer(&cfg.SMTP)
 		if err != nil {
@@ -208,15 +224,26 @@ func smtpDialer(cfg *config.SMTPConfig) (*gomail.Dialer, error) {
 	return d, nil
 }
 
-type dryRunSender struct{}
+// Allow testing deliveries in libraries via dryRun
+var LastRunResult *dryRunSender
+
+type dryRunSender struct {
+	lock  sync.Mutex
+	Mails [][]byte
+}
 
 func (s *dryRunSender) Send(from string, to []string, msg io.WriterTo) error {
-	fmt.Printf("------> MAIL FROM: %s TO: %+v\n", from, to)
-	msg.WriteTo(os.Stdout)
-	fmt.Println("------> /MAIL")
+	s.lock.Lock()
+	defer s.lock.Unlock()
+
+	var buf bytes.Buffer
+	msg.WriteTo(&buf)
+
+	s.Mails = append(s.Mails, buf.Bytes())
 	return nil
 }
 
 func (s *dryRunSender) Close() error {
+	LastRunResult = s
 	return nil
 }

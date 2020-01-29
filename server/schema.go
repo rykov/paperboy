@@ -26,6 +26,7 @@ func GraphQLHandler(cfg *config.AConfig) http.Handler {
 const schemaText = `
   schema {
     query: Query
+    mutation: Mutation
   }
 
   # The Query type, represents all of the entry points
@@ -34,6 +35,11 @@ const schemaText = `
     lists: [RecipientList]!
     renderOne(content: String!, recipient: String!): RenderedEmail
     paperboyInfo: PaperboyInfo!
+  }
+
+  # All mutations
+  type Mutation {
+    sendBeta(content: String!, recipients: [RecipientInput!]!): Int!
   }
 
   # A single rendered email information
@@ -62,6 +68,15 @@ const schemaText = `
     name: String!
   }
 
+  # Recipient metadata
+  input RecipientInput {
+    email: String!
+    params: JSON
+  }
+
   # HTML (same as string)
   scalar HTML
+
+  # JSON (freeform object)
+  scalar JSON
 `

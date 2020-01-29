@@ -22,6 +22,9 @@ import (
 	gmparser "github.com/yuin/goldmark/parser"
 )
 
+// Shared empty parameters
+var emptyParams = map[string]interface{}{}
+
 // Like "User-Agent"
 const xMailer = "paperboy/0.1.0 (https://paperboy.email)"
 
@@ -123,12 +126,29 @@ func (c *Campaign) templateContextFor(i int) (*tmplContext, error) {
 	return &tmplContext{context: ctx}, nil
 }
 
+// Populate campaign and a receipient list into a Campaign object
 func LoadCampaign(cfg *config.AConfig, tmplID, listID string) (*Campaign, error) {
-	// Translate IDs to files
-	tmplFile := cfg.AppFs.FindContentPath(tmplID)
-	listFile := cfg.AppFs.FindListPath(listID)
+	campaign, err := LoadContent(cfg, tmplID)
+	if err != nil {
+		return nil, err
+	}
 
+	// Load up recipient metadata
+	listFile := cfg.AppFs.FindListPath(listID)
+	who, err := parseRecipients(cfg.AppFs, listFile)
+	if err != nil {
+		return nil, err
+	}
+
+	// Populate recipients, and fire!
+	campaign.Recipients = who
+	return campaign, nil
+}
+
+// Populate campaign content and metadata from templateID into Campaign object
+func LoadContent(cfg *config.AConfig, tmplID string) (*Campaign, error) {
 	// Load up template with frontmatter
+	tmplFile := cfg.AppFs.FindContentPath(tmplID)
 	email, err := parseTemplate(cfg.AppFs, tmplFile)
 	if err != nil {
 		return nil, err
@@ -139,16 +159,12 @@ func LoadCampaign(cfg *config.AConfig, tmplID, listID string) (*Campaign, error)
 	if meta, err := email.Metadata(); err == nil && meta != nil {
 		metadata, _ := meta.(map[string]interface{})
 		fMeta = newCampaign(cfg, metadata)
+	} else { // Just defaults
+		fMeta = newCampaign(cfg, emptyParams)
 	}
 
 	// Parse email template for processing
 	tmpl, err := template.New(tmplID).Parse(string(email.Content()))
-	if err != nil {
-		return nil, err
-	}
-
-	// Load up recipient metadata
-	who, err := parseRecipients(cfg.AppFs, listFile)
 	if err != nil {
 		return nil, err
 	}
@@ -169,9 +185,8 @@ func LoadCampaign(cfg *config.AConfig, tmplID, listID string) (*Campaign, error)
 	}
 
 	return &Campaign{
-		Recipients: who,
-		EmailMeta:  &fMeta,
-		Email:      email,
+		EmailMeta: &fMeta,
+		Email:     email,
 
 		ID:     id,
 		Config: cfg,
@@ -193,7 +208,12 @@ func parseRecipients(appFs *config.Fs, path string) ([]*ctxRecipient, error) {
 		return nil, err
 	}
 
+	return MapsToRecipients(data)
+}
+
+func MapsToRecipients(data []map[string]interface{}) ([]*ctxRecipient, error) {
 	out := make([]*ctxRecipient, len(data))
+
 	for i, rData := range data {
 		r := newRecipient(rData)
 		out[i] = &r
