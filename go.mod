@@ -7,6 +7,7 @@ require (
 	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/bep/inflect v0.0.0-20160408190323-b896c45f5af9
+	github.com/cenkalti/backoff/v4 v4.0.0
 	github.com/chris-ramon/douceur v0.2.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df

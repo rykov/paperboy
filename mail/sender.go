@@ -1,6 +1,7 @@
 package mail
 
 import (
+	"github.com/cenkalti/backoff/v4"
 	"github.com/go-gomail/gomail"
 	"github.com/rykov/paperboy/config"
 
@@ -150,14 +151,24 @@ func configureSender(cfg *config.AConfig) (sender gomail.SendCloser, err error) 
 	if cfg.DryRun {
 		sender = &dryRunSender{Mails: [][]byte{}}
 	} else {
+
+		// Initialize dialer from configuration
 		dialer, err := smtpDialer(&cfg.SMTP)
 		if err != nil {
 			return nil, err
 		}
-		sender, err = dialer.Dial()
-		if err != nil {
-			return nil, err
-		}
+
+		// Configure to retry 3 times every second
+		var retryCfg backoff.BackOff = backoff.NewConstantBackOff(time.Second)
+		retryCfg = backoff.WithMaxRetries(retryCfg, 3)
+
+		// Dial SMTP with retries and logging
+		err = backoff.RetryNotify(func() error {
+			sender, err = dialer.Dial()
+			return err
+		}, retryCfg, func(err error, _ time.Duration) {
+			fmt.Println("Retrying SMTP dial on error: ", err)
+		})
 	}
 
 	// DKIM-signing sender, if configuration is present
