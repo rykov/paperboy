@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-// Context for campaign
-type context struct {
+// Shared variables for URL and template rendering
+type renderContext struct {
 	Recipient ctxRecipient
 	Campaign  ctxCampaign
 
@@ -18,7 +18,7 @@ type context struct {
 }
 
 // Convert to a map (for uritemplates and debugging)
-func (c *context) toFlatMap() map[string]interface{} {
+func (c *renderContext) toFlatMap() map[string]interface{} {
 	out := map[string]interface{}{}
 	b, _ := json.Marshal(c)
 	json.Unmarshal(b, &out)

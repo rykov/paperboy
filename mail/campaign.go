@@ -32,7 +32,7 @@ const xMailer = "paperboy/0.1.0 (https://paperboy.email)"
 type tmplContext struct {
 	Content html.HTML
 	Subject string
-	context
+	renderContext
 }
 
 type Campaign struct {
@@ -107,7 +107,7 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 
 // Create template context for messages and layouts
 func (c *Campaign) templateContextFor(i int) (*tmplContext, error) {
-	ctx := context{
+	ctx := renderContext{
 		Recipient: *c.Recipients[i],
 		Campaign:  *c.EmailMeta,
 		Address:   c.Config.Address,
@@ -123,7 +123,7 @@ func (c *Campaign) templateContextFor(i int) (*tmplContext, error) {
 	}
 
 	// Render template body with text/template
-	return &tmplContext{context: ctx}, nil
+	return &tmplContext{renderContext: ctx}, nil
 }
 
 // Populate campaign and a receipient list into a Campaign object

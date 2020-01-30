@@ -4,9 +4,8 @@ import (
 	"github.com/go-gomail/gomail"
 	"github.com/rykov/paperboy/config"
 
-	c "context" // FIXME
-
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"net/url"
@@ -15,7 +14,7 @@ import (
 	"time"
 )
 
-func LoadAndSendCampaign(ctx c.Context, cfg *config.AConfig, tmplFile, recipientFile string) error {
+func LoadAndSendCampaign(ctx context.Context, cfg *config.AConfig, tmplFile, recipientFile string) error {
 	// Load up template and recipientswith frontmatter
 	c, err := LoadCampaign(cfg, tmplFile, recipientFile)
 	if err != nil {
@@ -25,7 +24,7 @@ func LoadAndSendCampaign(ctx c.Context, cfg *config.AConfig, tmplFile, recipient
 	return SendCampaign(ctx, cfg, c)
 }
 
-func SendCampaign(ctx c.Context, cfg *config.AConfig, c *Campaign) error {
+func SendCampaign(ctx context.Context, cfg *config.AConfig, c *Campaign) error {
 	// Initialize deliverer
 	engine := &deliverer{
 		tasks:    make(chan *gomail.Message, 10),
