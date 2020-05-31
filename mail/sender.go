@@ -197,6 +197,8 @@ func smtpDialer(cfg *config.SMTPConfig) (*gomail.Dialer, error) {
 	surl, err := url.Parse(cfg.URL)
 	if err != nil {
 		return nil, err
+	} else if surl.Host == "" {
+		return nil, fmt.Errorf("Invalid SMTP URL: %s", surl)
 	}
 
 	// Populate/validate scheme

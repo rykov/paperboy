@@ -82,6 +82,8 @@ func TestSmtpDialerFailure(t *testing.T) {
 	}{
 		{"%gh&%ij", "invalid URL"},
 		{"https://host", "Invalid SMTP URL scheme"},
+		{"host.port:99", "Invalid SMTP URL: host.port:99"},
+		{"only.host", "Invalid SMTP URL: only.host"},
 	}
 
 	for _, c := range cases {
