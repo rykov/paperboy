@@ -17,6 +17,7 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/cast"
 
+	"github.com/charmbracelet/glamour"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	gmparser "github.com/yuin/goldmark/parser"
@@ -239,7 +240,24 @@ func (c *Campaign) renderPlain(body []byte, layoutPath string, ctx *tmplContext)
 		return "", err
 	}
 
+	// Parse template first to bail on errors, if broken
 	tmpl, err := template.New(filepath.Base(layoutPath)).Parse(layout)
+	if err != nil {
+		return "", err
+	}
+
+	// For markdown, we use notty style with tweaks
+	style := *glamour.DefaultStyles["notty"]
+	style.Link.BlockPrefix = "("
+	style.Link.BlockSuffix = ")"
+
+	// Render markdown to plain text
+	r, err := glamour.NewTermRenderer(glamour.WithStyles(style), glamour.WithWordWrap(-1))
+	if err != nil {
+		return "", err
+	}
+
+	body, err = r.RenderBytes(body)
 	if err != nil {
 		return "", err
 	}

@@ -48,11 +48,11 @@ func TestRenderOneQuery(t *testing.T) {
 	}
 
 	// Text extracted text and html parts
-	if s := resp.RenderOne.Text; s != "# Hello" {
-		t.Errorf("Invalid text: %s", s)
+	if s := resp.RenderOne.Text; s != "\r\n  # Hello\r\n\r\n" {
+		t.Errorf("Invalid text: %q", s)
 	}
 	if s := resp.RenderOne.HTML; !strings.Contains(s, "<h1 id=\"hello\">Hello</h1>") {
-		t.Errorf("Invalid html: %s", s)
+		t.Errorf("Invalid html: %q", s)
 	}
 
 	// Parse raw message to verify all the fields
