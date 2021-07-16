@@ -1,14 +1,42 @@
 project_name: Paperboy
+
 builds:
   - binary: paperboy
     goos:
       - darwin
       - linux
+      - windows
     goarch:
       - amd64
       - 386
-archive:
-  replacements:
-    386: 32bit
-    amd64: 64bit
-    darwin: macOS
+      - arm
+      - arm64
+    goarm:
+      - 7
+    ignore:
+      - goos: darwin
+        goarch: 386
+
+archives:
+  - format: tar.gz
+    wrap_in_directory: false
+    format_overrides:
+      - goos: windows
+        format: zip
+    replacements:
+      amd64: 64bit
+      386: 32bit
+      arm: ARM
+      arm64: ARM64
+      darwin: macOS
+      linux: Linux
+      windows: Windows
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  skip: true
+
+release:
+  draft: true

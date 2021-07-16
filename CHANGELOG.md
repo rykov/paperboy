@@ -1,7 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.2.1 (16 Jul 2021)
 
+- Reset connection on failure
+- Render text emails with Glamour
 - Use multiple workers for delivery
 - Configurable # of workers and send rate
 - Switched dependecy management to Go Modules
