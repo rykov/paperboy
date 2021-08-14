@@ -1,0 +1,7 @@
+query renderOne($content: String!, $recipient: String!) {
+  renderOne(content: $content, recipient: $recipient) {
+  	rawMessage
+    html
+    text
+  }
+}

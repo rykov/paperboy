@@ -1,0 +1,49 @@
+<Partials::Nav @subtitle="Preview" />
+
+<div class="my-3 px-4">
+  <div class="sm:hidden">
+    <label for="tabs" class="sr-only">Select a tab</label>
+    <select id="tabs" name="tabs" class="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md">
+      {{#each this.allFormats as |f| }}
+        {{#if (eq this.selectedFormat f)}}
+          <option selected>{{ f.id }}</option>
+        {{ else }}
+          <option>{{ f.id }}</option>
+        {{/if}}
+      {{/each}}
+    </select>
+  </div>
+  <div class="hidden sm:block">
+    <nav class="flex space-x-4" aria-label="Tabs">
+      {{#each this.allFormats as |f| }}
+        {{#if (eq this.selectedFormat f)}}
+          <a href="#" class="bg-indigo-100 text-indigo-700 px-3 py-2 font-medium text-sm rounded-md" aria-current="page">
+            {{ f.id }}
+          </a>
+        {{ else }}
+          <a href="#" class="text-gray-500 hover:text-gray-700 px-3 py-2 font-medium text-sm rounded-md"
+            {{ on 'click' (fn (mut this.selectedFormat) f) }}
+          >
+            {{ f.id }}
+          </a>
+        {{/if}}
+      {{/each}}    
+    </nav>
+  </div>
+</div>
+
+{{#if (eq this.selectedFormat.id "html") }}
+  <HtmlPreview @html={{ this.model.html }} />
+{{/if}}
+
+{{#if (eq this.selectedFormat.id "text") }}
+  <div class="mx-auto max-w-4xl p-2 border-2 mt-5">
+  	<pre class="overflow-x-auto">{{ this.model.text }}</pre>
+  </div>
+{{/if}}
+
+{{#if (eq this.selectedFormat.id "raw") }}
+  <div class="mx-auto max-w-4xl p-2 border-2 mt-5">
+    <pre class="overflow-x-auto">{{ this.model.rawMessage }}</pre>
+  </div>
+{{/if}}

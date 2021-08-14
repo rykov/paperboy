@@ -1,0 +1,22 @@
+<div class="py-10">
+  {{#if (or @header (has-block 'header'))}}
+    <header>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {{#if (has-block 'header') }}
+          {{ yield to='header' }}
+        {{ else }}
+          {{ @header }}
+        {{/if}}
+      </div>
+    </header>
+  {{/if}}
+  <main>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      {{#if (has-block) }}
+        {{ yield }}
+      {{ else }}
+        {{ @text }}
+      {{/if}}
+    </div>
+  </main>
+</div>

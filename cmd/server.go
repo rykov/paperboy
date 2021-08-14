@@ -3,9 +3,12 @@ package cmd
 import (
 	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/server"
+	"github.com/rykov/paperboy/ui"
 	"github.com/spf13/cobra"
 
+	"errors"
 	"fmt"
+	"io/fs"
 	"net"
 	"net/http"
 )
@@ -49,6 +52,9 @@ func startAPIServer(cfg *config.AConfig, configFn configFunc) error {
 		}
 	}
 
+	// The rest is handled by UI
+	mux.Handle("/", uiHandler())
+
 	// Initialize server
 	s := &http.Server{Handler: mux}
 	s.Addr = fmt.Sprintf(":%d", serverLocalPort)
@@ -68,4 +74,18 @@ func startAPIServer(cfg *config.AConfig, configFn configFunc) error {
 	// Serve server API
 	fmt.Printf("API server listening at %s ... \n", s.Addr)
 	return s.Serve(l)
+}
+
+// Handle paths for Browser UI
+func uiHandler() http.Handler {
+	httpFS := http.FS(ui.FS)
+	handler := http.FileServer(httpFS)
+
+	// All paths unrecognized by FS are rewritten to /index.html
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if _, err := httpFS.Open(r.URL.Path); errors.Is(err, fs.ErrNotExist) {
+			r.URL.Path = "/" // Let the UI sort out the rest
+		}
+		handler.ServeHTTP(w, r)
+	})
 }

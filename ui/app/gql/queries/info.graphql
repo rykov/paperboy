@@ -1,0 +1,6 @@
+query paperboyInfo {
+  paperboyInfo {
+    buildDate
+    version
+  }
+}

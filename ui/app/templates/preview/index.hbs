@@ -1,0 +1,55 @@
+<Partials::Nav @subtitle="Preview" />
+
+<Partials::WithHeader>
+
+  <:header>
+    <h1 class="text-3xl font-bold leading-tight text-gray-900">
+      Welcome to <a href="https://paperboy.email" target="_blank" rel="noopener noreferrer">Paperboy</a> campaign preview.
+    </h1>
+    <small>Use this interface to preview your campaigns, and more.</small>
+  </:header>
+
+  <:default>
+    <article class="prose mt-8">
+      <h3>Preview campaign from Paperboy CLI</h3>
+      <p>To get started, please go to a <a href="https://www.paperboy.email/docs/source-structure/">project directory</a>
+      and run this CLI command:
+      <pre>paperboy preview [campaign] [list]</pre></p>
+
+      <h3 class="pt-4">Manually select campaign</h3>
+      <table class="table-auto border-collapse">
+        <thead>
+        <tr>
+          <th>Campaign ID</th>
+          <th>List ID</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>
+          <Input
+            aria-label="Campaign ID"
+            @value={{ this.campaignID }}
+            placeholder="See content directory"
+            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+          /></td>
+          <td>
+           <Input
+            aria-label="List ID"
+            @value={{ this.listID }}
+            placeholder="See lists directory"
+            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md" />
+          </td>
+          <td>
+            <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" {{ on 'click' this.startPreview }}>
+              Preview
+            </button>
+        </td>
+        </tr>
+        </tbody>
+      </table>
+    </article>
+  </:default>
+
+</Partials::WithHeader>

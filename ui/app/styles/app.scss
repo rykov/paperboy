@@ -1,0 +1,19 @@
+@charset "UTF-8";
+
+// TailwindCSS
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Preview iframe
+iframe {
+	width:100%; overflow:hidden;
+	border:0px; margin:0px; padding:0px;
+}
+
+// Code segments in md-card's
+md-card {
+  pre, code { background-color: #EEE; }
+  code { position:relative; top:-1px; padding: 1px 4px 2px; }
+  pre { padding: 10px 20px; }
+}
