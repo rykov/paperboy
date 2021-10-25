@@ -1,3 +1,4 @@
+//go:build !withUI
 // +build !withUI
 
 package ui
