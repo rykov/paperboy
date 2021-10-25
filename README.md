@@ -8,7 +8,7 @@ A Fast & Modern Email Campaign Engine built in [Go][].
 
 [![Version Badge](https://badge.fury.io/mdy/github.com%2Frykov%2Fpaperboy.svg)](https://melody.sh/github.com/rykov/paperboy)
 [![Go Report Card](https://goreportcard.com/badge/github.com/rykov/paperboy)](https://goreportcard.com/report/github.com/rykov/paperboy)
-[![Build Status](https://github.com/rykov/paperboy/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/paperboy/actions/workflows/tests.yml)
+[![Build Status](https://github.com/rykov/paperboy/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/paperboy/actions/workflows/tests.yml)
 
 ## Overview
 
