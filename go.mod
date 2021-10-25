@@ -15,7 +15,7 @@ require (
 	github.com/graph-gophers/graphql-go v1.1.0
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/jtacoma/uritemplates v1.0.0
-	github.com/microcosm-cc/bluemonday v1.0.15
+	github.com/microcosm-cc/bluemonday v1.0.16
 	github.com/pelletier/go-toml v1.9.3
 	github.com/rs/cors v1.8.0
 	github.com/sirupsen/logrus v1.8.1
