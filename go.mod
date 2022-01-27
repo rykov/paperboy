@@ -11,7 +11,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/google/go-cmp v0.5.6
-	github.com/graph-gophers/graphql-go v1.2.0
+	github.com/graph-gophers/graphql-go v1.3.0
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/jtacoma/uritemplates v1.0.0
 	github.com/microcosm-cc/bluemonday v1.0.16
