@@ -24,7 +24,7 @@ require (
 	github.com/spf13/viper v1.12.0
 	github.com/toorop/go-dkim v0.0.0-20201103131630-e1cd1a0a5208
 	github.com/yuin/goldmark v1.4.13
-	golang.org/x/net v0.0.0-20220708220712-1185a9018129
+	golang.org/x/net v0.7.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -52,8 +52,8 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.0 // indirect
 	github.com/yuin/goldmark-emoji v1.0.1 // indirect
-	golang.org/x/sys v0.0.0-20220712014510-0a85c31ab51e // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 	gopkg.in/ini.v1 v1.66.6 // indirect
