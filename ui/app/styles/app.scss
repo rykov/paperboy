@@ -7,13 +7,27 @@
 
 // Preview iframe
 iframe {
-	width:100%; overflow:hidden;
-	border:0px; margin:0px; padding:0px;
+  width: 100%;
+  overflow: hidden;
+  border: 0;
+  margin: 0;
+  padding: 0;
 }
 
 // Code segments in md-card's
 md-card {
-  pre, code { background-color: #EEE; }
-  code { position:relative; top:-1px; padding: 1px 4px 2px; }
-  pre { padding: 10px 20px; }
+  pre,
+  code {
+    background-color: #eee;
+  }
+
+  code {
+    position: relative;
+    top: -1px;
+    padding: 1px 4px 2px;
+  }
+
+  pre {
+    padding: 10px 20px;
+  }
 }

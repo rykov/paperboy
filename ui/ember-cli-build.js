@@ -4,7 +4,7 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 const ConfigurePostCSS = require('./config/postcss.js');
 
 module.exports = function (defaults) {
-  let app = new EmberApp(defaults, {
+  const app = new EmberApp(defaults, {
     // ember-cli-postcss
     postcssOptions: ConfigurePostCSS(),
   });
