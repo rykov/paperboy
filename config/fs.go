@@ -41,8 +41,10 @@ func (f *Fs) FindListPath(name string) string {
 	return f.findFileWithExtension(paths, listExts)
 }
 
-/* This will look through all paths, match them with all extensions
-   and return the first one it finds that exists */
+/*
+This will look through all paths, match them with all extensions
+and return the first one it finds that exists
+*/
 func (f *Fs) findFileWithExtension(paths, exts []string) string {
 	for _, p := range paths {
 		if f.IsFile(p) {
