@@ -14,7 +14,7 @@ export default class PreviewRenderRoute extends Route {
         variables: { recipient: r, content: c },
         query,
       },
-      'renderOne'
+      'renderOne',
     );
   }
 }
