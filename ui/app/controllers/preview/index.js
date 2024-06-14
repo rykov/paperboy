@@ -8,13 +8,13 @@ export default class PreviewIndexController extends Controller {
   @service router;
 
   // Form fields
-  @tracked listID = '';
-  @tracked campaignID = '';
+  @tracked selectedList;
+  @tracked selectedCampaign;
 
   // Process manual preview form
   @action startPreview() {
-    const c = this.campaignID,
-      l = this.listID;
+    const l = this.selectedList?.param;
+    const c = this.selectedCampaign?.param;
     if (isPresent(c) && isPresent(l)) {
       this.router.transitionTo('preview.render', c, l);
     }

@@ -27,22 +27,30 @@
         </thead>
         <tbody>
         <tr>
-          <td>
-          <Input
-            aria-label="Campaign ID"
-            @value={{ this.campaignID }}
-            placeholder="See content directory"
-            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-          /></td>
-          <td>
-           <Input
-            aria-label="List ID"
-            @value={{ this.listID }}
-            placeholder="See lists directory"
-            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md" />
+          <td class="w-2/5 not-prose px-1">
+          <PowerSelect
+            @searchField="param"
+            @searchEnabled={{ true }}
+            @options={{ this.model.campaigns }}
+            @onChange={{ fn (mut this.selectedCampaign) }}
+            @selected={{ this.selectedCampaign }}
+          as |camp|>
+            {{ camp.param }}
+          </PowerSelect>
           </td>
-          <td>
-            <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" {{ on 'click' this.startPreview }}>
+          <td class="w-2/5 not-prose px-1">
+          <PowerSelect
+            @searchField="param"
+            @searchEnabled={{ true }}
+            @options={{ this.model.lists }}
+            @onChange={{ fn (mut this.selectedList) }}
+            @selected={{ this.selectedList }}
+          as |list|>
+            {{ list.param }}
+          </PowerSelect>
+          </td>
+          <td class="w-1/5">
+            <button type="submit" class="ml-3 inline-flex justify-center py-1 px-3 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" {{ on 'click' this.startPreview }}>
               Preview
             </button>
         </td>

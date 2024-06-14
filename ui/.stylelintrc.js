@@ -10,5 +10,6 @@ module.exports = {
 
     // Support for SCSS, Tailwind, etc
     'at-rule-no-unknown': [true, { ignoreAtRules: ['tailwind'] }],
+    'import-notation': [null], // To allow SCSS imports
   },
 };

@@ -1,0 +1,10 @@
+query index {
+  campaigns {
+    subject
+    param
+  }
+  lists {
+    name
+    param
+  }
+}
