@@ -1,4 +1,5 @@
 project_name: Paperboy
+version: 2
 
 builds:
   - binary: paperboy
@@ -8,15 +9,13 @@ builds:
       - windows
     goarch:
       - amd64
-      - 386
-      - arm
       - arm64
     goarm:
       - 7
-    tags: ['{{ if .Env.BUILD_WITH_UI }}withUI{{ else }}noUI{{ end }}']
-    ignore:
-      - goos: darwin
-        goarch: 386
+    tags: ['{{ if index .Env "BUILD_WITH_UI" }}withUI{{ else }}noUI{{ end }}']
+
+universal_binaries:
+  - replace: true
 
 archives:
   - format: tar.gz
@@ -24,20 +23,21 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
-    replacements:
-      amd64: 64bit
-      386: 32bit
-      arm: ARM
-      arm64: ARM64
-      darwin: macOS
-      linux: Linux
-      windows: Windows
+    name_template: >-
+      {{- .ProjectName }}_{{ .Version }}_
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{- title .Os }}{{ end }}_
+      {{- if eq .Arch "all" }}universal
+      {{- else if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end -}}
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
 
 changelog:
-  skip: true
+  disable: true
 
 release:
   draft: true
