@@ -15,7 +15,8 @@ builds:
     tags: ['{{ if index .Env "BUILD_WITH_UI" }}withUI{{ else }}noUI{{ end }}']
 
 universal_binaries:
-  - replace: true
+  - name_template: paperboy
+    replace: true
 
 archives:
   - format: tar.gz
