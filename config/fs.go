@@ -7,7 +7,7 @@ import (
 
 var (
 	contentExts = []string{"md"}
-	listExts    = []string{"yaml"}
+	listExts    = []string{"yaml", "yml"}
 )
 
 type Fs struct {
