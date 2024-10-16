@@ -1,12 +1,8 @@
 package server
 
 import (
-	"github.com/rykov/paperboy/config"
-	"github.com/spf13/afero"
-
 	"context"
 	"os"
-	"path/filepath"
 )
 
 // ===== Campaigns listing resolver ======
@@ -19,7 +15,7 @@ func (r *Resolver) Campaigns(ctx context.Context) ([]*Campaign, error) {
 			param:   key,
 		})
 	}
-	err := walkFilesByExt(r.cfg.AppFs, r.cfg.ContentDir, ".md", walkFn)
+	err := r.cfg.AppFs.WalkContent(walkFn)
 	return campaigns, err
 }
 
@@ -46,7 +42,7 @@ func (r *Resolver) Lists(ctx context.Context) ([]*List, error) {
 			param: key,
 		})
 	}
-	err := walkFilesByExt(r.cfg.AppFs, r.cfg.ListDir, ".yaml", walkFn)
+	err := r.cfg.AppFs.WalkLists(walkFn)
 	return lists, err
 }
 
@@ -61,24 +57,4 @@ func (c *List) Param() string {
 
 func (c *List) Name() string {
 	return c.name
-}
-
-// Iteration helper to find all files with a certain extension in a directory
-func walkFilesByExt(fs *config.Fs, dir, ext string, walkFn func(path, key string, fi os.FileInfo, err error)) error {
-	return afero.Walk(fs, dir, func(path string, fi os.FileInfo, err error) error {
-		if err != nil || fi.IsDir() {
-			return nil
-		}
-
-		pathExt := filepath.Ext(path)
-		if pathExt != ext {
-			return nil
-		}
-
-		// Remove dir prefix and extension
-		key, _ := filepath.Rel(dir, path)
-		key = key[:len(key)-len(pathExt)]
-		walkFn(path, key, fi, nil)
-		return nil
-	})
 }
