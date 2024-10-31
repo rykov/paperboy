@@ -4,10 +4,15 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 const ConfigurePostCSS = require('./config/postcss.js');
 
 module.exports = function (defaults) {
+  const isProduction = EmberApp.env() === 'production';
   const app = new EmberApp(defaults, {
     // ember-cli-postcss
     postcssOptions: ConfigurePostCSS(),
   });
+
+  // HACK: Ember 6.1+ removed "ember" import, so we do it here
+  const emberJs = `ember.${isProduction ? 'prod' : 'debug'}.js`;
+  app.import(`node_modules/ember-source/dist/${emberJs}`);
 
   // Use `app.import` to add additional libraries to the generated
   // output files.

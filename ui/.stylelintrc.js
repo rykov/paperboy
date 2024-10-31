@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  extends: ['stylelint-config-standard', 'stylelint-prettier/recommended'],
+  extends: ['stylelint-config-standard'],
   customSyntax: 'postcss-scss',
   plugins: ['stylelint-scss'],
   rules: {

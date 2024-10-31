@@ -1,7 +1,7 @@
-import { inject as service } from '@ember/service';
 import { computed, set } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import Controller from '@ember/controller';
+import { service } from '@ember/service';
 
 var FORMATS = Object.freeze([
   { id: 'html', order: 0 },

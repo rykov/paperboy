@@ -6,6 +6,7 @@
 // - ember-cli-postcss
 // - postcss-scss
 
+const Browsers = require('./targets.js').browsers;
 const tailwindConfig = './config/tailwind.js';
 
 module.exports = function (/* isProduction */) {
@@ -21,6 +22,9 @@ module.exports = function (/* isProduction */) {
           },
         },
         require('tailwindcss')(tailwindConfig),
+        require('autoprefixer')({
+          overrideBrowserslist: Browsers,
+        }),
       ],
     },
   };

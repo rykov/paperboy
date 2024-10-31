@@ -1,7 +1,7 @@
-import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import Controller from '@ember/controller';
 import { isPresent } from '@ember/utils';
+import { service } from '@ember/service';
 import { action } from '@ember/object';
 
 export default class PreviewIndexController extends Controller {

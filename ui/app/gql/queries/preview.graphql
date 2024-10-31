@@ -1,6 +1,6 @@
 query renderOne($content: String!, $recipient: String!) {
   renderOne(content: $content, recipient: $recipient) {
-  	rawMessage
+    rawMessage
     html
     text
   }
