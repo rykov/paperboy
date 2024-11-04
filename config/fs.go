@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"slices"
 
 	"github.com/spf13/afero"
 )
@@ -71,24 +72,13 @@ func (fs *Fs) WalkLists(walkFn func(path, key string, fi os.FileInfo, err error)
 
 // Iteration helper to find all files with multiple possible extensions in a directory
 func (fs *Fs) walkFilesByExts(dir string, exts []string, walkFn func(path, key string, fi os.FileInfo, err error)) error {
-	for _, e := range exts {
-		err := fs.walkFilesByExt(dir, e, walkFn)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// Iteration helper to find all files with a certain extension in a directory
-func (fs *Fs) walkFilesByExt(dir, ext string, walkFn func(path, key string, fi os.FileInfo, err error)) error {
 	return afero.Walk(fs, dir, func(path string, fi os.FileInfo, err error) error {
 		if err != nil || fi.IsDir() {
 			return nil
 		}
 
 		pathExt := filepath.Ext(path)
-		if pathExt != ext {
+		if !slices.Contains(exts, pathExt) {
 			return nil
 		}
 
