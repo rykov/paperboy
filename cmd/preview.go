@@ -21,11 +21,8 @@ const (
 )
 
 var previewCmd = &cobra.Command{
-	Use:   "preview",
+	Use:   "preview [content] [list]",
 	Short: "Preview campaign in browser",
-	Long:  `A longer description...`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.LoadConfig()
 		if err != nil {
