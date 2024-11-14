@@ -71,6 +71,9 @@ type TLSConfig struct {
 
 func (t TLSConfig) GetMinVersion() (uint16, error) {
 	switch t.MinVersion {
+	case "":
+		// Not set, so let the tls package decide
+		return 0, nil
 	case "1.0":
 		return tls.VersionTLS10, nil
 	case "1.1":
