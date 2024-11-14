@@ -72,14 +72,11 @@ var newCmd = &cobra.Command{
 	Use:     "new [path]",
 	Short:   "Create new content for a campaign",
 	Example: "paperboy new the-announcement.md",
+	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.LoadConfig()
 		if err != nil {
 			return err
-		}
-
-		if len(args) < 1 {
-			return newUserError("please provide a path")
 		}
 
 		path := cfg.AppFs.ContentPath(args[0])
@@ -94,14 +91,11 @@ var newListCmd = &cobra.Command{
 	Use:     "list [path]",
 	Short:   "Create a new recipient list",
 	Example: "paperboy new list in-the-know",
+	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.LoadConfig()
 		if err != nil {
 			return err
-		}
-
-		if len(args) < 1 {
-			return newUserError("please provide a path")
 		}
 
 		path := cfg.AppFs.ListPath(args[0])
@@ -112,6 +106,7 @@ var newListCmd = &cobra.Command{
 var newProjectCmd = &cobra.Command{
 	Use:   "project [path]",
 	Short: "Create new project directory",
+	Args:  cobra.RangeArgs(0, 1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		path := "."
 		if len(args) > 0 {

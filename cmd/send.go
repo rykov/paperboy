@@ -15,16 +15,13 @@ var sendCmd = &cobra.Command{
 	Use:     "send [content] [list]",
 	Short:   "Send campaign to recipients",
 	Example: "paperboy send the-announcement in-the-know",
+	Args:    cobra.ExactArgs(2),
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.LoadConfig()
 		if err != nil {
 			return err
-		}
-
-		if len(args) != 2 {
-			return newUserError("Invalid arguments")
 		}
 
 		ctx := withSignalTrap(context.Background())
