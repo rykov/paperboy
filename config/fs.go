@@ -1,13 +1,16 @@
 package config
 
 import (
-	"github.com/spf13/afero"
+	"os"
 	"path/filepath"
+	"slices"
+
+	"github.com/spf13/afero"
 )
 
 var (
-	contentExts = []string{"md"}
-	listExts    = []string{"yaml"}
+	contentExts = []string{".md"}
+	listExts    = []string{".yaml", ".yml"}
 )
 
 type Fs struct {
@@ -51,12 +54,40 @@ func (f *Fs) findFileWithExtension(paths, exts []string) string {
 			return p
 		}
 		for _, e := range exts {
-			if pe := p + "." + e; f.IsFile(pe) {
+			if pe := p + e; f.IsFile(pe) {
 				return pe
 			}
 		}
 	}
 	return ""
+}
+
+func (fs *Fs) WalkContent(walkFn func(path, key string, fi os.FileInfo, err error)) error {
+	return fs.walkFilesByExts(fs.Config.ContentDir, contentExts, walkFn)
+}
+
+func (fs *Fs) WalkLists(walkFn func(path, key string, fi os.FileInfo, err error)) error {
+	return fs.walkFilesByExts(fs.Config.ListDir, listExts, walkFn)
+}
+
+// Iteration helper to find all files with multiple possible extensions in a directory
+func (fs *Fs) walkFilesByExts(dir string, exts []string, walkFn func(path, key string, fi os.FileInfo, err error)) error {
+	return afero.Walk(fs, dir, func(path string, fi os.FileInfo, err error) error {
+		if err != nil || fi.IsDir() {
+			return nil
+		}
+
+		pathExt := filepath.Ext(path)
+		if !slices.Contains(exts, pathExt) {
+			return nil
+		}
+
+		// Remove dir prefix and extension
+		key, _ := filepath.Rel(dir, path)
+		key = key[:len(key)-len(pathExt)]
+		walkFn(path, key, fi, nil)
+		return nil
+	})
 }
 
 func (f *Fs) IsFile(path string) bool {
