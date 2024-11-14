@@ -1,9 +1,12 @@
 package config
 
 import (
+	"crypto/tls"
+
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 
+	"errors"
 	"fmt"
 	"runtime"
 	"strings"
@@ -58,6 +61,27 @@ type SMTPConfig struct {
 	URL  string
 	User string
 	Pass string
+	TLS  TLSConfig
+}
+
+type TLSConfig struct {
+	InsecureSkipVerify bool
+	MinVersion         string
+}
+
+func (t TLSConfig) GetMinVersion() (uint16, error) {
+	switch t.MinVersion {
+	case "1.0":
+		return tls.VersionTLS10, nil
+	case "1.1":
+		return tls.VersionTLS11, nil
+	case "1.2":
+		return tls.VersionTLS12, nil
+	case "1.3":
+		return tls.VersionTLS13, nil
+	default:
+		return 0, errors.New("Invalid TLS version")
+	}
 }
 
 // Initial blank config
@@ -115,6 +139,8 @@ func newViperConfig(fs afero.Fs) *viper.Viper {
 	v.SetDefault("smtp.url", "")
 	v.SetDefault("smtp.user", "")
 	v.SetDefault("smtp.pass", "")
+	v.SetDefault("smtp.tls.InsecureSkipVerify", false)
+	v.SetDefault("smtp.tls.MinVersion", "1.2")
 	v.SetDefault("dryRun", false)
 
 	// Defaults (Dirs)
