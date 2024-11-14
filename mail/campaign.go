@@ -138,7 +138,7 @@ func LoadCampaign(cfg *config.AConfig, tmplID, listID string) (*Campaign, error)
 	listFile := cfg.AppFs.FindListPath(listID)
 	who, err := parseRecipients(cfg.AppFs, listFile)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load campain's recipients: %w", err)
 	}
 
 	// Populate recipients, and fire!
@@ -152,7 +152,7 @@ func LoadContent(cfg *config.AConfig, tmplID string) (*Campaign, error) {
 	tmplFile := cfg.AppFs.FindContentPath(tmplID)
 	email, err := parseTemplate(cfg.AppFs, tmplFile)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load campain's content: %w", err)
 	}
 
 	// Read and cast frontmatter

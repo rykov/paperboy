@@ -22,7 +22,6 @@ const (
 var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Launch a preview server for emails",
-	Long:  `A longer description...`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.LoadConfig()
 		if err != nil {
