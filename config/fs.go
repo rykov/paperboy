@@ -4,13 +4,14 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/spf13/afero"
 )
 
 var (
 	contentExts = []string{".md"}
-	listExts    = []string{".yaml", ".yml"}
+	listExts    = []string{".yaml", ".yml", ".csv"}
 )
 
 type Fs struct {
@@ -98,4 +99,12 @@ func (f *Fs) IsFile(path string) bool {
 func (f *Fs) isDir(dir string) bool {
 	s, err := f.Stat(dir)
 	return err == nil && s.IsDir()
+}
+
+func (f *Fs) IsYaml(path string) bool {
+	return strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml")
+}
+
+func (f *Fs) IsCsv(path string) bool {
+	return strings.HasSuffix(path, ".csv")
 }

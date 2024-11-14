@@ -43,6 +43,9 @@ type ConfigFile struct {
 	// Validation
 	DKIM map[string]interface{}
 
+	// CSV parsing
+	CSV CSVConfig
+
 	// Directories
 	ContentDir string
 	LayoutDir  string
@@ -64,6 +67,11 @@ type SMTPConfig struct {
 type BuildInfo struct {
 	Version   string
 	BuildDate string
+}
+
+// Configuration for CSV parsing
+type CSVConfig struct {
+	Comma string
 }
 
 func (i BuildInfo) String() string {
