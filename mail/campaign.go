@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/ghodss/yaml"
 	"github.com/go-gomail/gomail"
 	"github.com/jtacoma/uritemplates"
 	"github.com/microcosm-cc/bluemonday"
@@ -201,11 +200,19 @@ func parseRecipients(appFs *config.Fs, path string) ([]*ctxRecipient, error) {
 	fmt.Println("Loading recipients", path)
 	raw, err := afero.ReadFile(appFs, path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read file %s: %w", path, err)
 	}
 
 	var data []map[string]interface{}
-	if err := yaml.Unmarshal(raw, &data); err != nil {
+
+	if appFs.IsYaml(path) {
+		data, err = unmarshalYamlRecipients(appFs, raw)
+	} else if appFs.IsCsv(path) {
+		data, err = unmarshalCsvRecipients(appFs, raw)
+	} else {
+		return nil, fmt.Errorf("unsupported recipient format: %s", path)
+	}
+	if err != nil {
 		return nil, err
 	}
 
