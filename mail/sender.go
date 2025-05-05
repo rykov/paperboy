@@ -1,6 +1,8 @@
 package mail
 
 import (
+	"crypto/tls"
+
 	"github.com/cenkalti/backoff/v4"
 	"github.com/go-gomail/gomail"
 	"github.com/rykov/paperboy/config"
@@ -236,6 +238,15 @@ func smtpDialer(cfg *config.SMTPConfig) (*gomail.Dialer, error) {
 	// Initialize the dialer
 	d := gomail.NewDialer(surl.Hostname(), port, user, pass)
 	d.SSL = (surl.Scheme == "smtps")
+	// insecure TLSConfig
+	tlsMinVersion, err := cfg.TLS.GetMinVersion()
+	if err != nil {
+		return nil, err
+	}
+	d.TLSConfig = &tls.Config{
+		InsecureSkipVerify: cfg.TLS.InsecureSkipVerify,
+		MinVersion:         tlsMinVersion,
+	}
 	return d, nil
 }
 
