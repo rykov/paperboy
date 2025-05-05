@@ -21,19 +21,13 @@ const (
 )
 
 var previewCmd = &cobra.Command{
-	Use:   "preview",
+	Use:   "preview [content] [list]",
 	Short: "Preview campaign in browser",
-	Long:  `A longer description...`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
+	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.LoadConfig()
 		if err != nil {
 			return err
-		}
-
-		if len(args) != 2 {
-			return newUserError("Invalid arguments")
 		}
 
 		// Start server, notifies channel when listening
