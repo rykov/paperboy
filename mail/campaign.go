@@ -18,6 +18,7 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/charmbracelet/glamour"
+	"github.com/charmbracelet/glamour/styles"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	gmparser "github.com/yuin/goldmark/parser"
@@ -247,7 +248,7 @@ func (c *Campaign) renderPlain(body []byte, layoutPath string, ctx *tmplContext)
 	}
 
 	// For markdown, we use notty style with tweaks
-	style := *glamour.DefaultStyles["notty"]
+	style := *styles.DefaultStyles["notty"]
 	style.Link.BlockPrefix = "("
 	style.Link.BlockSuffix = ")"
 

@@ -3,7 +3,7 @@ package mail
 import (
 	"crypto/tls"
 
-	"github.com/cenkalti/backoff/v4"
+	"github.com/cenkalti/backoff/v5"
 	"github.com/go-gomail/gomail"
 	"github.com/rykov/paperboy/config"
 
@@ -170,17 +170,14 @@ func configureSender(cfg *config.AConfig) (sender gomail.SendCloser, err error) 
 			return nil, err
 		}
 
-		// Configure to retry 3 times every second
-		var retryCfg backoff.BackOff = backoff.NewConstantBackOff(time.Second)
-		retryCfg = backoff.WithMaxRetries(retryCfg, 3)
-
-		// Dial SMTP with retries and logging
-		err = backoff.RetryNotify(func() error {
-			sender, err = dialer.Dial()
-			return err
-		}, retryCfg, func(err error, _ time.Duration) {
-			fmt.Println("Retrying SMTP dial on error: ", err)
-		})
+		// Dial SMTP with 3 retries and failure logging
+		sender, err = backoff.Retry(context.TODO(), dialer.Dial,
+			backoff.WithMaxTries(3),
+			backoff.WithBackOff(backoff.NewConstantBackOff(time.Second)),
+			backoff.WithNotify(func(err error, _ time.Duration) {
+				fmt.Println("Retrying SMTP dial on error: ", err)
+			}),
+		)
 	}
 
 	// DKIM-signing sender, if configuration is present

@@ -20,9 +20,9 @@ import (
 	"io"
 	"strings"
 
-	toml "github.com/pelletier/go-toml"
+	toml "github.com/pelletier/go-toml/v2"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // FrontmatterType represents a type of frontmatter.
@@ -34,8 +34,7 @@ type FrontmatterType struct {
 	includeMark        bool   // include start and end mark in output
 }
 
-// InterfaceToConfig encodes a given input based upon the mark and writes to w.
-func InterfaceToConfig(in interface{}, mark rune, w io.Writer) error {
+func InterfaceToConfig(in any, mark rune, w io.Writer) error {
 	if in == nil {
 		return errors.New("input was nil")
 	}
@@ -51,13 +50,9 @@ func InterfaceToConfig(in interface{}, mark rune, w io.Writer) error {
 		return err
 
 	case rune(TOMLLead[0]):
-		tree, err := toml.TreeFromMap(in.(map[string]interface{}))
-		if err != nil {
-			return err
-		}
-
-		_, err = tree.WriteTo(w)
-		return err
+		enc := toml.NewEncoder(w)
+		enc.SetIndentTables(true)
+		return enc.Encode(in)
 	case rune(JSONLead[0]):
 		b, err := json.MarshalIndent(in, "", "   ")
 		if err != nil {
@@ -71,16 +66,12 @@ func InterfaceToConfig(in interface{}, mark rune, w io.Writer) error {
 
 		_, err = w.Write([]byte{'\n'})
 		return err
-
 	default:
-		return errors.New("Unsupported Format provided")
+		return errors.New("unsupported Format provided")
 	}
 }
 
-// InterfaceToFrontMatter encodes a given input into a frontmatter
-// representation based upon the mark with the appropriate front matter delimiters
-// surrounding the output, which is written to w.
-func InterfaceToFrontMatter(in interface{}, mark rune, w io.Writer) error {
+func InterfaceToFrontMatter(in any, mark rune, w io.Writer) error {
 	if in == nil {
 		return errors.New("input was nil")
 	}
@@ -170,15 +161,14 @@ func DetectFrontMatter(mark rune) (f *FrontmatterType) {
 // HandleTOMLMetaData unmarshals TOML-encoded datum and returns a Go interface
 // representing the encoded data structure.
 func HandleTOMLMetaData(datum []byte) (interface{}, error) {
-	m := map[string]interface{}{}
 	datum = removeTOMLIdentifier(datum)
+	var m interface{}
 
-	tree, err := toml.LoadReader(bytes.NewReader(datum))
+	d := toml.NewDecoder(bytes.NewReader(datum))
+	err := d.Decode(&m)
 	if err != nil {
 		return m, err
 	}
-
-	m = tree.ToMap()
 
 	return m, nil
 }

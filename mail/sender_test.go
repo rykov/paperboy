@@ -3,7 +3,6 @@ package mail
 import (
 	"github.com/rykov/paperboy/config"
 
-	"fmt"
 	"strings"
 	"testing"
 )
@@ -51,7 +50,7 @@ func TestSmtpDialerSuccess(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		t.Run(fmt.Sprintf(c.testName), func(t *testing.T) {
+		t.Run(c.testName, func(t *testing.T) {
 			d, err := smtpDialer(&config.SMTPConfig{
 				URL:  c.smtpURL,
 				User: c.smtpUser,
@@ -87,7 +86,7 @@ func TestSmtpDialerFailure(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		t.Run(fmt.Sprintf(c.err), func(t *testing.T) {
+		t.Run(c.err, func(t *testing.T) {
 			_, err := smtpDialer(&config.SMTPConfig{URL: c.smtpURL})
 			if err == nil {
 				t.Errorf("Dialer should cause an error")
