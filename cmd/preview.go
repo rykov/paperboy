@@ -12,46 +12,36 @@ import (
 )
 
 const (
-	// Default configuration location for Preview UI
-	previewDefaultConfigFile = "https://www.paperboy.email/ui/server_config.json"
-
 	// Request headers when requesting server info
 	cliVersionHeader = "X-Paperboy-Version"
 	cliUserAgent     = "Paperboy (%s)"
 )
 
-var previewCmd = &cobra.Command{
-	Use:   "preview [content] [list]",
-	Short: "Preview campaign in browser",
-	Args:  cobra.ExactArgs(2),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		cfg, err := config.LoadConfig()
-		if err != nil {
-			return err
-		}
+func previewCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "preview [content] [list]",
+		Short: "Preview campaign in browser",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := config.LoadConfig()
+			if err != nil {
+				return err
+			}
 
-		// Start server, notifies channel when listening
-		return startAPIServer(cfg, func(mux *http.ServeMux, serverReady chan bool) error {
+			// Start server, notifies channel when listening
+			return startAPIServer(cfg, func(mux *http.ServeMux, serverReady chan bool) error {
 
-			// Wait for server and open preview
-			go func() {
-				if r, _ := <-serverReady; r {
-					openPreview(args[0], args[1])
-				}
-			}()
+				// Wait for server and open preview
+				go func() {
+					if r, _ := <-serverReady; r {
+						openPreview(args[0], args[1])
+					}
+				}()
 
-			return nil
-		})
-	},
-}
-
-// Configuration file (local or remote) and viper
-var previewConfigFlag string
-
-// Relevant for both "server" and "preview" commands
-func init() {
-	desc := "Path or URL of preview server config"
-	previewCmd.PersistentFlags().StringVar(&previewConfigFlag, "previewConfig", "", desc)
+				return nil
+			})
+		},
+	}
 }
 
 func openPreview(content, list string) {

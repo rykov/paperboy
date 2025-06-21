@@ -15,17 +15,6 @@ import (
 	"time"
 )
 
-func init() {
-	// "init" alias for "new project"
-	initCmd := *newProjectCmd
-	initCmd.Use = "init [path]"
-	RootCmd.AddCommand(&initCmd)
-
-	// Subcommands for "new"
-	newCmd.AddCommand(newProjectCmd)
-	newCmd.AddCommand(newListCmd)
-}
-
 var (
 	newProjectDirs = []string{"content", "layouts", "lists", "themes"}
 )
@@ -68,83 +57,101 @@ Visit https://www.paperboy.email/ to learn more.
 `
 )
 
-var newCmd = &cobra.Command{
-	Use:     "new [path]",
-	Short:   "Create new content for a campaign",
-	Example: "paperboy new the-announcement.md",
-	Args:    cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		cfg, err := config.LoadConfig()
-		if err != nil {
-			return err
-		}
-
-		path := cfg.AppFs.ContentPath(args[0])
-		return writeTemplate(cfg.AppFs, path, contentTemplate, map[string]string{
-			"Date":    time.Now().Format(time.RFC3339),
-			"Subject": pathToName(path),
-		}, false)
-	},
+// "init" alias for "new project"
+func initCmd() *cobra.Command {
+	cmd := newProjectCmd()
+	cmd.Use = "init [path]"
+	return cmd
 }
 
-var newListCmd = &cobra.Command{
-	Use:     "list [path]",
-	Short:   "Create a new recipient list",
-	Example: "paperboy new list in-the-know",
-	Args:    cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		cfg, err := config.LoadConfig()
-		if err != nil {
-			return err
-		}
-
-		path := cfg.AppFs.ListPath(args[0])
-		return writeTemplate(cfg.AppFs, path, listTemplate, nil, false)
-	},
-}
-
-var newProjectCmd = &cobra.Command{
-	Use:   "project [path]",
-	Short: "Create new project directory",
-	Args:  cobra.RangeArgs(0, 1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		path := "."
-		if len(args) > 0 {
-			path = args[0]
-		}
-
-		path, err := filepath.Abs(path)
-		if err != nil {
-			return err
-		}
-
-		// Initalize new configuration
-		cfg := config.NewConfig(afero.NewOsFs())
-
-		// Check for config to see if a project exists
-		configPath := filepath.Join(path, "config.toml")
-		if ok, _ := afero.Exists(cfg.AppFs, configPath); ok {
-			return newUserError("%s already contains a project", path)
-		}
-
-		// Create project directories
-		for _, dir := range newProjectDirs {
-			if err := os.MkdirAll(filepath.Join(path, dir), 0755); err != nil {
+// "new" parent command for creation
+func newCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "new [path]",
+		Short:   "Create new content for a campaign",
+		Example: "paperboy new the-announcement.md",
+		Args:    cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := config.LoadConfig()
+			if err != nil {
 				return err
 			}
-		}
 
-		// Write basic configuration
-		if err := writeTemplate(cfg.AppFs, configPath, configTemplate, nil, true); err != nil {
-			return err
-		}
+			path := cfg.AppFs.ContentPath(args[0])
+			return writeTemplate(cfg.AppFs, path, contentTemplate, map[string]string{
+				"Date":    time.Now().Format(time.RFC3339),
+				"Subject": pathToName(path),
+			}, false)
+		},
+	}
 
-		// Success message
-		vars := map[string]string{"Path": path, "Cmd": filepath.Base(os.Args[0])}
-		out, _ := renderTemplate(newProjectBanner, vars)
-		fmt.Print(out)
-		return nil
-	},
+	// Subcommand "project" to start a new project
+	cmd.AddCommand(newProjectCmd())
+
+	// Subcommand "list" to start a new recipient list
+	cmd.AddCommand(&cobra.Command{
+		Use:     "list [path]",
+		Short:   "Create a new recipient list",
+		Example: "paperboy new list in-the-know",
+		Args:    cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := config.LoadConfig()
+			if err != nil {
+				return err
+			}
+
+			path := cfg.AppFs.ListPath(args[0])
+			return writeTemplate(cfg.AppFs, path, listTemplate, nil, false)
+		},
+	})
+
+	return cmd
+}
+
+func newProjectCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "project [path]",
+		Short: "Create new project directory",
+		Args:  cobra.RangeArgs(0, 1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			path := "."
+			if len(args) > 0 {
+				path = args[0]
+			}
+
+			path, err := filepath.Abs(path)
+			if err != nil {
+				return err
+			}
+
+			// Initalize new configuration
+			cfg := config.NewConfig(afero.NewOsFs())
+
+			// Check for config to see if a project exists
+			configPath := filepath.Join(path, "config.toml")
+			if ok, _ := afero.Exists(cfg.AppFs, configPath); ok {
+				return newUserError("%s already contains a project", path)
+			}
+
+			// Create project directories
+			for _, dir := range newProjectDirs {
+				if err := os.MkdirAll(filepath.Join(path, dir), 0755); err != nil {
+					return err
+				}
+			}
+
+			// Write basic configuration
+			if err := writeTemplate(cfg.AppFs, configPath, configTemplate, nil, true); err != nil {
+				return err
+			}
+
+			// Success message
+			vars := map[string]string{"Path": path, "Cmd": filepath.Base(os.Args[0])}
+			out, _ := renderTemplate(newProjectBanner, vars)
+			fmt.Print(out)
+			return nil
+		},
+	}
 }
 
 func pathToName(path string) string {

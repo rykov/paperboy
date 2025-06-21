@@ -32,6 +32,7 @@ func SendCampaign(ctx context.Context, cfg *config.AConfig, c *Campaign) error {
 	engine := &deliverer{
 		tasks:    make(chan *gomail.Message, 10),
 		waiter:   &sync.WaitGroup{},
+		context:  ctx,
 		campaign: c,
 	}
 
@@ -100,6 +101,7 @@ func SendCampaign(ctx context.Context, cfg *config.AConfig, c *Campaign) error {
 
 type deliverer struct {
 	campaign *Campaign
+	context  context.Context
 	waiter   *sync.WaitGroup
 	tasks    chan *gomail.Message
 
@@ -127,7 +129,7 @@ func (d *deliverer) startWorker(id int) error {
 	d.waiter.Add(1)
 
 	// Dial up the sender
-	sender, err := configureSender(d.campaign.Config)
+	sender, err := d.configureSender()
 	if err != nil {
 		return err
 	}
@@ -147,7 +149,7 @@ func (d *deliverer) startWorker(id int) error {
 			if err := gomail.Send(sender, m); err != nil {
 				fmt.Printf("[%d] Could not send email: %s\n", id, err)
 				sender.Close() // Replace errored connection
-				sender, err = configureSender(d.campaign.Config)
+				sender, err = d.configureSender()
 				if err != nil {
 					break
 				}
@@ -158,7 +160,10 @@ func (d *deliverer) startWorker(id int) error {
 	return nil
 }
 
-func configureSender(cfg *config.AConfig) (sender gomail.SendCloser, err error) {
+func (d *deliverer) configureSender() (sender gomail.SendCloser, err error) {
+	cfg := d.campaign.Config
+	ctx := d.context
+
 	// Dial up SMTP or dryRun
 	if cfg.DryRun {
 		sender = &dryRunSender{Mails: [][]byte{}}
@@ -171,7 +176,7 @@ func configureSender(cfg *config.AConfig) (sender gomail.SendCloser, err error) 
 		}
 
 		// Dial SMTP with 3 retries and failure logging
-		sender, err = backoff.Retry(context.TODO(), dialer.Dial,
+		sender, err = backoff.Retry(ctx, dialer.Dial,
 			backoff.WithMaxTries(3),
 			backoff.WithBackOff(backoff.NewConstantBackOff(time.Second)),
 			backoff.WithNotify(func(err error, _ time.Duration) {

@@ -14,8 +14,13 @@
 
 package main
 
-import "github.com/rykov/paperboy/cmd"
-import "github.com/rykov/paperboy/config"
+import (
+	"github.com/rykov/paperboy/cmd"
+	"github.com/rykov/paperboy/config"
+
+	"fmt"
+	"os"
+)
 
 // Populated by goreleaser
 var (
@@ -25,5 +30,9 @@ var (
 
 // Commands managed by Cobra
 func main() {
-	cmd.Execute(config.BuildInfo{version, date})
+	bi := config.BuildInfo{version, date}
+	if err := cmd.New(bi).Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(-1)
+	}
 }

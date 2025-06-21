@@ -19,16 +19,18 @@ const (
 	serverLocalPort   = 8080
 )
 
-var serverCmd = &cobra.Command{
-	Use:   "server",
-	Short: "Launch a preview server for emails",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		cfg, err := config.LoadConfig()
-		if err != nil {
-			return err
-		}
-		return startAPIServer(cfg, nil)
-	},
+func serverCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "server",
+		Short: "Launch a preview server for emails",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := config.LoadConfig()
+			if err != nil {
+				return err
+			}
+			return startAPIServer(cfg, nil)
+		},
+	}
 }
 
 // Function is called before booting the server to configure
