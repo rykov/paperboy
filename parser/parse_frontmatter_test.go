@@ -256,7 +256,12 @@ func TestExtractFrontMatter(t *testing.T) {
 				if err != nil {
 					continue
 				}
-				l, r := determineDelims(line)
+				l, r, err := determineDelims(line)
+				if err != nil {
+					t.Logf("\n%q\n", string(test.frontmatter))
+					t.Errorf("Error determining delimters: %s", err)
+					continue
+				}
 				fm, err := extractFrontMatterDelims(bufio.NewReader(strings.NewReader(test.frontmatter)), l, r)
 				if (err == nil) != test.errIsNil {
 					t.Logf("\n%q\n", string(test.frontmatter))

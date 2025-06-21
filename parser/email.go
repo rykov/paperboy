@@ -123,7 +123,10 @@ func ReadFrom(r io.Reader) (p Email, err error) {
 	newp.render = shouldRender(firstLine)
 
 	if newp.render && isFrontMatterDelim(firstLine) {
-		left, right := determineDelims(firstLine)
+		left, right, err := determineDelims(firstLine)
+		if err != nil {
+			return nil, err
+		}
 		fm, err := extractFrontMatterDelims(reader, left, right)
 		if err != nil {
 			return nil, err
@@ -254,23 +257,24 @@ func isFrontMatterDelim(data []byte) bool {
 	return delims.Match(data)
 }
 
-func determineDelims(firstLine []byte) (left, right []byte) {
+func determineDelims(firstLine []byte) (left, right []byte, err error) {
 	switch len(firstLine) {
 	case 5:
 		fallthrough
 	case 4:
 		if firstLine[0] == YAMLLead[0] {
-			return []byte(YAMLDelim), []byte(YAMLDelim)
+			return []byte(YAMLDelim), []byte(YAMLDelim), nil
 		}
-		return []byte(TOMLDelim), []byte(TOMLDelim)
+		return []byte(TOMLDelim), []byte(TOMLDelim), nil
 	case 3:
 		fallthrough
 	case 2:
 		fallthrough
 	case 1:
-		return []byte(JSONLead), []byte("}")
+		return []byte(JSONLead), []byte("}"), nil
 	default:
-		panic(fmt.Sprintf("Unable to determine delims from %q", firstLine))
+		err := fmt.Errorf("Unable to determine delims from %q", firstLine)
+		return nil, nil, err
 	}
 }
 
