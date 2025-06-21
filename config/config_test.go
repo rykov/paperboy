@@ -2,20 +2,19 @@ package config
 
 import (
 	"crypto/tls"
-	"path/filepath"
 	"testing"
 
 	"github.com/spf13/afero"
 )
 
 func TestDefaultConfig(t *testing.T) {
-	cfg := NewConfig(afero.NewMemMapFs())
+	fs := afero.NewMemMapFs()
 
 	// Write and load fake configuration
-	cPath, _ := filepath.Abs("./config.toml")
-	afero.WriteFile(cfg.AppFs, cPath, []byte(""), 0644)
-	if err := LoadConfigTo(cfg); err != nil {
-		panic(err)
+	afero.WriteFile(fs, "/config.toml", []byte(""), 0644)
+	cfg, err := LoadConfigFs(fs)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	version, err := cfg.ConfigFile.SMTP.TLS.GetMinVersion()
@@ -31,17 +30,17 @@ func TestDefaultConfig(t *testing.T) {
 }
 
 func TestTLSConfig(t *testing.T) {
-	cfg := NewConfig(afero.NewMemMapFs())
+	fs := afero.NewMemMapFs()
 
 	// Write and load fake configuration
-	cPath, _ := filepath.Abs("./config.toml")
-	afero.WriteFile(cfg.AppFs, cPath, []byte(`
+	afero.WriteFile(fs, "/config.toml", []byte(`
 [smtp.tls]
 InsecureSkipVerify = true
 MinVersion = "1.0"
 	`), 0644)
-	if err := LoadConfigTo(cfg); err != nil {
-		panic(err)
+	cfg, err := LoadConfigFs(fs)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	version, err := cfg.ConfigFile.SMTP.TLS.GetMinVersion()

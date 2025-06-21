@@ -10,14 +10,13 @@ import (
 
 	"context"
 	"encoding/json"
-	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 )
 
 func TestRenderOneQuery(t *testing.T) {
-	cfg, fs := newTestConfigAndFs()
+	cfg, fs := newTestConfigAndFs(t)
 	afero.WriteFile(fs, fs.ContentPath("c1.md"), []byte("# Hello"), 0644)
 	afero.WriteFile(fs, fs.ListPath("r1.yaml"), []byte(`---
 - email: ex@example.org
@@ -72,7 +71,7 @@ func TestRenderOneQuery(t *testing.T) {
 }
 
 func TestPaperboyInfoQuery(t *testing.T) {
-	cfg, _ := newTestConfigAndFs()
+	cfg, _ := newTestConfigAndFs(t)
 
 	expected := &cfg.Build
 	expected.BuildDate = time.Now().String()
@@ -118,18 +117,18 @@ func issueGraphQL(cfg *config.AConfig, query string, vars map[string]interface{}
 	return schema.Exec(context.TODO(), query, "", vars)
 }
 
-func newTestConfigAndFs() (*config.AConfig, *config.Fs) {
-	cfg := config.NewConfig(afero.NewMemMapFs())
+func newTestConfigAndFs(t *testing.T) (*config.AConfig, *config.Fs) {
+	fs := afero.NewMemMapFs()
 
 	// FIXME: Viper's config loading from non-global
 	// instance is broken, need to file an issue
-	viper.SetFs(cfg.AppFs)
+	viper.SetFs(fs)
 
 	// Write and load fake configuration
-	cPath, _ := filepath.Abs("./config.toml")
-	afero.WriteFile(cfg.AppFs, cPath, []byte(""), 0644)
-	if err := config.LoadConfigTo(cfg); err != nil {
-		panic(err)
+	afero.WriteFile(fs, "/config.toml", []byte(""), 0644)
+	cfg, err := config.LoadConfigFs(fs)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	// Ensure that sender is in dryRun mode for testing

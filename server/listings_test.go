@@ -20,7 +20,7 @@ type gqlCampaign struct {
 }
 
 func TestCampaignsQuery(t *testing.T) {
-	cfg, fs := newTestConfigAndFs()
+	cfg, fs := newTestConfigAndFs(t)
 	afero.WriteFile(fs, fs.ContentPath("c1.md"), []byte("# Hello"), 0644)
 	afero.WriteFile(fs, fs.ContentPath("sub/c2.md"), []byte("# World"), 0644)
 	afero.WriteFile(fs, fs.ContentPath("skip.txt"), []byte("Not-content"), 0644)
@@ -70,7 +70,7 @@ type gqlList struct {
 }
 
 func TestListsQuery(t *testing.T) {
-	cfg, fs := newTestConfigAndFs()
+	cfg, fs := newTestConfigAndFs(t)
 	afero.WriteFile(fs, fs.ListPath("l1.yaml"), []byte("---"), 0644)
 	afero.WriteFile(fs, fs.ListPath("sub/l2.yaml"), []byte("---"), 0644)
 	afero.WriteFile(fs, fs.ListPath("skip.txt"), []byte("Not-content"), 0644)

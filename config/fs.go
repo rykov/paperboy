@@ -1,7 +1,7 @@
 package config
 
 import (
-	"os"
+	"io/fs"
 	"path/filepath"
 	"slices"
 
@@ -62,17 +62,17 @@ func (f *Fs) findFileWithExtension(paths, exts []string) string {
 	return ""
 }
 
-func (fs *Fs) WalkContent(walkFn func(path, key string, fi os.FileInfo, err error)) error {
+func (fs *Fs) WalkContent(walkFn func(path, key string, fi fs.FileInfo, err error)) error {
 	return fs.walkFilesByExts(fs.Config.ContentDir, contentExts, walkFn)
 }
 
-func (fs *Fs) WalkLists(walkFn func(path, key string, fi os.FileInfo, err error)) error {
+func (fs *Fs) WalkLists(walkFn func(path, key string, fi fs.FileInfo, err error)) error {
 	return fs.walkFilesByExts(fs.Config.ListDir, listExts, walkFn)
 }
 
 // Iteration helper to find all files with multiple possible extensions in a directory
-func (fs *Fs) walkFilesByExts(dir string, exts []string, walkFn func(path, key string, fi os.FileInfo, err error)) error {
-	return afero.Walk(fs, dir, func(path string, fi os.FileInfo, err error) error {
+func (pfs *Fs) walkFilesByExts(dir string, exts []string, walkFn func(path, key string, fi fs.FileInfo, err error)) error {
+	return afero.Walk(pfs, dir, func(path string, fi fs.FileInfo, err error) error {
 		if err != nil || fi.IsDir() {
 			return nil
 		}

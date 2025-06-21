@@ -2,14 +2,14 @@ package server
 
 import (
 	"context"
-	"os"
+	"io/fs"
 )
 
 // ===== Campaigns listing resolver ======
 
 func (r *Resolver) Campaigns(ctx context.Context) ([]*Campaign, error) {
 	campaigns := []*Campaign{}
-	walkFn := func(path, key string, fi os.FileInfo, err error) {
+	walkFn := func(path, key string, fi fs.FileInfo, err error) {
 		campaigns = append(campaigns, &Campaign{
 			subject: key, // FIXME
 			param:   key,
@@ -36,7 +36,7 @@ func (c *Campaign) Subject() string {
 
 func (r *Resolver) Lists(ctx context.Context) ([]*List, error) {
 	lists := []*List{}
-	walkFn := func(path, key string, fi os.FileInfo, err error) {
+	walkFn := func(path, key string, fi fs.FileInfo, err error) {
 		lists = append(lists, &List{
 			name:  key, // FIXME
 			param: key,

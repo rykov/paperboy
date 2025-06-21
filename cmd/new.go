@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -33,6 +34,7 @@ Email content goes here (Markdown formatted)
   name: Nick Example
 `
 
+	configFile     = "config.toml"
 	configTemplate = `# config.toml
 # See https://www.paperboy.email/docs/configuration/
 from = "Example <example@example.org>"
@@ -124,13 +126,11 @@ func newProjectCmd() *cobra.Command {
 				return err
 			}
 
-			// Initalize new configuration
-			cfg := config.NewConfig(afero.NewOsFs())
-
 			// Check for config to see if a project exists
-			configPath := filepath.Join(path, "config.toml")
-			if ok, _ := afero.Exists(cfg.AppFs, configPath); ok {
+			if _, err := os.Stat(filepath.Join(path, configFile)); err == nil {
 				return newUserError("%s already contains a project", path)
+			} else if !errors.Is(err, os.ErrNotExist) {
+				return err
 			}
 
 			// Create project directories
@@ -140,12 +140,15 @@ func newProjectCmd() *cobra.Command {
 				}
 			}
 
-			// Write basic configuration
-			if err := writeTemplate(cfg.AppFs, configPath, configTemplate, nil, true); err != nil {
+			// Filesystem based at specified project path
+			projFs := afero.NewBasePathFs(afero.NewOsFs(), path)
+
+			// Write basic project configuration
+			if err := writeTemplate(projFs, configFile, configTemplate, nil, true); err != nil {
 				return err
 			}
 
-			// Success message
+			// Render success message template
 			vars := map[string]string{"Path": path, "Cmd": filepath.Base(os.Args[0])}
 			out, _ := renderTemplate(newProjectBanner, vars)
 			fmt.Print(out)
@@ -159,7 +162,7 @@ func pathToName(path string) string {
 	return inflect.Humanize(strings.TrimSuffix(name, ext))
 }
 
-func writeTemplate(fs *config.Fs, path, content string, data interface{}, quiet bool) error {
+func writeTemplate(fs afero.Fs, path, content string, data interface{}, quiet bool) error {
 	if ex, err := afero.Exists(fs, path); ex {
 		return newUserError("%s already exists", path)
 	} else if err != nil {

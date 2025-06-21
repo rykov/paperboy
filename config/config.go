@@ -8,6 +8,7 @@ import (
 
 	"errors"
 	"fmt"
+	"os"
 	"runtime"
 	"strings"
 )
@@ -97,26 +98,30 @@ func (i BuildInfo) String() string {
 	return fmt.Sprintf("v%s %s/%s (%s)", i.Version, runtime.GOOS, runtime.GOARCH, i.BuildDate)
 }
 
-// Initalize configuration with passed-in VFS
-func NewConfig(afs afero.Fs) *AConfig {
-	cfg := &AConfig{AppFs: &Fs{Fs: afs}}
-	cfg.AppFs.Config = cfg
-	return cfg
-}
-
-// Standard configuration with Viper
+// Standard configuration with Viper operating
+// on OS FS based at current working directory
 func LoadConfig() (*AConfig, error) {
-	cfg := NewConfig(afero.NewOsFs()) // Config
-	return cfg, LoadConfigTo(cfg)
+	wd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+	fs := afero.NewBasePathFs(afero.NewOsFs(), wd)
+	return LoadConfigFs(fs)
 }
 
-// Configuration helper for tests, etc
-func LoadConfigTo(cfg *AConfig) error {
+// Standard configuration for specified afero FS
+// The project is assumed to be in afero.Fs root
+func LoadConfigFs(fs afero.Fs) (*AConfig, error) {
+	cfg := &AConfig{AppFs: &Fs{Fs: fs}}
+	cfg.AppFs.Config = cfg
+
 	viperConfig := newViperConfig(cfg.AppFs)
 	if err := viperConfig.ReadInConfig(); err != nil {
-		return err
+		return nil, err
 	}
-	return viperConfig.Unmarshal(&cfg.ConfigFile)
+
+	err := viperConfig.Unmarshal(&cfg.ConfigFile)
+	return cfg, err
 }
 
 // Initialize configuration with Viper
@@ -158,7 +163,7 @@ func newViperConfig(fs afero.Fs) *viper.Viper {
 
 	// Prepare for project's config.*
 	v.SetConfigName("config")
-	v.AddConfigPath(".")
+	v.AddConfigPath("/")
 
 	// 🐍
 	return v
