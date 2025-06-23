@@ -15,6 +15,7 @@ require (
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/jtacoma/uritemplates v1.0.0
 	github.com/microcosm-cc/bluemonday v1.0.27
+	github.com/moby/patternmatcher v0.6.0
 	github.com/pelletier/go-toml/v2 v2.2.4
 	github.com/rs/cors v1.11.1
 	github.com/sirupsen/logrus v1.9.3

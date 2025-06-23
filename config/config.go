@@ -58,8 +58,9 @@ type ConfigFile struct {
 	Workers  int
 
 	// Client/Server
-	ServerAuth string
-	ServerPort uint
+	ClientIgnores []string
+	ServerAuth    string
+	ServerPort    uint
 }
 
 type SMTPConfig struct {
