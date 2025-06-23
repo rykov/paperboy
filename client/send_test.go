@@ -25,7 +25,7 @@ func TestSendIntegration(t *testing.T) {
 
 	// 2) spin up the server
 	h := server.MustSchemaHandler(schemaSDL, &testResolver{})
-	srv := httptest.NewServer(h)
+	srv := httptest.NewServer(server.WithMiddleware(h, nil))
 	defer srv.Close()
 
 	// 3) test various client requests
@@ -37,6 +37,12 @@ func TestSendIntegration(t *testing.T) {
 	if err := cli.Send(dir, "testCampaign", "testError"); err == nil {
 		t.Errorf("Expected server to error, got success")
 	} else if a, e := err.Error(), "server error: testError"; a != e {
+		t.Errorf("Expected error %q, got %q", e, a)
+	}
+
+	if err := cli.Send(dir, "testCampaign", "testPanic"); err == nil {
+		t.Errorf("Expected server to error, got success")
+	} else if a, e := err.Error(), "server error: panic occurred: testPanic"; a != e {
 		t.Errorf("Expected error %q, got %q", e, a)
 	}
 }
@@ -64,7 +70,9 @@ func (r *testResolver) SendCampaign(ctx context.Context, args struct {
 	List     string
 }) (bool, error) {
 	if l := args.List; l == "testError" {
-		return false, fmt.Errorf(l)
+		return false, fmt.Errorf("%s", l)
+	} else if l == "testPanic" {
+		panic(l)
 	}
 
 	f, ok := server.RequestZipFile(ctx)

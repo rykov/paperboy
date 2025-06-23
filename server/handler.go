@@ -3,8 +3,11 @@ package server
 import (
 	"github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
+	"github.com/rykov/paperboy/config"
+	"github.com/urfave/negroni/v3"
 
 	"context"
+	"crypto/subtle"
 	"encoding/json"
 	"errors"
 	"io"
@@ -118,4 +121,29 @@ type gqlRequestParams struct {
 	Query         string                 `json:"query"`
 	OperationName string                 `json:"operationName"`
 	Variables     map[string]interface{} `json:"variables"`
+}
+
+// WithMiddleware wraps the handler with logging, recovery, etc
+func WithMiddleware(h http.Handler, cfg *config.AConfig) http.Handler {
+	n := negroni.New(negroni.NewRecovery(), negroni.NewLogger())
+
+	// Add basic authentication
+	if cfg != nil && cfg.ServerAuth != "" {
+		expU, expP, _ := strings.Cut(cfg.ServerAuth, ":")
+		n.UseFunc(func(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+			if u, p, ok := r.BasicAuth(); ok {
+				okU := subtle.ConstantTimeCompare([]byte(u), []byte(expU)) == 1
+				okP := subtle.ConstantTimeCompare([]byte(p), []byte(expP)) == 1
+				if okU && okP {
+					next(rw, r)
+					return
+				}
+			}
+			s := http.StatusUnauthorized
+			http.Error(rw, http.StatusText(s), s)
+		})
+	}
+
+	n.UseHandler(h)
+	return n
 }

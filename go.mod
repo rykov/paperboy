@@ -23,6 +23,7 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
 	github.com/toorop/go-dkim v0.0.0-20250226130143-9025cce95817
+	github.com/urfave/negroni/v3 v3.1.1
 	github.com/yuin/goldmark v1.7.12
 	golang.org/x/net v0.41.0
 	gopkg.in/yaml.v3 v3.0.1

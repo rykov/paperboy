@@ -34,7 +34,7 @@ func previewCmd() *cobra.Command {
 				// Wait for server and open preview
 				go func() {
 					if r, _ := <-serverReady; r {
-						openPreview(args[0], args[1])
+						openPreview(cfg, args[0], args[1])
 					}
 				}()
 
@@ -44,9 +44,9 @@ func previewCmd() *cobra.Command {
 	}
 }
 
-func openPreview(content, list string) {
+func openPreview(cfg *config.AConfig, content, list string) {
 	// Root URL for preview and GraphQL server
-	previewRoot := fmt.Sprintf("http://localhost:%d", serverLocalPort)
+	previewRoot := fmt.Sprintf("http://localhost:%d", cfg.ServerPort)
 	previewPath := fmt.Sprintf("/preview/%s/%s", url.PathEscape(content), url.PathEscape(list))
 
 	// Open preview URL on various platform
