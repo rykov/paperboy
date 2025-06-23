@@ -183,6 +183,9 @@ func (d *deliverer) configureSender() (sender gomail.SendCloser, err error) {
 				fmt.Println("Retrying SMTP dial on error: ", err)
 			}),
 		)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// DKIM-signing sender, if configuration is present
@@ -240,15 +243,20 @@ func smtpDialer(cfg *config.SMTPConfig) (*gomail.Dialer, error) {
 	// Initialize the dialer
 	d := gomail.NewDialer(surl.Hostname(), port, user, pass)
 	d.SSL = (surl.Scheme == "smtps")
-	// insecure TLSConfig
-	tlsMinVersion, err := cfg.TLS.GetMinVersion()
-	if err != nil {
-		return nil, err
+
+	// Custom TLSConfig
+	if cfg.TLS != nil {
+		tlsMinVersion, err := cfg.TLS.GetMinVersion()
+		if err != nil {
+			return nil, err
+		}
+		d.TLSConfig = &tls.Config{
+			InsecureSkipVerify: cfg.TLS.InsecureSkipVerify,
+			MinVersion:         tlsMinVersion,
+			ServerName:         d.Host,
+		}
 	}
-	d.TLSConfig = &tls.Config{
-		InsecureSkipVerify: cfg.TLS.InsecureSkipVerify,
-		MinVersion:         tlsMinVersion,
-	}
+
 	return d, nil
 }
 
