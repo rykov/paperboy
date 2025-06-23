@@ -56,6 +56,10 @@ type ConfigFile struct {
 	// Delivery
 	SendRate float32
 	Workers  int
+
+	// Client/Server
+	ServerAuth string
+	ServerPort uint
 }
 
 type SMTPConfig struct {
@@ -117,7 +121,11 @@ func LoadConfigFs(fs afero.Fs) (*AConfig, error) {
 
 	viperConfig := newViperConfig(cfg.AppFs)
 	if err := viperConfig.ReadInConfig(); err != nil {
-		return nil, err
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			fmt.Println(err.Error())
+		} else {
+			return nil, err
+		}
 	}
 
 	err := viperConfig.Unmarshal(&cfg.ConfigFile)
@@ -160,6 +168,11 @@ func newViperConfig(fs afero.Fs) *viper.Viper {
 	// Delivery workers/rate
 	v.SetDefault("sendRate", 1)
 	v.SetDefault("workers", 3)
+
+	// Server, Client, API
+	v.BindEnv("serverPort", "PORT")
+	v.SetDefault("serverPort", 8080)
+	v.SetDefault("serverAuth", "")
 
 	// Prepare for project's config.*
 	v.SetConfigName("config")

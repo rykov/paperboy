@@ -16,7 +16,6 @@ import (
 const (
 	// Local server configuration
 	serverGraphQLPath = "/graphql"
-	serverLocalPort   = 8080
 )
 
 func serverCmd() *cobra.Command {
@@ -56,9 +55,9 @@ func startAPIServer(cfg *config.AConfig, configFn configFunc) error {
 	// The rest is handled by UI
 	mux.Handle("/", uiHandler())
 
-	// Initialize server
-	s := &http.Server{Handler: mux}
-	s.Addr = fmt.Sprintf(":%d", serverLocalPort)
+	// Initialize server with standard middleware
+	s := &http.Server{Handler: server.WithMiddleware(mux, cfg)}
+	s.Addr = fmt.Sprintf(":%d", cfg.ServerPort)
 
 	// Open port for listening
 	l, err := net.Listen("tcp", s.Addr)
