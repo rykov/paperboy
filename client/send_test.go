@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
@@ -17,7 +18,9 @@ import (
 func TestSendIntegration(t *testing.T) {
 	// 1) create temp dir with files
 	dir := t.TempDir()
-	for name, content := range expected {
+	tempFiles := maps.Clone(expected)
+	tempFiles["baz.skip"] = "skip this plz"
+	for name, content := range tempFiles {
 		path := filepath.Join(dir, name)
 		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 			t.Fatalf("writing %q: %v", path, err)
@@ -30,18 +33,22 @@ func TestSendIntegration(t *testing.T) {
 	defer srv.Close()
 
 	// 3) test various client requests
+	args := SendArgs{ProjectPath: dir, Campaign: "testCampaign", List: "testList"}
+	args.ProjectIgnores = []string{"*.skip"} // Test ignoring files
 	cli := New(context.Background(), srv.URL)
-	if err := cli.Send(dir, "testCampaign", "testList"); err != nil {
+	if err := cli.Send(args); err != nil {
 		t.Fatalf("client.Send failed: %v", err)
 	}
 
-	if err := cli.Send(dir, "testCampaign", "testError"); err == nil {
+	args.List = "testError"
+	if err := cli.Send(args); err == nil {
 		t.Errorf("Expected server to error, got success")
 	} else if a, e := err.Error(), "server error: testError"; a != e {
 		t.Errorf("Expected error %q, got %q", e, a)
 	}
 
-	if err := cli.Send(dir, "testCampaign", "testPanic"); err == nil {
+	args.List = "testPanic"
+	if err := cli.Send(args); err == nil {
 		t.Errorf("Expected server to error, got success")
 	} else if a, e := err.Error(), "server error: panic occurred: testPanic"; a != e {
 		t.Errorf("Expected error %q, got %q", e, a)

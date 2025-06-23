@@ -29,11 +29,16 @@ func sendCmd() *cobra.Command {
 			}
 
 			ctx := cmd.Context()
-			if u := serverURL; u != "" {
-				return client.New(ctx, u).Send(".", args[0], args[1])
-			} else {
+			if u := serverURL; u == "" {
 				ctx = withSignalTrap(ctx)
 				return mail.LoadAndSendCampaign(ctx, cfg, args[0], args[1])
+			} else {
+				return client.New(ctx, u).Send(client.SendArgs{
+					ProjectPath:    ".", // TODO: configurable
+					ProjectIgnores: cfg.ClientIgnores,
+					Campaign:       args[0],
+					List:           args[1],
+				})
 			}
 		},
 	}

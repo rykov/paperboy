@@ -1,6 +1,7 @@
 package client
 
 import (
+	"github.com/moby/patternmatcher"
 	"resty.dev/v3"
 
 	"archive/zip"
@@ -31,8 +32,8 @@ func New(ctx context.Context, url string) *client {
 	return &client{ctx, url}
 }
 
-func (c *client) Send(projectPath, campaign, list string) error {
-	pr, ct := streamZipToMultipart(projectPath, func(mw *multipart.Writer) error {
+func (c *client) Send(args SendArgs) error {
+	pr, ct := streamZipToMultipart(args, func(mw *multipart.Writer) error {
 		header := make(textproto.MIMEHeader)
 		header.Set("Content-Type", "application/json")
 		part, err := mw.CreatePart(header)
@@ -44,8 +45,8 @@ func (c *client) Send(projectPath, campaign, list string) error {
 			"operationName": "sendCampaign",
 			"query":         sendGQL,
 			"variables": map[string]any{
-				"campaign": campaign,
-				"list":     list,
+				"campaign": args.Campaign,
+				"list":     args.List,
 			},
 		})
 	})
@@ -77,6 +78,14 @@ func (c *client) Send(projectPath, campaign, list string) error {
 }
 
 // Common GQL error response
+type SendArgs struct {
+	ProjectIgnores []string
+	ProjectPath    string
+	Campaign       string
+	List           string
+}
+
+// Common GQL error response
 type gqlErrorResponse struct {
 	Errors []struct {
 		Path    []string
@@ -85,10 +94,13 @@ type gqlErrorResponse struct {
 }
 
 // Create a pipe: the ZIP writer writes to pw, and resty reads from pr.
-func streamZipToMultipart(dirPath string, callback func(*multipart.Writer) error) (io.Reader, string) {
+func streamZipToMultipart(args SendArgs, callback func(*multipart.Writer) error) (io.Reader, string) {
 	// Create a pipe: multipart.Writer writes to pw, Resty reads from pr.
 	pr, pw := io.Pipe()
 	mw := multipart.NewWriter(pw)
+
+	dirPath := args.ProjectPath
+	ignores := args.ProjectIgnores
 
 	go func() {
 		defer pw.Close()
@@ -105,7 +117,9 @@ func streamZipToMultipart(dirPath string, callback func(*multipart.Writer) error
 
 		// Stream the ZIP into that part:
 		zw := zip.NewWriter(part)
-		zipErr := filepath.WalkDir(dirPath, func(path string, d fs.DirEntry, err error) error {
+
+		// Walk through the directory respecting "ClientIgnores" filtering configuration
+		zipErr := walkWithIgnores(dirPath, ignores, func(path string, d fs.DirEntry, err error) error {
 			if err != nil || d.IsDir() {
 				return err
 			}
@@ -164,4 +178,44 @@ func streamZipToMultipart(dirPath string, callback func(*multipart.Writer) error
 	}()
 
 	return pr, mw.FormDataContentType()
+}
+
+// walkWithIgnores does a ".dockerignore"-like filtering when walking a directory
+func walkWithIgnores(root string, ignores []string, fn fs.WalkDirFunc) error {
+	matcher, err := patternmatcher.New(ignores)
+	if err != nil {
+		return fmt.Errorf("invalid ignore pattern: %w", err)
+	}
+
+	return filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		// Propagate internal errors
+		if err != nil {
+			return fn(path, d, err)
+		}
+
+		// Compute a path relative to root for pattern matching
+		rel, relErr := filepath.Rel(root, path)
+		if relErr != nil {
+			rel = path
+		}
+		rel = filepath.ToSlash(rel)
+
+		// Skip the root itself from matching
+		if rel != "." {
+			// patternmatcher expects slash-separated paths
+			matched, err := matcher.Matches(rel)
+			if err != nil {
+				return fmt.Errorf("matching %q: %w", rel, err)
+			}
+			if matched {
+				if d.IsDir() {
+					return fs.SkipDir
+				}
+				return nil
+			}
+		}
+
+		// Not ignored
+		return fn(path, d, err)
+	})
 }
