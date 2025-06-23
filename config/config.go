@@ -67,7 +67,7 @@ type SMTPConfig struct {
 	URL  string
 	User string
 	Pass string
-	TLS  TLSConfig
+	TLS  *TLSConfig
 }
 
 type TLSConfig struct {
