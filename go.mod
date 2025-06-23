@@ -26,6 +26,7 @@ require (
 	github.com/yuin/goldmark v1.7.12
 	golang.org/x/net v0.41.0
 	gopkg.in/yaml.v3 v3.0.1
+	resty.dev/v3 v3.0.0-beta.3
 )
 
 require (

@@ -1,8 +1,6 @@
 package server
 
 import (
-	"github.com/graph-gophers/graphql-go"
-	"github.com/graph-gophers/graphql-go/relay"
 	"github.com/rs/cors"
 	"github.com/rykov/paperboy/config"
 
@@ -19,8 +17,9 @@ func GraphQLHandler(cfg *config.AConfig) http.Handler {
 		},
 	})
 
-	schema := graphql.MustParseSchema(schemaText, &Resolver{cfg: cfg})
-	return c.Handler(&relay.Handler{Schema: schema})
+	// GraphQL handler for exposed API
+	handler := MustSchemaHandler(schemaText, &Resolver{cfg: cfg})
+	return c.Handler(handler)
 }
 
 const schemaText = `
@@ -40,6 +39,7 @@ const schemaText = `
   # All mutations
   type Mutation {
     sendBeta(content: String!, recipients: [RecipientInput!]!): Int!
+    sendCampaign(campaign: String!, list: String!): Boolean!
   }
 
   # A single rendered email information
