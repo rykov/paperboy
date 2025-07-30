@@ -47,6 +47,9 @@ type ConfigFile struct {
 	// Validation
 	DKIM map[string]interface{}
 
+	// CSV parsing
+	CSV CSVConfig
+
 	// Directories
 	ContentDir string
 	LayoutDir  string
@@ -97,6 +100,11 @@ func (t TLSConfig) GetMinVersion() (uint16, error) {
 type BuildInfo struct {
 	Version   string
 	BuildDate string
+}
+
+// Configuration for CSV parsing
+type CSVConfig struct {
+	Comma string
 }
 
 func (i BuildInfo) String() string {
