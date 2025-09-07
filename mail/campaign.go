@@ -95,7 +95,11 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	}
 
 	toEmail := cast.ToString(ctx.Recipient.Email)
-	toName := cast.ToString(ctx.Recipient.Name)
+	to := cast.ToString(ctx.Campaign.To)
+	toName, err := renderRecName(to, ctx)
+	if err != nil {
+		return err
+	}
 
 	m.Reset() // Return to NewMessage state
 	m.SetAddressHeader("To", toEmail, toName)
@@ -317,6 +321,14 @@ func (c *Campaign) renderHTML(body []byte, layoutPath string, ctx *tmplContext) 
 
 func renderSubject(subject string, ctx *tmplContext) (string, error) {
 	tmpl, err := template.New("subject").Parse(subject)
+	if err != nil {
+		return "", err
+	}
+	return executeTemplate(nil, tmpl, ctx)
+}
+
+func renderRecName(name string, ctx *tmplContext) (string, error) {
+	tmpl, err := template.New("name").Parse(name)
 	if err != nil {
 		return "", err
 	}
