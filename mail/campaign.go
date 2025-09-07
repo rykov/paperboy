@@ -161,6 +161,8 @@ func LoadContent(cfg *config.AConfig, tmplID string) (*Campaign, error) {
 	if meta, err := email.Metadata(); err == nil && meta != nil {
 		metadata, _ := meta.(map[string]interface{})
 		fMeta = newCampaign(cfg, metadata)
+	} else if err != nil {
+		return nil, fmt.Errorf("failed to decode campain's frontmatter: %w", err)
 	} else { // Just defaults
 		fMeta = newCampaign(cfg, emptyParams)
 	}
