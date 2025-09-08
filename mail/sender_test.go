@@ -96,29 +96,3 @@ func TestSmtpDialerFailure(t *testing.T) {
 		})
 	}
 }
-
-func TestFilter(t *testing.T) {
-	recipients := []*ctxRecipient{
-		&ctxRecipient{
-			Name:  "Name1",
-			Email: "name1@example.com",
-			Params: map[string]interface{}{
-				"class": "1",
-			},
-		},
-		&ctxRecipient{
-			Name:  "Name2",
-			Email: "name2@example.com",
-			Params: map[string]interface{}{
-				"class": "2",
-			},
-		},
-	}
-	filtered, err := filterRecipients(recipients, "class == '1'")
-	if err != nil {
-		t.Errorf("Failed: %s", err)
-	}
-	if len(filtered) != 1 {
-		t.Errorf("Got %d", len(filtered))
-	}
-}

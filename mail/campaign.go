@@ -38,7 +38,7 @@ type tmplContext struct {
 }
 
 type Campaign struct {
-	Recipients []*ctxRecipient
+	Recipients CtxRecipients
 	EmailMeta  *ctxCampaign
 	Email      parser.Email
 

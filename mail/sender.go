@@ -3,7 +3,6 @@ package mail
 import (
 	"crypto/tls"
 
-	"github.com/casbin/govaluate"
 	"github.com/cenkalti/backoff/v5"
 	"github.com/go-gomail/gomail"
 	"github.com/rykov/paperboy/config"
@@ -35,8 +34,7 @@ func LoadAndSendCampaignFiltered(ctx context.Context, cfg *config.AConfig, tmplF
 		return err
 	}
 
-	recipients := c.Recipients
-	filteredRecipients, err := filterRecipients(recipients, filter)
+	filteredRecipients, err := c.Recipients.Filter(filter)
 	if err != nil {
 		return err
 	}
@@ -44,25 +42,6 @@ func LoadAndSendCampaignFiltered(ctx context.Context, cfg *config.AConfig, tmplF
 	c.Recipients = filteredRecipients
 
 	return SendCampaign(ctx, cfg, c)
-}
-
-func filterRecipients(recipients []*ctxRecipient, filter string) ([]*ctxRecipient, error) {
-	expression, err := govaluate.NewEvaluableExpression(filter)
-	if err != nil {
-		return nil, err
-	}
-
-	var filteredRecipients []*ctxRecipient
-	for _, r := range recipients {
-		result, err := expression.Evaluate(r.Params)
-		if err != nil {
-			return nil, err
-		}
-		if result == true {
-			filteredRecipients = append(filteredRecipients, r)
-		}
-	}
-	return filteredRecipients, nil
 }
 
 func SendCampaign(ctx context.Context, cfg *config.AConfig, c *Campaign) error {
