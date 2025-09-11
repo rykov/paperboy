@@ -95,8 +95,8 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	}
 
 	toEmail := cast.ToString(ctx.Recipient.Email)
-	to := cast.ToString(ctx.Campaign.To)
-	toName, err := renderRecName(to, ctx)
+	dn := cast.ToString(ctx.Campaign.DisplayName)
+	toName, err := renderRecDisplayName(dn, ctx)
 	if err != nil {
 		return err
 	}
@@ -327,8 +327,12 @@ func renderSubject(subject string, ctx *tmplContext) (string, error) {
 	return executeTemplate(nil, tmpl, ctx)
 }
 
-func renderRecName(name string, ctx *tmplContext) (string, error) {
-	tmpl, err := template.New("name").Parse(name)
+func renderRecDisplayName(tmplName string, ctx *tmplContext) (string, error) {
+	if tmplName == "" {
+		// No template, use Name field only
+		return ctx.Recipient.Name, nil
+	}
+	tmpl, err := template.New("name").Parse(tmplName)
 	if err != nil {
 		return "", err
 	}
