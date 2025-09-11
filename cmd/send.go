@@ -14,6 +14,7 @@ import (
 
 func sendCmd() *cobra.Command {
 	var serverURL string
+	var recipientsFilter string
 
 	cmd := &cobra.Command{
 		Use:     "send [content] [list]",
@@ -31,7 +32,7 @@ func sendCmd() *cobra.Command {
 			ctx := cmd.Context()
 			if u := serverURL; u == "" {
 				ctx = withSignalTrap(ctx)
-				return mail.LoadAndSendCampaign(ctx, cfg, args[0], args[1])
+				return mail.LoadAndSendCampaign(ctx, cfg, args[0], args[1], recipientsFilter)
 			} else {
 				return client.New(ctx, u).Send(client.SendArgs{
 					ProjectPath:    ".", // TODO: configurable
@@ -45,6 +46,7 @@ func sendCmd() *cobra.Command {
 
 	// Server to specify remote server
 	cmd.Flags().StringVar(&serverURL, "server", "", "URL of server")
+	cmd.Flags().StringVar(&recipientsFilter, "filter", "", "Recipients filter")
 
 	return cmd
 }
