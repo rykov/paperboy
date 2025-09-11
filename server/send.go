@@ -92,6 +92,7 @@ func (r *Resolver) SendCampaign(ctx context.Context, args SendCampaignArgs) (boo
 		return false, fmt.Errorf("ZIP Config: %w", err)
 	}
 
-	err = mail.LoadAndSendCampaign(ctx, cfg, args.Campaign, args.List)
+	// Filter is possibly defined in the Campaign
+	err = mail.LoadAndSendCampaign(ctx, cfg, args.Campaign, args.List, "")
 	return err == nil, err
 }

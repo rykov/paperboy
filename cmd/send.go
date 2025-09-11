@@ -32,11 +32,7 @@ func sendCmd() *cobra.Command {
 			ctx := cmd.Context()
 			if u := serverURL; u == "" {
 				ctx = withSignalTrap(ctx)
-				if recipientsFilter != "" {
-					return mail.LoadAndSendCampaignFiltered(ctx, cfg, args[0], args[1], recipientsFilter)
-				} else {
-					return mail.LoadAndSendCampaign(ctx, cfg, args[0], args[1])
-				}
+				return mail.LoadAndSendCampaign(ctx, cfg, args[0], args[1], recipientsFilter)
 			} else {
 				return client.New(ctx, u).Send(client.SendArgs{
 					ProjectPath:    ".", // TODO: configurable

@@ -43,7 +43,9 @@ func newRecipient(data map[string]interface{}) ctxRecipient {
 
 // Campaign variable
 type ctxCampaign struct {
-	From   string
+	From string
+	// Filter recipients
+	Filter string
 	Params map[string]interface{}
 
 	// Original subject from frontmatter
@@ -62,9 +64,11 @@ func newCampaign(cfg *config.AConfig, data map[string]interface{}) ctxCampaign {
 	if c.From, _ = c.Params["from"].(string); c.From == "" {
 		c.From = cfg.From
 	}
+	c.Filter, _ = c.Params["filter"].(string)
 
 	delete(c.Params, "subject")
 	delete(c.Params, "from")
+	delete(c.Params, "filter")
 	return c
 }
 

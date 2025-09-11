@@ -17,29 +17,25 @@ import (
 	"time"
 )
 
-func LoadAndSendCampaign(ctx context.Context, cfg *config.AConfig, tmplFile, recipientFile string) error {
+func LoadAndSendCampaign(ctx context.Context, cfg *config.AConfig, tmplFile, recipientFile string, filter string) error {
 	// Load up template and recipientswith frontmatter
 	c, err := LoadCampaign(cfg, tmplFile, recipientFile)
 	if err != nil {
 		return err
 	}
 
-	return SendCampaign(ctx, cfg, c)
-}
-
-func LoadAndSendCampaignFiltered(ctx context.Context, cfg *config.AConfig, tmplFile, recipientFile string, filter string) error {
-	// Load up template and recipientswith frontmatter
-	c, err := LoadCampaign(cfg, tmplFile, recipientFile)
-	if err != nil {
-		return err
+	if filter == "" {
+		// Argument specified: use the possibly declared in Campaign
+		filter = c.EmailMeta.Filter
 	}
-
-	filteredRecipients, err := c.Recipients.Filter(filter)
-	if err != nil {
-		return err
+	if filter != "" {
+		// Filter the recipients
+		filteredRecipients, err := c.Recipients.Filter(filter)
+		if err != nil {
+			return err
+		}
+		c.Recipients = filteredRecipients
 	}
-
-	c.Recipients = filteredRecipients
 
 	return SendCampaign(ctx, cfg, c)
 }
