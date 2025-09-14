@@ -104,6 +104,10 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	m.SetHeader("X-Mailer", xMailer)
 	m.SetBody("text/plain", plainBody)
 	m.AddAlternative("text/html", htmlBody)
+	// Attachments
+	for _, attachment := range c.EmailMeta.Attachments {
+		m.Attach(attachment)
+	}
 	return nil
 }
 

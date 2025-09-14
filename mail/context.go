@@ -43,8 +43,9 @@ func newRecipient(data map[string]interface{}) ctxRecipient {
 
 // Campaign variable
 type ctxCampaign struct {
-	From   string
-	Params map[string]interface{}
+	From        string
+	Params      map[string]interface{}
+	Attachments []string
 
 	// Original subject from frontmatter
 	// before templating via renderSubject
@@ -62,9 +63,25 @@ func newCampaign(cfg *config.AConfig, data map[string]interface{}) ctxCampaign {
 	if c.From, _ = c.Params["from"].(string); c.From == "" {
 		c.From = cfg.From
 	}
+	// Attachments
+	if attachment, ok := c.Params["attachments"].(string); ok {
+		// A single file is attached
+		c.Attachments[0] = attachment
+	} else if attachments, ok := c.Params["attachments"].([]interface{}); ok {
+		c.Attachments = make([]string, len(attachments))
+		for i, attachment := range attachments {
+			if file, ok := attachment.(string); ok {
+				c.Attachments[i] = file
+			} else {
+				// there is attachment, but not decoded
+				log.Errorf("Failed to decode attachment %d: type %T", i, attachment)
+			}
+		}
+	}
 
 	delete(c.Params, "subject")
 	delete(c.Params, "from")
+	delete(c.Params, "attachments")
 	return c
 }
 

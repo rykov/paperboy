@@ -17,6 +17,7 @@ package main
 import (
 	"github.com/rykov/paperboy/cmd"
 	"github.com/rykov/paperboy/config"
+	"github.com/sirupsen/logrus"
 
 	"fmt"
 	"os"
@@ -27,6 +28,21 @@ var (
 	version = "???"
 	date    = "???"
 )
+
+func init() {
+	lvl, ok := os.LookupEnv("LOG_LEVEL")
+	// LOG_LEVEL not set, let's default to info
+	if !ok {
+		lvl = "info"
+	}
+	// parse string, this is built-in feature of logrus
+	ll, err := logrus.ParseLevel(lvl)
+	if err != nil {
+		ll = logrus.DebugLevel
+	}
+	// set global log level
+	logrus.SetLevel(ll)
+}
 
 // Commands managed by Cobra
 func main() {
