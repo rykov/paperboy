@@ -182,3 +182,62 @@ func buildMultipartBody(jsonContent map[string]any, zipContent []byte) (body *by
 
 	return body, w.FormDataContentType(), nil
 }
+
+func TestServeHTTP_JSON_NoMultipartError(t *testing.T) {
+	// Simple resolver for JSON-only GraphQL
+	resolver := &jsonTestResolver{}
+
+	// Simple GraphQL schema
+	schema := `type Query { hello: String! }`
+	h := MustSchemaHandler(schema, resolver)
+
+	// Prepare regular JSON GraphQL request (no multipart)
+	jsonReq := map[string]any{
+		"query": "{ hello }",
+	}
+	jsonBytes, err := json.Marshal(jsonReq)
+	if err != nil {
+		t.Fatalf("marshal JSON request: %v", err)
+	}
+
+	// Create HTTP request with application/json Content-Type
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest("POST", "/graphql", bytes.NewReader(jsonBytes))
+	req.Header.Set("Content-Type", "application/json")
+
+	// Invoke handler
+	h.ServeHTTP(rr, req)
+
+	if rr.Code != 200 {
+		t.Errorf("Response body: %q", rr.Body.String())
+		t.Fatalf("expected status 200, got %d", rr.Code)
+	}
+
+	// Verify response contains valid JSON without multipart error
+	var resp struct {
+		Data   struct{ Hello string }
+		Errors []map[string]any
+	}
+	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("unmarshal response: %v", err)
+	}
+	if e := resp.Errors; e != nil {
+		t.Errorf("expected no GraphQL errors: %+v", e)
+	}
+	if resp.Data.Hello != "world" {
+		t.Errorf("expected hello=world, got %q", resp.Data.Hello)
+	}
+
+	// Ensure the response doesn't contain the multipart error message
+	responseBody := rr.Body.String()
+	if strings.Contains(responseBody, "multipart/form-data") {
+		t.Errorf("response should not contain multipart error: %s", responseBody)
+	}
+}
+
+// jsonTestResolver for testing regular JSON GraphQL requests
+type jsonTestResolver struct{}
+
+func (r *jsonTestResolver) Hello() string {
+	return "world"
+}

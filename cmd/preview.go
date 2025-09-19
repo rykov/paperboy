@@ -13,9 +13,13 @@ import (
 
 const (
 	// Request headers when requesting server info
+	cliPreviewMsg    = "\nPlease open the browser to the following URL:\n%s\n\n"
 	cliVersionHeader = "X-Paperboy-Version"
 	cliUserAgent     = "Paperboy (%s)"
 )
+
+// Test mode disables opening the browser
+var previewTestMode = false
 
 func previewCmd() *cobra.Command {
 	return &cobra.Command{
@@ -34,7 +38,7 @@ func previewCmd() *cobra.Command {
 				// Wait for server and open preview
 				go func() {
 					if r, _ := <-serverReady; r {
-						openPreview(cfg, args[0], args[1])
+						openPreview(cmd, cfg, args[0], args[1])
 					}
 				}()
 
@@ -44,7 +48,7 @@ func previewCmd() *cobra.Command {
 	}
 }
 
-func openPreview(cfg *config.AConfig, content, list string) {
+func openPreview(cmd *cobra.Command, cfg *config.AConfig, content, list string) {
 	// Root URL for preview and GraphQL server
 	previewRoot := fmt.Sprintf("http://localhost:%d", cfg.ServerPort)
 	previewPath := fmt.Sprintf("/preview/%s/%s", url.PathEscape(content), url.PathEscape(list))
@@ -52,18 +56,22 @@ func openPreview(cfg *config.AConfig, content, list string) {
 	// Open preview URL on various platform
 	url := previewRoot + previewPath
 	var err error
-	switch runtime.GOOS {
-	case "darwin":
-		err = exec.Command("open", url).Start()
-	case "linux":
-		err = exec.Command("xdg-open", url).Start()
-	case "windows":
-		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
-	default:
-		err = fmt.Errorf("Unsupported platform")
+	if previewTestMode {
+		err = fmt.Errorf("Test mode")
+	} else {
+		switch runtime.GOOS {
+		case "darwin":
+			err = exec.Command("open", url).Start()
+		case "linux":
+			err = exec.Command("xdg-open", url).Start()
+		case "windows":
+			err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+		default:
+			err = fmt.Errorf("Unsupported platform")
+		}
 	}
 
 	if err != nil {
-		fmt.Printf("\nPlease open the browser to the following URL:\n%s\n\n", url)
+		fmt.Fprintf(cmd.OutOrStdout(), cliPreviewMsg, url)
 	}
 }

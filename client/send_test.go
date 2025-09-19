@@ -58,7 +58,9 @@ func TestSendIntegration(t *testing.T) {
 // minimal test‐only schema & resolver:
 const schemaSDL = `
   schema { query: Query mutation: Mutation }
-  type Query {}
+  type Query {
+    _schema: String @deprecated(reason: "Not implemented")
+  }
   type Mutation {
     sendCampaign(campaign: String!, list: String!): Boolean!
   }
@@ -71,6 +73,11 @@ var expected = map[string]string{
 }
 
 type testResolver struct{}
+
+// Schema query resolver to satisfy GraphQL schema requirements
+func (r *testResolver) Schema() *string {
+	return nil
+}
 
 // resolver signature with context so we can pull the zip back out
 func (r *testResolver) SendCampaign(ctx context.Context, args struct {

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 
-	"context"
 	"encoding/json"
 	"strings"
 	"testing"
@@ -114,7 +113,7 @@ func issueGraphQLQuery(cfg *config.AConfig, query string) *graphql.Response {
 
 func issueGraphQL(cfg *config.AConfig, query string, vars map[string]interface{}) *graphql.Response {
 	schema := graphql.MustParseSchema(schemaText, &Resolver{cfg: cfg})
-	return schema.Exec(context.TODO(), query, "", vars)
+	return schema.Exec(cfg.Context, query, "", vars)
 }
 
 func newTestConfigAndFs(t *testing.T) (*config.AConfig, *config.Fs) {
