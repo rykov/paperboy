@@ -10,10 +10,6 @@ module.exports = function (defaults) {
     postcssOptions: ConfigurePostCSS(),
   });
 
-  // HACK: Ember 6.1+ removed "ember" import, so we do it here
-  const emberJs = `ember.${isProduction ? 'prod' : 'debug'}.js`;
-  app.import(`node_modules/ember-source/dist/${emberJs}`);
-
   // Use `app.import` to add additional libraries to the generated
   // output files.
   //
