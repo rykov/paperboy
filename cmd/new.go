@@ -74,7 +74,7 @@ func newCmd() *cobra.Command {
 		Example: "paperboy new the-announcement.md",
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := config.LoadConfig()
+			cfg, err := config.LoadConfig(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -97,7 +97,7 @@ func newCmd() *cobra.Command {
 		Example: "paperboy new list in-the-know",
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := config.LoadConfig()
+			cfg, err := config.LoadConfig(cmd.Context())
 			if err != nil {
 				return err
 			}

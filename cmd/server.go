@@ -6,11 +6,13 @@ import (
 	"github.com/rykov/paperboy/ui"
 	"github.com/spf13/cobra"
 
+	"context"
 	"errors"
 	"fmt"
 	"io/fs"
 	"net"
 	"net/http"
+	"time"
 )
 
 const (
@@ -23,7 +25,7 @@ func serverCmd() *cobra.Command {
 		Use:   "server",
 		Short: "Launch a preview server for emails",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := config.LoadConfig()
+			cfg, err := config.LoadConfig(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -59,6 +61,11 @@ func startAPIServer(cfg *config.AConfig, configFn configFunc) error {
 	s := &http.Server{Handler: server.WithMiddleware(mux, cfg)}
 	s.Addr = fmt.Sprintf(":%d", cfg.ServerPort)
 
+	// Request base context to gracefully kill connections
+	s.BaseContext = func(_ net.Listener) context.Context {
+		return cfg.Context
+	}
+
 	// Open port for listening
 	l, err := net.Listen("tcp", s.Addr)
 	if err != nil {
@@ -71,9 +78,33 @@ func startAPIServer(cfg *config.AConfig, configFn configFunc) error {
 		close(ready)
 	}
 
-	// Serve server API
-	fmt.Printf("API server listening at %s ... \n", s.Addr)
-	return s.Serve(l)
+	// Start server in goroutine with error handling
+	errChan := make(chan error, 1)
+	go func() {
+		fmt.Printf("API server listening at %s ... \n", s.Addr)
+		if err := s.Serve(l); err != nil && err != http.ErrServerClosed {
+			errChan <- err
+		}
+		close(errChan)
+	}()
+
+	// Wait until shutdown
+	select {
+	case <-cfg.Context.Done():
+		// Parent-triggered shutdown
+	case err := <-errChan:
+		if err != nil {
+			fmt.Printf("Server failed to start: %v\n", err)
+			return fmt.Errorf("server failed to start: %w", err)
+		}
+	}
+
+	// Graceful shutdown with timeout
+	doneCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	fmt.Println("\nShutting down server...")
+	return s.Shutdown(doneCtx)
 }
 
 // Handle paths for Browser UI

@@ -29,6 +29,9 @@ func (r *Resolver) SendBeta(ctx context.Context, args SendOneArgs) (int32, error
 		return 0, fmt.Errorf("No recipients")
 	}
 
+	// Request config with context
+	cfg := r.cfg.WithContext(ctx)
+
 	// Prepare argument for mail.MapsToRecipients
 	paramsAry := make([]map[string]interface{}, len(args.Recipients))
 	for i, r := range args.Recipients {
@@ -56,14 +59,14 @@ func (r *Resolver) SendBeta(ctx context.Context, args SendOneArgs) (int32, error
 	}
 
 	// Load content and metadata
-	campaign, err := mail.LoadContent(r.cfg, args.Content)
+	campaign, err := mail.LoadContent(cfg, args.Content)
 	if err != nil {
 		return 0, err
 	}
 
 	// Populate recipients and fire away
 	campaign.Recipients = recipients
-	err = mail.SendCampaign(ctx, r.cfg, campaign)
+	err = mail.SendCampaign(cfg, campaign)
 	return int32(len(recipients)), err
 }
 
@@ -87,11 +90,13 @@ func (r *Resolver) SendCampaign(ctx context.Context, args SendCampaignArgs) (boo
 		return false, fmt.Errorf("ZIP: %w", err)
 	}
 
-	cfg, err := config.LoadConfigFs(zipfs.New(zr))
+	// Wrap incoming ZIP file into a virtual FS with context
+	cfg, err := config.LoadConfigFs(ctx, zipfs.New(zr))
 	if err != nil {
 		return false, fmt.Errorf("ZIP Config: %w", err)
 	}
 
-	err = mail.LoadAndSendCampaign(ctx, cfg, args.Campaign, args.List)
+	// Load campaign and recipient list, and send it 🚀
+	err = mail.LoadAndSendCampaign(cfg, args.Campaign, args.List)
 	return err == nil, err
 }

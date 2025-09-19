@@ -17,32 +17,31 @@ import (
 	"time"
 )
 
-func LoadAndSendCampaign(ctx context.Context, cfg *config.AConfig, tmplFile, recipientFile string) error {
+func LoadAndSendCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
 	// Load up template and recipientswith frontmatter
 	c, err := LoadCampaign(cfg, tmplFile, recipientFile)
 	if err != nil {
 		return err
 	}
 
-	return SendCampaign(ctx, cfg, c)
+	return SendCampaign(cfg, c)
 }
 
-func SendCampaign(ctx context.Context, cfg *config.AConfig, c *Campaign) error {
+func SendCampaign(cfg *config.AConfig, c *Campaign) error {
 	// Initialize deliverer
 	engine := &deliverer{
 		tasks:    make(chan *gomail.Message, 10),
 		waiter:   &sync.WaitGroup{},
-		context:  ctx,
+		context:  cfg.Context,
 		campaign: c,
 	}
 
 	// Capture context cancellation for graceful exit
-	if done := ctx.Done(); done != nil {
-		go func() {
-			<-done
-			engine.close()
-		}()
-	}
+	done := cfg.Context.Done()
+	go func() {
+		<-done
+		engine.close()
+	}()
 
 	// Rate configuration
 	throttle, workers := time.Duration(0), cfg.Workers

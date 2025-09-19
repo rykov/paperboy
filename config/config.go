@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -26,8 +27,18 @@ type AConfig struct {
 	// From config.toml
 	ConfigFile
 
+	// Command context
+	Context context.Context
+
 	// Afero VFS
 	AppFs *Fs
+}
+
+// Creates a new config with provided context override
+func (orig AConfig) WithContext(ctx context.Context) *AConfig {
+	var newCfg = orig
+	newCfg.Context = ctx
+	return &newCfg
 }
 
 // See https://www.paperboy.email/docs/configuration/
@@ -105,25 +116,25 @@ func (i BuildInfo) String() string {
 
 // Standard configuration with Viper operating
 // on OS FS based at current working directory
-func LoadConfig() (*AConfig, error) {
+func LoadConfig(ctx context.Context) (*AConfig, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return nil, err
 	}
 	fs := afero.NewBasePathFs(afero.NewOsFs(), wd)
-	return LoadConfigFs(fs)
+	return LoadConfigFs(ctx, fs)
 }
 
 // Standard configuration for specified afero FS
 // The project is assumed to be in afero.Fs root
-func LoadConfigFs(fs afero.Fs) (*AConfig, error) {
-	cfg := &AConfig{AppFs: &Fs{Fs: fs}}
+func LoadConfigFs(ctx context.Context, fs afero.Fs) (*AConfig, error) {
+	cfg := &AConfig{Context: ctx, AppFs: &Fs{Fs: fs}}
 	cfg.AppFs.Config = cfg
 
 	viperConfig := newViperConfig(cfg.AppFs)
 	if err := viperConfig.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			fmt.Println(err.Error())
+			fmt.Fprintln(os.Stderr, err.Error())
 		} else {
 			return nil, err
 		}

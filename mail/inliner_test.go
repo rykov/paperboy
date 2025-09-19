@@ -14,7 +14,7 @@ func NewTestConfig(t *testing.T) *config.AConfig {
 	fs := afero.NewMemMapFs()
 	afero.WriteFile(fs, "/config.toml", []byte(""), 0644)
 
-	cfg, _ := config.LoadConfigFs(fs)
+	cfg, _ := config.LoadConfigFs(t.Context(), fs)
 	expect := reflect.TypeOf((*afero.MemMapFs)(nil))
 	if expect != reflect.TypeOf(cfg.AppFs.Fs) {
 		t.Errorf("AppFs should be MemMapFs - check setup")

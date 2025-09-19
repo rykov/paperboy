@@ -30,13 +30,18 @@ func (r *Resolver) RenderOne(ctx context.Context, args *RenderOneArgs) (*rendere
 		return nil, fmt.Errorf("Specifier should be a number: %s", recIDstr)
 	}
 
-	campaign, err := mail.LoadCampaign(r.cfg, args.Content, listID)
+	// Request config with context
+	cfg := r.cfg.WithContext(ctx)
+
+	// Load campaign and recipient list
+	campaign, err := mail.LoadCampaign(cfg, args.Content, listID)
 	if err != nil {
 		return nil, err
 	} else if len(campaign.Recipients) == 0 {
 		return nil, fmt.Errorf("No recipients in list %s", listID)
 	}
 
+	// Find message for specified recipient
 	msg, err := campaign.MessageFor(recID)
 	if err != nil {
 		return nil, err

@@ -5,11 +5,6 @@ import (
 	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/cobra"
-
-	"context"
-	"fmt"
-	"os"
-	"os/signal"
 )
 
 func sendCmd() *cobra.Command {
@@ -23,17 +18,15 @@ func sendCmd() *cobra.Command {
 		// Uncomment the following line if your bare application
 		// has an action associated with it:
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := config.LoadConfig() // Validate project
+			cfg, err := config.LoadConfig(cmd.Context()) // Validate project
 			if err != nil {
 				return err
 			}
 
-			ctx := cmd.Context()
 			if u := serverURL; u == "" {
-				ctx = withSignalTrap(ctx)
-				return mail.LoadAndSendCampaign(ctx, cfg, args[0], args[1])
+				return mail.LoadAndSendCampaign(cfg, args[0], args[1])
 			} else {
-				return client.New(ctx, u).Send(client.SendArgs{
+				return client.New(cmd.Context(), u).Send(client.SendArgs{
 					ProjectPath:    ".", // TODO: configurable
 					ProjectIgnores: cfg.ClientIgnores,
 					Campaign:       args[0],
@@ -47,20 +40,4 @@ func sendCmd() *cobra.Command {
 	cmd.Flags().StringVar(&serverURL, "server", "", "URL of server")
 
 	return cmd
-}
-
-func withSignalTrap(cmdCtx context.Context) context.Context {
-	ctx, cancel := context.WithCancel(cmdCtx)
-
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		for sig := range c {
-			fmt.Printf("Stopping on %s\n", sig)
-			cancel()
-			return
-		}
-	}()
-
-	return ctx
 }

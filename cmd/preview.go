@@ -23,7 +23,7 @@ func previewCmd() *cobra.Command {
 		Short: "Preview campaign in browser",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := config.LoadConfig()
+			cfg, err := config.LoadConfig(cmd.Context())
 			if err != nil {
 				return err
 			}

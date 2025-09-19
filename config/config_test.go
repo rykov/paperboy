@@ -12,7 +12,7 @@ func TestDefaultConfig(t *testing.T) {
 
 	// Write and load fake configuration
 	afero.WriteFile(fs, "/config.toml", []byte(""), 0644)
-	cfg, err := LoadConfigFs(fs)
+	cfg, err := LoadConfigFs(t.Context(), fs)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,7 +38,7 @@ func TestTLSConfig(t *testing.T) {
 InsecureSkipVerify = true
 MinVersion = "1.0"
 	`), 0644)
-	cfg, err := LoadConfigFs(fs)
+	cfg, err := LoadConfigFs(t.Context(), fs)
 	if err != nil {
 		t.Fatal(err)
 	}

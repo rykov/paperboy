@@ -126,7 +126,7 @@ func newTestConfigAndFs(t *testing.T) (*config.AConfig, *config.Fs) {
 
 	// Write and load fake configuration
 	afero.WriteFile(fs, "/config.toml", []byte(""), 0644)
-	cfg, err := config.LoadConfigFs(fs)
+	cfg, err := config.LoadConfigFs(t.Context(), fs)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -18,8 +18,12 @@ import (
 	"github.com/rykov/paperboy/cmd"
 	"github.com/rykov/paperboy/config"
 
+	"context"
+	"errors"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 // Populated by goreleaser
@@ -30,9 +34,20 @@ var (
 
 // Commands managed by Cobra
 func main() {
-	bi := config.BuildInfo{version, date}
-	if err := cmd.New(bi).Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop() // unregistered signal handlers
+
+	bi := config.BuildInfo{
+		Version:   version,
+		BuildDate: date,
+	}
+
+	if err := cmd.New(bi).ExecuteContext(ctx); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		if errors.Is(err, context.Canceled) {
+			os.Exit(130) // Standard SIGINT exit code
+		} else {
+			os.Exit(1)
+		}
 	}
 }
