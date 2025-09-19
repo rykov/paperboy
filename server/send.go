@@ -1,9 +1,13 @@
 package server
 
 import (
+	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/mail"
+	"github.com/spf13/afero/zipfs"
 
+	"archive/zip"
 	"context"
+	"errors"
 	"fmt"
 )
 
@@ -61,4 +65,33 @@ func (r *Resolver) SendBeta(ctx context.Context, args SendOneArgs) (int32, error
 	campaign.Recipients = recipients
 	err = mail.SendCampaign(ctx, r.cfg, campaign)
 	return int32(len(recipients)), err
+}
+
+type SendCampaignArgs struct {
+	Campaign string
+	List     string
+}
+
+// ===== Use ZIP-file attachment to deliver campaign to the recipient list ======
+func (r *Resolver) SendCampaign(ctx context.Context, args SendCampaignArgs) (bool, error) {
+	file, ok := RequestZipFile(ctx)
+	if !ok {
+		return false, errors.New("ZIP: No file")
+	}
+	fi, err := file.Stat()
+	if err != nil {
+		return false, fmt.Errorf("ZIP: %w", err)
+	}
+	zr, err := zip.NewReader(file, fi.Size())
+	if err != nil {
+		return false, fmt.Errorf("ZIP: %w", err)
+	}
+
+	cfg, err := config.LoadConfigFs(zipfs.New(zr))
+	if err != nil {
+		return false, fmt.Errorf("ZIP Config: %w", err)
+	}
+
+	err = mail.LoadAndSendCampaign(ctx, cfg, args.Campaign, args.List)
+	return err == nil, err
 }

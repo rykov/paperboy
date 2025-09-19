@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/rykov/paperboy/client"
 	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/mail"
 	"github.com/spf13/cobra"
@@ -12,7 +13,9 @@ import (
 )
 
 func sendCmd() *cobra.Command {
-	return &cobra.Command{
+	var serverURL string
+
+	cmd := &cobra.Command{
 		Use:     "send [content] [list]",
 		Short:   "Send campaign to recipients",
 		Example: "paperboy send the-announcement in-the-know",
@@ -20,15 +23,25 @@ func sendCmd() *cobra.Command {
 		// Uncomment the following line if your bare application
 		// has an action associated with it:
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := config.LoadConfig()
+			cfg, err := config.LoadConfig() // Validate project
 			if err != nil {
 				return err
 			}
 
-			ctx := withSignalTrap(cmd.Context())
-			return mail.LoadAndSendCampaign(ctx, cfg, args[0], args[1])
+			ctx := cmd.Context()
+			if u := serverURL; u != "" {
+				return client.New(ctx, u).Send(".", args[0], args[1])
+			} else {
+				ctx = withSignalTrap(ctx)
+				return mail.LoadAndSendCampaign(ctx, cfg, args[0], args[1])
+			}
 		},
 	}
+
+	// Server to specify remote server
+	cmd.Flags().StringVar(&serverURL, "server", "", "URL of server")
+
+	return cmd
 }
 
 func withSignalTrap(cmdCtx context.Context) context.Context {
