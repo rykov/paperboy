@@ -151,3 +151,236 @@ Unsubscribe: {{ .UnsubscribeURL }}
 
 	t.Log("Campaign test completed successfully with dry-run sender")
 }
+
+func TestToTemplateEmpty(t *testing.T) {
+	memFs := afero.NewMemMapFs()
+	memFs.MkdirAll("content", 0755)
+
+	// Email template without "to" field in frontmatter
+	emailContent := `---
+subject: "Test Email"
+from: "sender@example.com"
+---
+
+Hello {{ .Recipient.Name }}!`
+
+	afero.WriteFile(memFs, "content/test.md", []byte(emailContent), 0644)
+
+	cfg, err := config.LoadConfigFs(t.Context(), memFs)
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	campaign, err := LoadContent(cfg, "test")
+	if err != nil {
+		t.Fatalf("Failed to load campaign: %v", err)
+	}
+
+	// Add a test recipient
+	campaign.Recipients = []*ctxRecipient{
+		{
+			Email: "john@example.com",
+			Name:  "John Doe",
+		},
+	}
+
+	message, err := campaign.MessageFor(0)
+	if err != nil {
+		t.Fatalf("Failed to generate message: %v", err)
+	}
+
+	// Verify default To behavior (AddToFormat)
+	var buf bytes.Buffer
+	if _, err := message.WriteTo(&buf); err != nil {
+		t.Fatalf("Failed to write message: %v", err)
+	}
+
+	msgContent := buf.String()
+	if !strings.Contains(msgContent, "john@example.com") {
+		t.Error("Message should contain recipient email with default To behavior")
+	}
+	if !strings.Contains(msgContent, "John Doe") {
+		t.Error("Message should contain recipient name with default To behavior")
+	}
+}
+
+func TestToTemplateSuccess(t *testing.T) {
+	memFs := afero.NewMemMapFs()
+	memFs.MkdirAll("content", 0755)
+
+	// Email template with "to" template in frontmatter
+	emailContent := `---
+subject: "Test Email"
+from: "sender@example.com"
+to: "User {{ .Recipient.Name }} <{{ .Recipient.Email }}>"
+---
+
+Hello {{ .Recipient.Name }}!`
+
+	afero.WriteFile(memFs, "content/test.md", []byte(emailContent), 0644)
+
+	cfg, err := config.LoadConfigFs(t.Context(), memFs)
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	campaign, err := LoadContent(cfg, "test")
+	if err != nil {
+		t.Fatalf("Failed to load campaign: %v", err)
+	}
+
+	// Add a test recipient
+	campaign.Recipients = []*ctxRecipient{
+		{
+			Email: "jane@example.com",
+			Name:  "Jane Smith",
+		},
+	}
+
+	message, err := campaign.MessageFor(0)
+	if err != nil {
+		t.Fatalf("Failed to generate message: %v", err)
+	}
+
+	// Verify To template was rendered correctly
+	var buf bytes.Buffer
+	if _, err := message.WriteTo(&buf); err != nil {
+		t.Fatalf("Failed to write message: %v", err)
+	}
+
+	msgContent := buf.String()
+	// Should contain the rendered template format (go-mail formats with quotes)
+	expectedTo := `"User Jane Smith" <jane@example.com>`
+	if !strings.Contains(msgContent, expectedTo) {
+		t.Errorf("Message should contain rendered To template '%s', got: %s", expectedTo, msgContent)
+	}
+}
+
+func TestToTemplateInvalidSyntax(t *testing.T) {
+	memFs := afero.NewMemMapFs()
+	memFs.MkdirAll("content", 0755)
+
+	// Email template with invalid "to" template syntax
+	emailContent := `---
+subject: "Test Email"
+from: "sender@example.com"
+to: "{{ .Recipient.InvalidField"
+---
+
+Hello {{ .Recipient.Name }}!`
+
+	afero.WriteFile(memFs, "content/test.md", []byte(emailContent), 0644)
+
+	cfg, err := config.LoadConfigFs(t.Context(), memFs)
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	campaign, err := LoadContent(cfg, "test")
+	if err != nil {
+		t.Fatalf("Failed to load campaign: %v", err)
+	}
+
+	// Add a test recipient
+	campaign.Recipients = []*ctxRecipient{
+		{
+			Email: "test@example.com",
+			Name:  "Test User",
+		},
+	}
+
+	// Should fail when trying to generate message due to invalid template
+	_, err = campaign.MessageFor(0)
+	if err == nil {
+		t.Error("Expected error when using invalid To template syntax")
+	}
+
+	if !strings.Contains(err.Error(), "template") {
+		t.Errorf("Error should mention template parsing issue, got: %v", err)
+	}
+}
+
+func TestToTemplateRenderingError(t *testing.T) {
+	memFs := afero.NewMemMapFs()
+	memFs.MkdirAll("content", 0755)
+
+	// Email template with "to" template that references non-existent field
+	emailContent := `---
+subject: "Test Email"
+from: "sender@example.com"
+to: "{{ .NonExistentField.Email }}"
+---
+
+Hello {{ .Recipient.Name }}!`
+
+	afero.WriteFile(memFs, "content/test.md", []byte(emailContent), 0644)
+
+	cfg, err := config.LoadConfigFs(t.Context(), memFs)
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	campaign, err := LoadContent(cfg, "test")
+	if err != nil {
+		t.Fatalf("Failed to load campaign: %v", err)
+	}
+
+	// Add a test recipient
+	campaign.Recipients = []*ctxRecipient{
+		{
+			Email: "test@example.com",
+			Name:  "Test User",
+		},
+	}
+
+	// Should fail when trying to render the template due to missing field
+	_, err = campaign.MessageFor(0)
+	if err == nil {
+		t.Error("Expected error when To template references non-existent field")
+	}
+}
+
+func TestToTemplateInvalidEmailAddress(t *testing.T) {
+	memFs := afero.NewMemMapFs()
+	memFs.MkdirAll("content", 0755)
+
+	// Email template with "to" template that renders to an invalid email address
+	emailContent := `---
+subject: "Test Email"
+from: "sender@example.com"
+to: "{{ .Recipient.Name }} invalid-email-format"
+---
+
+Hello {{ .Recipient.Name }}!`
+
+	afero.WriteFile(memFs, "content/test.md", []byte(emailContent), 0644)
+
+	cfg, err := config.LoadConfigFs(t.Context(), memFs)
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	campaign, err := LoadContent(cfg, "test")
+	if err != nil {
+		t.Fatalf("Failed to load campaign: %v", err)
+	}
+
+	// Add a test recipient
+	campaign.Recipients = []*ctxRecipient{
+		{
+			Email: "test@example.com",
+			Name:  "Test User",
+		},
+	}
+
+	// Should fail when m.AddTo() tries to parse the invalid email address
+	_, err = campaign.MessageFor(0)
+	if err == nil {
+		t.Error("Expected error when To template renders invalid email address")
+	}
+
+	// The error should be related to email address parsing/validation
+	if !strings.Contains(err.Error(), "address") && !strings.Contains(err.Error(), "email") {
+		t.Errorf("Error should mention address/email validation issue, got: %v", err)
+	}
+}

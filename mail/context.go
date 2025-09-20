@@ -49,6 +49,10 @@ type ctxCampaign struct {
 	// Original subject from frontmatter
 	// before templating via renderSubject
 	subject string
+
+	// Original "To" from frontmatter
+	// before templating via addMessageRecipient
+	to string
 }
 
 func (c ctxCampaign) Subject() string {
@@ -59,12 +63,15 @@ func (c ctxCampaign) Subject() string {
 func newCampaign(cfg *config.AConfig, data map[string]interface{}) ctxCampaign {
 	c := ctxCampaign{Params: keysToLower(data)}
 	c.subject, _ = c.Params["subject"].(string)
+	c.to, _ = c.Params["to"].(string)
+
 	if c.From, _ = c.Params["from"].(string); c.From == "" {
 		c.From = cfg.From
 	}
 
 	delete(c.Params, "subject")
 	delete(c.Params, "from")
+	delete(c.Params, "to")
 	return c
 }
 

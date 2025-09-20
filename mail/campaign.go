@@ -96,17 +96,36 @@ func (c *Campaign) renderMessage(m *mail.Msg, i int) error {
 		return err
 	}
 
-	toEmail := cast.ToString(ctx.Recipient.Email)
-	toName := cast.ToString(ctx.Recipient.Name)
-
 	m.Reset() // Return to NewMsg state
+	errT := addMessageRecipient(m, ctx)
 	errF := m.From(cast.ToString(ctx.Campaign.From))
-	errT := m.AddToFormat(toName, toEmail)
 	m.Subject(cast.ToString(ctx.Subject))
 	m.SetGenHeader("X-Mailer", xMailer)
 	m.SetBodyString(mail.TypeTextPlain, plainBody)
 	m.AddAlternativeString(mail.TypeTextHTML, htmlBody)
 	return errors.Join(errT, errF)
+}
+
+// Populates default recipient or renders "To" campaign template
+func addMessageRecipient(m *mail.Msg, ctx *tmplContext) error {
+	toTmpl := ctx.Campaign.to
+	if toTmpl == "" {
+		toEmail := cast.ToString(ctx.Recipient.Email)
+		toName := cast.ToString(ctx.Recipient.Name)
+		return m.AddToFormat(toName, toEmail)
+	}
+
+	tmpl, err := template.New("to").Parse(toTmpl)
+	if err != nil {
+		return err
+	}
+
+	to, err := executeTemplate(nil, tmpl, ctx)
+	if err != nil {
+		return err
+	}
+
+	return m.AddTo(to)
 }
 
 // Create template context for messages and layouts
