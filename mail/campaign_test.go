@@ -384,3 +384,65 @@ Hello {{ .Recipient.Name }}!`
 		t.Errorf("Error should mention address/email validation issue, got: %v", err)
 	}
 }
+
+func TestLoadContentWithMalformedFrontmatter(t *testing.T) {
+	memFs := afero.NewMemMapFs()
+	memFs.MkdirAll("content", 0755)
+
+	// Email template with malformed YAML frontmatter
+	emailContent := `---
+subject: "Test Email"
+from: "sender@example.com"
+invalid_yaml: [unclosed array
+---
+
+Hello World!`
+
+	afero.WriteFile(memFs, "content/malformed.md", []byte(emailContent), 0644)
+
+	cfg, err := config.LoadConfigFs(t.Context(), memFs)
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Should fail when trying to parse malformed frontmatter
+	_, err = LoadContent(cfg, "malformed")
+	if err == nil {
+		t.Error("Expected error when parsing malformed frontmatter")
+	}
+
+	if !strings.Contains(err.Error(), "frontmatter") {
+		t.Errorf("Error should mention frontmatter parsing issue, got: %v", err)
+	}
+}
+
+func TestLoadContentWithMalformedJSON(t *testing.T) {
+	memFs := afero.NewMemMapFs()
+	memFs.MkdirAll("content", 0755)
+
+	// Email template with malformed JSON frontmatter
+	emailContent := `{
+  "subject": "Test Email",
+  "from": "sender@example.com",
+  "invalid_json": {unclosed object
+}
+
+Hello World!`
+
+	afero.WriteFile(memFs, "content/malformed_json.md", []byte(emailContent), 0644)
+
+	cfg, err := config.LoadConfigFs(t.Context(), memFs)
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Should fail when trying to parse malformed JSON frontmatter
+	_, err = LoadContent(cfg, "malformed_json")
+	if err == nil {
+		t.Error("Expected error when parsing malformed JSON frontmatter")
+	}
+
+	if !strings.Contains(err.Error(), "frontmatter") {
+		t.Errorf("Error should mention frontmatter parsing issue, got: %v", err)
+	}
+}
