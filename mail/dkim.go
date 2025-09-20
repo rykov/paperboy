@@ -1,19 +1,20 @@
 package mail
 
 import (
-	"bytes"
-	"fmt"
-	"io"
-
-	"github.com/go-gomail/gomail"
+	msgd "github.com/emersion/go-msgauth/dkim"
 	"github.com/rykov/paperboy/config"
 	"github.com/spf13/afero"
 	"github.com/spf13/cast"
-	"github.com/toorop/go-dkim"
+	"github.com/wneessen/go-mail-middleware/dkim"
+
+	"errors"
+	"fmt"
+	"strings"
+	"time"
 )
 
-func SendCloserWithDKIM(appFs *config.Fs, sc gomail.SendCloser, conf map[string]interface{}) (gomail.SendCloser, error) {
-	dOpts := dkim.NewSigOptions()
+func DKIMMiddleware(ac *config.AConfig) (*dkim.Middleware, error) {
+	conf, appFs := ac.DKIM, ac.AppFs
 
 	// Required: Read private key from keyFile
 	keyFile := cast.ToString(conf["keyfile"])
@@ -26,57 +27,41 @@ func SendCloserWithDKIM(appFs *config.Fs, sc gomail.SendCloser, conf map[string]
 		return nil, err
 	}
 
-	// Required configuration
-	dOpts.PrivateKey = keyBytes
-	dOpts.Domain = cast.ToString(conf["domain"])
-	dOpts.Selector = cast.ToString(conf["selector"])
+	// Domain and selector for DKIM
+	domain := cast.ToString(conf["domain"])
+	sel := cast.ToString(conf["selector"])
 
-	// Optional configuration
+	// Header fields to sign
+	opts := []dkim.SignerOption{
+		dkim.WithHeaderFields(
+			"Mime-Version", "To", "From", "Subject", "Reply-To",
+			"Sender", "Content-Transfer-Encoding", "Content-Type",
+		),
+	}
+
+	sc, err := dkim.NewConfig(domain, sel, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	// (Optional) Expiration configuration
 	if v, ok := conf["signatureexpirein"]; ok {
-		dOpts.SignatureExpireIn = cast.ToUint64(v)
+		sc.SetExpiration(time.Unix(0, cast.ToInt64(v)))
 	}
 
-	if v, ok := conf["canonicalization"]; ok {
-		dOpts.Canonicalization = cast.ToString(v)
+	// (Optional) Canonicalization configuration
+	if v, ok := conf["canonicalization"]; ok && v != "" {
+		parts := strings.SplitN(cast.ToString(v), "/", 2)
+		if len(parts) != 2 {
+			return nil, dkim.ErrInvalidCanonicalization
+		}
+		errH := sc.SetHeaderCanonicalization(msgd.Canonicalization(parts[0]))
+		errB := sc.SetBodyCanonicalization(msgd.Canonicalization(parts[1]))
+		if err := errors.Join(errH, errB); err != nil {
+			return nil, err
+		}
 	}
 
-	// TODO: add "headers" configuration
-	dOpts.Headers = []string{
-		"Mime-Version", "To", "From", "Subject", "Reply-To",
-		"Sender", "Content-Transfer-Encoding", "Content-Type",
-	}
-
-	return &dkimSendCloser{Options: dOpts, sc: sc}, nil
-}
-
-type dkimSendCloser struct {
-	Options dkim.SigOptions
-	sc      gomail.SendCloser
-}
-
-func (d *dkimSendCloser) Send(from string, to []string, msg io.WriterTo) error {
-	return d.sc.Send(from, to, dkimMessage{d.Options, msg})
-}
-
-func (d *dkimSendCloser) Close() error {
-	return d.sc.Close()
-}
-
-type dkimMessage struct {
-	options dkim.SigOptions
-	msg     io.WriterTo
-}
-
-func (dm dkimMessage) WriteTo(w io.Writer) (n int64, err error) {
-	var b bytes.Buffer
-	if _, err := dm.msg.WriteTo(&b); err != nil {
-		return 0, err
-	}
-
-	email := b.Bytes()
-	if err := dkim.Sign(&email, dm.options); err != nil {
-		return 0, err
-	}
-
-	return bytes.NewBuffer(email).WriteTo(w)
+	// Create the middleware with key & config
+	return dkim.NewFromRSAKey(keyBytes, sc)
 }

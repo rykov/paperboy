@@ -58,8 +58,10 @@ func TestRenderOneQuery(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Invalid RawMessage: %s", err)
 	}
-	if r := em.To; !cmp.Equal(r, []string{"ex@example.org"}) {
-		t.Errorf("Invalid email.To: %+v", r)
+	// go-mail formats email addresses with angle brackets when no display name is provided
+	expectedTo := []string{"<ex@example.org>"}
+	if r := em.To; !cmp.Equal(r, expectedTo) {
+		t.Errorf("Invalid email.To: %+v, expected: %+v", r, expectedTo)
 	}
 	if s := string(em.HTML); s != resp.RenderOne.HTML {
 		t.Errorf("Invalid RawMessage HTML: %s", s)

@@ -2,6 +2,7 @@ package mail
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	html "html/template"
 	"io"
@@ -9,13 +10,13 @@ import (
 	"text/template"
 
 	"github.com/ghodss/yaml"
-	"github.com/go-gomail/gomail"
 	"github.com/jtacoma/uritemplates"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/rykov/paperboy/config"
 	"github.com/rykov/paperboy/parser"
 	"github.com/spf13/afero"
 	"github.com/spf13/cast"
+	"github.com/wneessen/go-mail"
 
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/glamour/styles"
@@ -50,15 +51,16 @@ type Campaign struct {
 	unsubscribeURLTemplate *uritemplates.UriTemplate
 
 	// Configuration for everything else
-	Config *config.AConfig
+	MsgOpts []mail.MsgOption
+	Config  *config.AConfig
 }
 
-func (c *Campaign) MessageFor(i int) (*gomail.Message, error) {
-	m := gomail.NewMessage()
+func (c *Campaign) MessageFor(i int) (*mail.Msg, error) {
+	m := mail.NewMsg(c.MsgOpts...)
 	return m, c.renderMessage(m, i)
 }
 
-func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
+func (c *Campaign) renderMessage(m *mail.Msg, i int) error {
 	var content bytes.Buffer
 	appFs := c.Config.AppFs
 
@@ -97,14 +99,14 @@ func (c *Campaign) renderMessage(m *gomail.Message, i int) error {
 	toEmail := cast.ToString(ctx.Recipient.Email)
 	toName := cast.ToString(ctx.Recipient.Name)
 
-	m.Reset() // Return to NewMessage state
-	m.SetAddressHeader("To", toEmail, toName)
-	m.SetHeader("Subject", cast.ToString(ctx.Subject))
-	m.SetHeader("From", cast.ToString(ctx.Campaign.From))
-	m.SetHeader("X-Mailer", xMailer)
-	m.SetBody("text/plain", plainBody)
-	m.AddAlternative("text/html", htmlBody)
-	return nil
+	m.Reset() // Return to NewMsg state
+	errF := m.From(cast.ToString(ctx.Campaign.From))
+	errT := m.AddToFormat(toName, toEmail)
+	m.Subject(cast.ToString(ctx.Subject))
+	m.SetGenHeader("X-Mailer", xMailer)
+	m.SetBodyString(mail.TypeTextPlain, plainBody)
+	m.AddAlternativeString(mail.TypeTextHTML, htmlBody)
+	return errors.Join(errT, errF)
 }
 
 // Create template context for messages and layouts
@@ -186,12 +188,20 @@ func LoadContent(cfg *config.AConfig, tmplID string) (*Campaign, error) {
 		}
 	}
 
+	// Prepare []mail.MsgOption
+	opts, err := msgOptions(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create campaign
 	return &Campaign{
 		EmailMeta: &fMeta,
 		Email:     email,
 
-		ID:     id,
-		Config: cfg,
+		ID:      id,
+		Config:  cfg,
+		MsgOpts: opts,
 
 		unsubscribeURLTemplate: unsubscribe,
 		bodyTemplate:           tmpl,
@@ -346,4 +356,18 @@ func executeTemplate(body []byte, tmpl Template, ctx *tmplContext) (string, erro
 	err := tmpl.Execute(&out, ctx)
 	ctx.Content = html.HTML("")
 	return out.String(), err
+}
+
+func msgOptions(cfg *config.AConfig) ([]mail.MsgOption, error) {
+	var opts = []mail.MsgOption{}
+
+	if len(cfg.DKIM) > 0 {
+		mw, err := DKIMMiddleware(cfg)
+		if err != nil {
+			return nil, err
+		}
+		opts = append(opts, mail.WithMiddleware(mw))
+	}
+
+	return opts, nil
 }
