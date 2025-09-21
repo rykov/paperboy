@@ -96,14 +96,27 @@ func (c *Campaign) renderMessage(m *mail.Msg, i int) error {
 		return err
 	}
 
+	// Reset and populate header
 	m.Reset() // Return to NewMsg state
 	errT := addMessageRecipient(m, ctx)
 	errF := m.From(cast.ToString(ctx.Campaign.From))
 	m.Subject(cast.ToString(ctx.Subject))
 	m.SetGenHeader("X-Mailer", xMailer)
+
+	// Populate plain & HTML body
 	m.SetBodyString(mail.TypeTextPlain, plainBody)
 	m.AddAlternativeString(mail.TypeTextHTML, htmlBody)
-	return errors.Join(errT, errF)
+
+	// Include attachments by path within AppFs
+	errs, fs := []error{}, afero.NewIOFS(c.Config.AppFs)
+	for _, a := range c.EmailMeta.attachments {
+		if err := m.AttachFromIOFS(a, fs); err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	errs = append(errs, errT, errF)
+	return errors.Join(errs...)
 }
 
 // Populates default recipient or renders "To" campaign template

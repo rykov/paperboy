@@ -3,8 +3,10 @@ package mail
 import (
 	"github.com/rykov/paperboy/config"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 
 	"encoding/json"
+	"slices"
 	"strings"
 )
 
@@ -53,6 +55,9 @@ type ctxCampaign struct {
 	// Original "To" from frontmatter
 	// before templating via addMessageRecipient
 	to string
+
+	// Paths to attachments to each email
+	attachments []string
 }
 
 func (c ctxCampaign) Subject() string {
@@ -62,13 +67,23 @@ func (c ctxCampaign) Subject() string {
 
 func newCampaign(cfg *config.AConfig, data map[string]interface{}) ctxCampaign {
 	c := ctxCampaign{Params: keysToLower(data)}
-	c.subject, _ = c.Params["subject"].(string)
-	c.to, _ = c.Params["to"].(string)
+	c.subject = cast.ToString(c.Params["subject"])
+	c.to = cast.ToString(c.Params["to"])
 
-	if c.From, _ = c.Params["from"].(string); c.From == "" {
+	c.From = cast.ToString(c.Params["from"])
+	if c.From == "" {
 		c.From = cfg.From
 	}
 
+	// This will cast either an array or an invidivual string into an array.
+	// We remove blanks because an empty string will become []string{""}
+	if ary, err := cast.ToStringSliceE(c.Params["attachments"]); err == nil {
+		c.attachments = slices.DeleteFunc(ary, func(s string) bool {
+			return s == "" // delete blanks
+		})
+	}
+
+	delete(c.Params, "attachments")
 	delete(c.Params, "subject")
 	delete(c.Params, "from")
 	delete(c.Params, "to")
