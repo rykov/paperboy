@@ -184,7 +184,7 @@ func TestRenderTemplateNoData(t *testing.T) {
 }
 
 func TestNewProjectDirs(t *testing.T) {
-	expected := []string{"content", "layouts", "lists", "themes"}
+	expected := []string{"assets", "content", "layouts", "lists", "themes"}
 
 	if len(newProjectDirs) != len(expected) {
 		t.Errorf("Expected %d project dirs, got %d", len(expected), len(newProjectDirs))

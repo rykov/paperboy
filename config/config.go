@@ -59,6 +59,7 @@ type ConfigFile struct {
 	DKIM map[string]interface{}
 
 	// Directories
+	AssetDir   string
 	ContentDir string
 	LayoutDir  string
 	ThemeDir   string
@@ -172,6 +173,7 @@ func newViperConfig(fs afero.Fs) *viper.Viper {
 	v.SetDefault("dryRun", false)
 
 	// Defaults (Dirs)
+	v.SetDefault("assetDir", "assets")
 	v.SetDefault("contentDir", "content")
 	v.SetDefault("layoutDir", "layouts")
 	v.SetDefault("themeDir", "themes")

@@ -34,6 +34,10 @@ func (f *Fs) LayoutPath(name string) string {
 	return f.findFileWithExtension(p, []string{})
 }
 
+func (f *Fs) AssetPath(name string) string {
+	return filepath.Join(f.Config.AssetDir, name)
+}
+
 func (f *Fs) FindContentPath(name string) string {
 	paths := []string{f.ContentPath(name)}
 	return f.findFileWithExtension(paths, contentExts)

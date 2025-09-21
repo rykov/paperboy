@@ -1,38 +1,41 @@
 package mail
 
 import (
+	"github.com/emersion/go-msgauth/dkim"
+	"github.com/rykov/paperboy/config"
+	"github.com/spf13/afero"
+	"github.com/wneessen/go-mail"
+
 	"bytes"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/pem"
+	"fmt"
+	"io"
 	"strings"
 	"testing"
-
-	"github.com/rykov/paperboy/config"
-	"github.com/spf13/afero"
-	"github.com/wneessen/go-mail"
 )
 
 // Generate a test RSA private key for DKIM testing
-func generateTestPrivateKey() ([]byte, error) {
-	privateKey, err := rsa.GenerateKey(rand.Reader, 1024)
+func generateTestPrivateKey() (*rsa.PrivateKey, []byte, error) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privateKey)
-	privateKeyPEM := pem.EncodeToMemory(&pem.Block{
+	keyPEM := pem.EncodeToMemory(&pem.Block{
+		Bytes: x509.MarshalPKCS1PrivateKey(key),
 		Type:  "RSA PRIVATE KEY",
-		Bytes: privateKeyBytes,
 	})
 
-	return privateKeyPEM, nil
+	return key, keyPEM, nil
 }
 
 func TestDKIMMiddlewareSuccess(t *testing.T) {
 	// Generate test private key
-	privateKeyPEM, err := generateTestPrivateKey()
+	rsaKey, privateKeyPEM, err := generateTestPrivateKey()
 	if err != nil {
 		t.Fatalf("Failed to generate test private key: %v", err)
 	}
@@ -94,6 +97,8 @@ func TestDKIMMiddlewareSuccess(t *testing.T) {
 	if !strings.Contains(msgContent, "s=default") {
 		t.Error("DKIM signature should contain selector (s=default)")
 	}
+
+	verifyEmailWithDKIM(t, &buf, rsaKey)
 }
 
 func TestDKIMMiddlewareMissingKeyFile(t *testing.T) {
@@ -136,7 +141,7 @@ func TestDKIMMiddlewareInvalidKeyFile(t *testing.T) {
 
 func TestDKIMMiddlewareOptionalParameters(t *testing.T) {
 	// Generate test private key
-	privateKeyPEM, err := generateTestPrivateKey()
+	_, privateKeyPEM, err := generateTestPrivateKey()
 	if err != nil {
 		t.Fatalf("Failed to generate test private key: %v", err)
 	}
@@ -170,7 +175,7 @@ func TestDKIMMiddlewareOptionalParameters(t *testing.T) {
 
 func TestMsgOptionsWithDKIM(t *testing.T) {
 	// Generate test private key
-	privateKeyPEM, err := generateTestPrivateKey()
+	rsaKey, privateKeyPEM, err := generateTestPrivateKey()
 	if err != nil {
 		t.Fatalf("Failed to generate test private key: %v", err)
 	}
@@ -229,6 +234,8 @@ func TestMsgOptionsWithDKIM(t *testing.T) {
 	if !strings.Contains(output, "Subject: Test Email") {
 		t.Error("Original Subject header should be preserved")
 	}
+
+	verifyEmailWithDKIM(t, &buf, rsaKey)
 }
 
 func TestMsgOptionsWithoutDKIM(t *testing.T) {
@@ -247,5 +254,37 @@ func TestMsgOptionsWithoutDKIM(t *testing.T) {
 	// Should have no options
 	if len(opts) != 0 {
 		t.Error("Should have no message options when DKIM is not configured")
+	}
+}
+
+// Decode and verify DKIM signature for reader of incoming email
+func verifyEmailWithDKIM(t *testing.T, r io.Reader, rsaKey *rsa.PrivateKey) {
+	pubKeyBytes, err := x509.MarshalPKIXPublicKey(&rsaKey.PublicKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	pubKeyB64 := base64.StdEncoding.EncodeToString(pubKeyBytes)
+	verifications, err := dkim.VerifyWithOptions(r, &dkim.VerifyOptions{
+		LookupTXT: func(domain string) ([]string, error) {
+			if domain == "default._domainkey.example.com" {
+				return []string{fmt.Sprintf("v=DKIM1; k=rsa; p=%s", pubKeyB64)}, nil
+			}
+			return nil, fmt.Errorf("DNS record not found for domain: %s", domain)
+		},
+	})
+
+	if err != nil {
+		t.Errorf("DKIM Verification error: %s", err)
+	} else if len(verifications) == 0 {
+		t.Errorf("DKIM Verification missing")
+	}
+
+	for _, v := range verifications {
+		if v.Err == nil {
+			t.Logf("Valid DKIM signature for domain: %s", v.Domain)
+		} else {
+			t.Errorf("Invalid DKIM signature for domain %s: %s", v.Domain, v.Err)
+		}
 	}
 }

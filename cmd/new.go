@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	newProjectDirs = []string{"content", "layouts", "lists", "themes"}
+	newProjectDirs = []string{"assets", "content", "layouts", "lists", "themes"}
 )
 
 const (

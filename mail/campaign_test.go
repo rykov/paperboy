@@ -425,20 +425,20 @@ func TestCampaignWithAttachments(t *testing.T) {
 	memFs.MkdirAll("content", 0755)
 	memFs.MkdirAll("lists", 0755)
 	memFs.MkdirAll("layouts", 0755)
-	memFs.MkdirAll("attachments", 0755)
+	memFs.MkdirAll("assets", 0755)
 
-	// Create test attachment files
-	afero.WriteFile(memFs, "attachments/document.pdf", []byte("fake PDF content"), 0644)
-	afero.WriteFile(memFs, "attachments/image.png", []byte("fake PNG content"), 0644)
-	afero.WriteFile(memFs, "attachments/data.csv", []byte("name,email\nJohn,john@example.com"), 0644)
+	// Create test attachment files in assets directory
+	afero.WriteFile(memFs, "assets/document.pdf", []byte("fake PDF content"), 0644)
+	afero.WriteFile(memFs, "assets/image.png", []byte("fake PNG content"), 0644)
+	afero.WriteFile(memFs, "assets/data.csv", []byte("name,email\nJohn,john@example.com"), 0644)
 
 	// Create email template with attachments
 	emailContent := `---
 subject: "Newsletter with Attachments"
 from: "test@example.com"
 attachments:
-  - "attachments/document.pdf"
-  - "attachments/image.png"
+  - "document.pdf"
+  - "image.png"
 ---
 
 # Hello {{ .Recipient.Name }}!
@@ -481,7 +481,7 @@ The Team`
 	}
 
 	// Verify attachments were parsed correctly
-	expectedAttachments := []string{"attachments/document.pdf", "attachments/image.png"}
+	expectedAttachments := []string{"document.pdf", "image.png"}
 	if !cmp.Equal(campaign.EmailMeta.attachments, expectedAttachments) {
 		t.Errorf("Expected attachments %v, got %v", expectedAttachments, campaign.EmailMeta.attachments)
 	}
@@ -518,16 +518,16 @@ func TestCampaignWithSingleAttachment(t *testing.T) {
 	// Setup virtual filesystem
 	memFs := afero.NewMemMapFs()
 	memFs.MkdirAll("content", 0755)
-	memFs.MkdirAll("attachments", 0755)
+	memFs.MkdirAll("assets", 0755)
 
 	// Create test attachment file
-	afero.WriteFile(memFs, "attachments/report.pdf", []byte("fake PDF report"), 0644)
+	afero.WriteFile(memFs, "assets/report.pdf", []byte("fake PDF report"), 0644)
 
 	// Create email template with single attachment (string format)
 	emailContent := `---
 subject: "Report"
 from: "test@example.com"
-attachments: "attachments/report.pdf"
+attachments: "report.pdf"
 ---
 
 Please find the attached report.`
@@ -554,7 +554,7 @@ Please find the attached report.`
 	}
 
 	// Verify single attachment was parsed as slice
-	expectedAttachments := []string{"attachments/report.pdf"}
+	expectedAttachments := []string{"report.pdf"}
 	if !cmp.Equal(campaign.EmailMeta.attachments, expectedAttachments) {
 		t.Errorf("Expected attachments %v, got %v", expectedAttachments, campaign.EmailMeta.attachments)
 	}
@@ -588,7 +588,7 @@ func TestCampaignWithMissingAttachment(t *testing.T) {
 	emailContent := `---
 subject: "Missing Attachment Test"
 from: "test@example.com"
-attachments: "nonexistent/file.pdf"
+attachments: "nonexistent-file.pdf"
 ---
 
 This should fail due to missing attachment.`
@@ -691,17 +691,16 @@ func TestCampaignAttachmentPathTraversal(t *testing.T) {
 	// Setup virtual filesystem
 	memFs := afero.NewMemMapFs()
 	memFs.MkdirAll("content", 0755)
-	memFs.MkdirAll("safe", 0755)
+	memFs.MkdirAll("assets", 0755)
 
-	// Create a file in safe directory
-	afero.WriteFile(memFs, "safe/document.pdf", []byte("safe content"), 0644)
+	// Create a file in assets directory
+	afero.WriteFile(memFs, "assets/document.pdf", []byte("safe content"), 0644)
 
-	// Try to create a file outside the filesystem root (this should be blocked by AppFs)
 	// The actual security is provided by using AppFs which restricts access
 	emailContent := `---
 subject: "Path Traversal Test"
 from: "test@example.com"
-attachments: "safe/document.pdf"
+attachments: "document.pdf"
 ---
 
 Testing safe attachment access.`

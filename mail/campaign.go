@@ -28,8 +28,8 @@ import (
 // Shared empty parameters
 var emptyParams = map[string]interface{}{}
 
-// Like "User-Agent"
-const xMailer = "paperboy/0.1.0 (https://paperboy.email)"
+// For "X-Mailer" header (ala "User-Agent" for browser)
+const xMailer = "paperboy/%s (https://paperboy.email)"
 
 // Context for template rendering
 type tmplContext struct {
@@ -101,7 +101,11 @@ func (c *Campaign) renderMessage(m *mail.Msg, i int) error {
 	errT := addMessageRecipient(m, ctx)
 	errF := m.From(cast.ToString(ctx.Campaign.From))
 	m.Subject(cast.ToString(ctx.Subject))
-	m.SetGenHeader("X-Mailer", xMailer)
+	m.SetDate()
+
+	// Populate mailer name & version
+	xm := fmt.Sprintf(xMailer, c.Config.Build.Version)
+	m.SetGenHeader("X-Mailer", xm)
 
 	// Populate plain & HTML body
 	m.SetBodyString(mail.TypeTextPlain, plainBody)
@@ -110,7 +114,8 @@ func (c *Campaign) renderMessage(m *mail.Msg, i int) error {
 	// Include attachments by path within AppFs
 	errs, fs := []error{}, afero.NewIOFS(c.Config.AppFs)
 	for _, a := range c.EmailMeta.attachments {
-		if err := m.AttachFromIOFS(a, fs); err != nil {
+		path := c.Config.AppFs.AssetPath(a) // ./assets
+		if err := m.AttachFromIOFS(path, fs); err != nil {
 			errs = append(errs, err)
 		}
 	}
