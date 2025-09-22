@@ -19,11 +19,11 @@ universal_binaries:
     replace: true
 
 archives:
-  - format: tar.gz
+  - formats: ["tar.gz"]
     wrap_in_directory: false
     format_overrides:
       - goos: windows
-        format: zip
+        formats: ["zip"]
     name_template: >-
       {{- .ProjectName }}_{{ .Version }}_
       {{- if eq .Os "darwin" }}macOS

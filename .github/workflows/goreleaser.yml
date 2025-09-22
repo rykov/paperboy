@@ -14,12 +14,12 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       -
         name: Install Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           cache-dependency-path: 'ui/yarn.lock'
           node-version-file: 'ui/package.json'
@@ -32,7 +32,9 @@ jobs:
           yarn run build
       -
         name: Install Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6

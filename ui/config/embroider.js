@@ -3,6 +3,7 @@
 module.exports = function embroiderConfig() {
   return {
     staticAddonTestSupportTrees: true,
+    staticEmberSource: true,
     staticAddonTrees: true,
     staticModifiers: true,
 

@@ -1,5 +1,38 @@
 # Changelog
 
+## v0.4.0 (22 Sep 2025)
+
+- Migrated to [wneessen/go-mail](github.com/wneessen/go-mail)
+- Fixed frontmatter error handling @guyou
+- Allow custom "To" template @guyou
+- Added attachment support @guyou
+
+## v0.4.0-beta.2 (20 Sep 2025)
+
+- Switched to Cobra's Context
+- Enhanced TLS configuration @gbonnefille
+- Upgraded dependencies & added tests
+- Upgraded to Ember 6.7.0
+
+## v0.4.0-beta.1 (28 Jun 2025)
+
+- Added sendCampaign with ZipFs
+- Added legacy TLS support @gbonnefille
+- Added API middleware for panics, logging, and auth
+- Support for `.yml` file extension @gbonnefille
+- Upgraded to Go 1.24 & Ember 6.5
+- Refactored `cmd` code structure
+
+## v0.3.0-beta.1 (24 Jun 2024)
+
+- Minor fixes & dependency updates
+- Upgraded to Ember 5.9
+- Upgraded to Go 1.22
+
+## v0.3.0-alpha.1 (18 Aug 2021)
+
+- Added Ember-based UI for preview
+
 ## 0.2.1 (16 Jul 2021)
 
 - Reset connection on failure
