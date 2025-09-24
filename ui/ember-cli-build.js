@@ -1,14 +1,9 @@
 'use strict';
 
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
-const ConfigurePostCSS = require('./config/postcss.js');
 
 module.exports = function (defaults) {
-  const isProduction = EmberApp.env() === 'production';
-  const app = new EmberApp(defaults, {
-    // ember-cli-postcss
-    postcssOptions: ConfigurePostCSS(),
-  });
+  const app = new EmberApp(defaults, {});
 
   // Use `app.import` to add additional libraries to the generated
   // output files.

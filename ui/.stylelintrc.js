@@ -9,7 +9,7 @@ module.exports = {
     'selector-pseudo-class-no-unknown': [true, { ignorePseudoClasses: ['global'] }],
 
     // Support for SCSS, Tailwind, etc
-    'at-rule-no-unknown': [true, { ignoreAtRules: ['tailwind'] }],
+    'at-rule-no-unknown': [true, { ignoreAtRules: ['source', 'plugin'] }],
     'import-notation': [null], // To allow SCSS imports
   },
 };

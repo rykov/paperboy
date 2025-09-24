@@ -8,6 +8,12 @@ if (macroCondition(isDevelopingApp())) {
   importSync('./deprecation-workflow');
 }
 
+// Load Tailwind CSS shim & plugins
+import 'preview/templates/_styles/tailwind.css';
+
+// Load main application stylesheet
+import 'preview/templates/_styles/app.scss';
+
 export default class App extends Application {
   modulePrefix = config.modulePrefix;
   podModulePrefix = config.podModulePrefix;

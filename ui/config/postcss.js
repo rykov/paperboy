@@ -7,25 +7,30 @@
 // - postcss-scss
 
 const Browsers = require('./targets.js').browsers;
-const tailwindConfig = './config/tailwind.js';
 
-module.exports = function (/* isProduction */) {
-  return {
-    compile: {
-      parser: require('postcss-scss'),
-      extension: 'scss',
-      plugins: [
-        {
-          module: require('@csstools/postcss-sass'),
-          options: {
-            includePaths: ['node_modules'],
-          },
-        },
-        require('tailwindcss')(tailwindConfig),
-        require('autoprefixer')({
-          overrideBrowserslist: Browsers,
-        }),
-      ],
-    },
-  };
+// Common plugins for CSS & SCSS
+const commonPlugins = [
+  require('@tailwindcss/postcss')({}),
+  require('autoprefixer')({
+    overrideBrowserslist: Browsers,
+  }),
+];
+
+module.exports = {
+  // Configuration for CSS pipeline
+  embroiderCSS: {
+    plugins: commonPlugins,
+  },
+
+  // Configuration for SCSS pipeline
+  embroiderSCSS: {
+    parser: require('postcss-scss'),
+    extension: 'scss',
+    plugins: [
+      require('@csstools/postcss-sass')({
+        includePaths: ['node_modules'],
+      }),
+      ...commonPlugins,
+    ],
+  },
 };

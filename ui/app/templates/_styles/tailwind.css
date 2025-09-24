@@ -1,0 +1,10 @@
+/* Tailwind CSS v4 */
+@import "tailwindcss";
+
+/* Tailwind plugins */
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
+/* Scan/watch these directories for class names */
+@source "../../../app/**/*.{html,hbs,js,ts,gjs,gts}";
+@source "../../../public/**/*.html";
