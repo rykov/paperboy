@@ -25,7 +25,7 @@ require (
 	github.com/spf13/viper v1.21.0
 	github.com/urfave/negroni/v3 v3.1.1
 	github.com/wneessen/go-mail v0.7.0
-	github.com/wneessen/go-mail-middleware v0.1.0
+	github.com/wneessen/go-mail-middleware v0.0.9
 	github.com/yuin/goldmark v1.7.13
 	golang.org/x/net v0.44.0
 	gopkg.in/yaml.v3 v3.0.1

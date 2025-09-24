@@ -124,8 +124,8 @@ github.com/urfave/negroni/v3 v3.1.1 h1:6MS4nG9Jk/UuCACaUlNXCbiKa0ywF9LXz5dGu09v8
 github.com/urfave/negroni/v3 v3.1.1/go.mod h1:jWvnX03kcSjDBl/ShB0iHvx5uOs7mAzZXW+JvJ5XYAs=
 github.com/wneessen/go-mail v0.7.0 h1:/Wmgd5AVjp5PA+Ken5EFfr+QR83gmqHli9HcAhh0vnU=
 github.com/wneessen/go-mail v0.7.0/go.mod h1:+TkW6QP3EVkgTEqHtVmnAE/1MRhmzb8Y9/W3pweuS+k=
-github.com/wneessen/go-mail-middleware v0.1.0 h1:vcuHs8dmMVxqr6TXi/KdzLLwLc44vGLRV88YfQonUyY=
-github.com/wneessen/go-mail-middleware v0.1.0/go.mod h1:dskrqbIvWW4BygunbApcfEWVFBjWP3HDedTqpN1BtXs=
+github.com/wneessen/go-mail-middleware v0.0.9 h1:LiWv4XsLtY+pgkeoOlHS3UBQl4GySN1DxNN9TND9nS8=
+github.com/wneessen/go-mail-middleware v0.0.9/go.mod h1:k5x2NF1mkeDZLOI5/hOvD+/0n6uRdVqiH41SLKKXuwU=
 github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e h1:JVG44RsyaB9T2KIHavMF/ppJZNG9ZpyihvCd0w101no=
 github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e/go.mod h1:RbqR21r5mrJuqunuUZ/Dhy/avygyECGrLceyNeo4LiM=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
