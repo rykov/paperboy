@@ -7,6 +7,10 @@ import (
 	"github.com/spf13/cast"
 	"github.com/wneessen/go-mail-middleware/dkim"
 
+	"crypto/ed25519"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"strings"
@@ -63,5 +67,35 @@ func DKIMMiddleware(ac *config.AConfig) (*dkim.Middleware, error) {
 	}
 
 	// Create the middleware with key & config
-	return dkim.NewFromRSAKey(keyBytes, sc)
+	return newDkimMiddleware(keyBytes, sc)
+}
+
+// Create the middleware with key & config with auto-detection
+func newDkimMiddleware(keyBytes []byte, sc *dkim.SignerConfig) (*dkim.Middleware, error) {
+	block, _ := pem.Decode(keyBytes)
+	if block == nil {
+		return nil, fmt.Errorf("failed to decode PEM block")
+	}
+
+	// Try PKCS8 first (supports both RSA and Ed25519)
+	if privateKey, err := x509.ParsePKCS8PrivateKey(block.Bytes); err == nil {
+		switch key := privateKey.(type) {
+		case ed25519.PrivateKey:
+			return dkim.NewFromEd25519Key(keyBytes, sc)
+		case *rsa.PrivateKey:
+			return dkim.NewFromRSAKey(pem.EncodeToMemory(&pem.Block{
+				Bytes: x509.MarshalPKCS1PrivateKey(key),
+				Type:  "RSA PRIVATE KEY",
+			}), sc)
+		default:
+			return nil, fmt.Errorf("unsupported key type: %T", privateKey)
+		}
+	}
+
+	// Try PKCS1 (RSA only)
+	if _, err := x509.ParsePKCS1PrivateKey(block.Bytes); err == nil {
+		return dkim.NewFromRSAKey(keyBytes, sc)
+	}
+
+	return nil, fmt.Errorf("unsupported key format or type")
 }

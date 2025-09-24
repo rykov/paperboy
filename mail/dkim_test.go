@@ -5,8 +5,10 @@ import (
 	"github.com/rykov/paperboy/config"
 	"github.com/spf13/afero"
 	"github.com/wneessen/go-mail"
+	dkimmiddleware "github.com/wneessen/go-mail-middleware/dkim"
 
 	"bytes"
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -18,19 +20,54 @@ import (
 	"testing"
 )
 
-// Generate a test RSA private key for DKIM testing
-func generateTestPrivateKey() (*rsa.PrivateKey, []byte, error) {
+// Generate test keys for DKIM testing
+func generateRSAPKCS1() (*rsa.PrivateKey, []byte, error) {
 	key, err := rsa.GenerateKey(rand.Reader, 1024)
 	if err != nil {
 		return nil, nil, err
 	}
-
 	keyPEM := pem.EncodeToMemory(&pem.Block{
-		Bytes: x509.MarshalPKCS1PrivateKey(key),
 		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(key),
 	})
-
 	return key, keyPEM, nil
+}
+
+func generateRSAPKCS8() (*rsa.PrivateKey, []byte, error) {
+	key, err := rsa.GenerateKey(rand.Reader, 1024)
+	if err != nil {
+		return nil, nil, err
+	}
+	pkcs8Bytes, err := x509.MarshalPKCS8PrivateKey(key)
+	if err != nil {
+		return nil, nil, err
+	}
+	keyPEM := pem.EncodeToMemory(&pem.Block{
+		Type:  "PRIVATE KEY",
+		Bytes: pkcs8Bytes,
+	})
+	return key, keyPEM, nil
+}
+
+func generateEd25519PKCS8() (ed25519.PrivateKey, []byte, error) {
+	_, priv, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		return nil, nil, err
+	}
+	pkcs8Bytes, err := x509.MarshalPKCS8PrivateKey(priv)
+	if err != nil {
+		return nil, nil, err
+	}
+	keyPEM := pem.EncodeToMemory(&pem.Block{
+		Type:  "PRIVATE KEY",
+		Bytes: pkcs8Bytes,
+	})
+	return priv, keyPEM, nil
+}
+
+// Legacy function for backward compatibility
+func generateTestPrivateKey() (*rsa.PrivateKey, []byte, error) {
+	return generateRSAPKCS1()
 }
 
 func TestDKIMMiddlewareSuccess(t *testing.T) {
@@ -285,6 +322,90 @@ func verifyEmailWithDKIM(t *testing.T, r io.Reader, rsaKey *rsa.PrivateKey) {
 			t.Logf("Valid DKIM signature for domain: %s", v.Domain)
 		} else {
 			t.Errorf("Invalid DKIM signature for domain %s: %s", v.Domain, v.Err)
+		}
+	}
+}
+
+// Helper function to test DKIM middleware creation and message signing
+func testDKIMFormat(t *testing.T, name string, keyPEM []byte, rsaKey *rsa.PrivateKey) {
+	// Test direct middleware creation
+	sc, err := dkimmiddleware.NewConfig("example.com", "default")
+	if err != nil {
+		t.Fatalf("Failed to create config: %v", err)
+	}
+
+	middleware, err := newDkimMiddleware(keyPEM, sc)
+	if err != nil {
+		t.Fatalf("newDkimMiddleware failed for %s: %v", name, err)
+	}
+
+	// Test message signing
+	msg := mail.NewMsg(mail.WithMiddleware(middleware))
+	msg.From("test@example.com")
+	msg.To("user@example.com")
+	msg.Subject("Test " + name)
+	msg.SetBodyString(mail.TypeTextPlain, "Test content")
+
+	var buf bytes.Buffer
+	if _, err := msg.WriteTo(&buf); err != nil {
+		t.Fatalf("Failed to write message: %v", err)
+	}
+
+	// Verify DKIM signature
+	content := buf.String()
+	if !strings.Contains(content, "DKIM-Signature:") {
+		t.Errorf("Missing DKIM-Signature for %s", name)
+	}
+	if !strings.Contains(content, "d=example.com") {
+		t.Errorf("Missing domain for %s", name)
+	}
+
+	// Verify RSA signatures only
+	if rsaKey != nil {
+		verifyEmailWithDKIM(t, &buf, rsaKey)
+	}
+}
+
+// Test all supported key formats
+func TestNewDkimMiddleware_AllFormats(t *testing.T) {
+	t.Run("RSA_PKCS1", func(t *testing.T) {
+		key, keyPEM, err := generateRSAPKCS1()
+		if err != nil {
+			t.Fatal(err)
+		}
+		testDKIMFormat(t, "RSA PKCS1", keyPEM, key)
+	})
+
+	t.Run("RSA_PKCS8", func(t *testing.T) {
+		key, keyPEM, err := generateRSAPKCS8()
+		if err != nil {
+			t.Fatal(err)
+		}
+		testDKIMFormat(t, "RSA PKCS8", keyPEM, key)
+	})
+
+	t.Run("Ed25519_PKCS8", func(t *testing.T) {
+		_, keyPEM, err := generateEd25519PKCS8()
+		if err != nil {
+			t.Fatal(err)
+		}
+		testDKIMFormat(t, "Ed25519 PKCS8", keyPEM, nil)
+	})
+}
+
+// Test error handling for invalid keys
+func TestNewDkimMiddleware_InvalidKeys(t *testing.T) {
+	sc, _ := dkimmiddleware.NewConfig("example.com", "default")
+
+	tests := [][]byte{
+		[]byte("not a valid PEM"),
+		[]byte("-----BEGIN PRIVATE KEY-----\n-----END PRIVATE KEY-----"),
+		[]byte("-----BEGIN PRIVATE KEY-----\naW52YWxpZCBkYXRh\n-----END PRIVATE KEY-----"),
+	}
+
+	for i, keyData := range tests {
+		if middleware, err := newDkimMiddleware(keyData, sc); err == nil || middleware != nil {
+			t.Errorf("Test %d: expected error and nil middleware", i+1)
 		}
 	}
 }
