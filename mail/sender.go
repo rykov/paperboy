@@ -17,8 +17,13 @@ import (
 	"time"
 )
 
-// SendCloser interface for sending emails
-type SendCloser interface {
+// Interface to create connections
+type sender interface {
+	newConn() (sendConn, error)
+}
+
+// sendConn interface for sending emails
+type sendConn interface {
 	Send(msg ...*mail.Msg) error
 	Close() error
 }
@@ -34,12 +39,32 @@ func LoadAndSendCampaign(cfg *config.AConfig, tmplFile, recipientFile string) er
 }
 
 func SendCampaign(cfg *config.AConfig, c *Campaign) error {
+	var s sender
+
+	// Skip dial on dryRun
+	if cfg.DryRun {
+		s = &testSender{}
+	} else {
+		s = smtpSender{cfg.Context, c}
+	}
+
+	return sendCampaignTo(s, cfg, c)
+}
+
+func SendCampaignDryRun(cfg *config.AConfig, c *Campaign) ([][]byte, error) {
+	s := &testSender{}
+	err := sendCampaignTo(s, cfg, c)
+	return s.Mails, err
+}
+
+func sendCampaignTo(s sender, cfg *config.AConfig, c *Campaign) error {
 	// Initialize deliverer
 	engine := &deliverer{
 		tasks:    make(chan *mail.Msg, 10),
 		waiter:   &sync.WaitGroup{},
 		context:  cfg.Context,
 		campaign: c,
+		sender:   s,
 	}
 
 	// Capture context cancellation for graceful exit
@@ -114,6 +139,9 @@ type deliverer struct {
 
 	// Go-Mail middleware
 	middleware []mail.Middleware
+
+	// Adds newConn()
+	sender
 }
 
 func (d *deliverer) close() {
@@ -136,7 +164,7 @@ func (d *deliverer) startWorker(id int) error {
 	d.waiter.Add(1)
 
 	// Dial up the sender
-	sender, err := d.configureSender()
+	conn, err := d.newConn()
 	if err != nil {
 		return err
 	}
@@ -144,21 +172,27 @@ func (d *deliverer) startWorker(id int) error {
 	go func() {
 		defer d.waiter.Done()
 		defer fmt.Printf("[%d] Stopping worker...\n", id)
-		defer sender.Close()
+		defer conn.Close()
 		c := d.campaign
 
 		for {
-			m, more := <-d.tasks
-			if !more {
+			select {
+			case <-d.context.Done():
+				fmt.Printf("[%d] Worker stopped on cancellation\n", id)
 				return
-			}
-			fmt.Printf("[%d] Sending %s to %s\n", id, c.ID, m.GetToString())
-			if err := sender.Send(m); err != nil {
-				fmt.Printf("[%d] Could not send email: %s\n", id, err)
-				sender.Close() // Replace errored connection
-				sender, err = d.configureSender()
-				if err != nil {
-					break
+			case m, more := <-d.tasks:
+				if !more {
+					return
+				}
+				fmt.Printf("[%d] Sending %s to %s\n", id, c.ID, m.GetToString())
+				if err := conn.Send(m); err != nil {
+					fmt.Printf("[%d] Could not send email: %s\n", id, err)
+					conn.Close() // Replace errored connection
+					conn, err = d.newConn()
+					if err != nil {
+						fmt.Printf("[%d] Failed to recreate sender after error: %v\n", id, err)
+						return
+					}
 				}
 			}
 		}
@@ -167,14 +201,14 @@ func (d *deliverer) startWorker(id int) error {
 	return nil
 }
 
-func (d *deliverer) configureSender() (sender SendCloser, err error) {
-	cfg := d.campaign.Config
-	ctx := d.context // not used with go-mail
+type smtpSender struct {
+	context  context.Context
+	campaign *Campaign
+}
 
-	// Skip dial on dryRun
-	if cfg.DryRun {
-		return &dryRunSender{Mails: [][]byte{}}, nil
-	}
+func (d smtpSender) newConn() (conn sendConn, err error) {
+	cfg := d.campaign.Config
+	ctx := d.context
 
 	// Initialize dialer from configuration
 	dialer, err := smtpDialer(&cfg.SMTP)
@@ -273,15 +307,16 @@ func smtpDialer(cfg *config.SMTPConfig) (*mail.Client, error) {
 	return mail.NewClient(hostname, opts...)
 }
 
-// Allow testing deliveries in libraries via dryRun
-var LastRunResult *dryRunSender
-
-type dryRunSender struct {
+type testSender struct {
 	lock  sync.Mutex
 	Mails [][]byte
 }
 
-func (s *dryRunSender) Send(msgs ...*mail.Msg) error {
+func (s *testSender) newConn() (conn sendConn, err error) {
+	return s, nil
+}
+
+func (s *testSender) Send(msgs ...*mail.Msg) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	var err error
@@ -298,7 +333,6 @@ func (s *dryRunSender) Send(msgs ...*mail.Msg) error {
 	return err
 }
 
-func (s *dryRunSender) Close() error {
-	LastRunResult = s
+func (s *testSender) Close() error {
 	return nil
 }

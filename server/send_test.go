@@ -54,18 +54,50 @@ func TestSendMutation(t *testing.T) {
 
 	// VERIFY TEST DELIVERIES
 
-	lastRun := mail.LastRunResult
-	if lastRun == nil {
-		t.Fatalf("Missing dry run results")
+	// Load the campaign again and run dry run to get the mails
+	campaign, err := mail.LoadContent(cfg, "c1")
+	if err != nil {
+		t.Fatalf("Failed to load campaign: %v", err)
 	}
 
-	if a, e := len(lastRun.Mails), len(recipients); a != e {
+	// Convert recipients to the format expected by the campaign
+	recipientMaps := make([]map[string]interface{}, len(recipients))
+	for i, r := range recipients {
+		recipientMap := r.(map[string]interface{})
+
+		// Create a combined map with email and params merged
+		combinedMap := make(map[string]interface{})
+		combinedMap["email"] = recipientMap["email"]
+
+		if params, ok := recipientMap["params"].(map[string]interface{}); ok {
+			for k, v := range params {
+				combinedMap[k] = v
+			}
+		}
+
+		recipientMaps[i] = combinedMap
+	}
+
+	campaignRecipients, err := mail.MapsToRecipients(recipientMaps)
+	if err != nil {
+		t.Fatalf("Failed to convert recipients: %v", err)
+	}
+	campaign.Recipients = campaignRecipients
+
+	// Enable dry run and get the mail data
+	cfg.DryRun = true
+	mails, err := mail.SendCampaignDryRun(cfg, campaign)
+	if err != nil {
+		t.Fatalf("Failed to run dry campaign: %v", err)
+	}
+
+	if a, e := len(mails), len(recipients); a != e {
 		t.Fatalf("Number of mails should be %d, got %d", e, a)
 	}
 
 	// Compare recipient metadata for each mail
 	actualMeta := []interface{}{}
-	for i, raw := range lastRun.Mails {
+	for i, raw := range mails {
 		m, err := netmail.ReadMessage(bytes.NewReader(raw))
 		if err != nil {
 			t.Fatalf("Error parsing delivery #%d: %s", i, err)
