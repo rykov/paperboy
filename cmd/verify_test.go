@@ -6,45 +6,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func TestSendCmd(t *testing.T) {
-	cmd := sendCmd()
+func TestVerifyCmd(t *testing.T) {
+	cmd := verifyCmd()
 
 	if cmd == nil {
-		t.Fatal("sendCmd() returned nil")
+		t.Fatal("verifyCmd() returned nil")
 	}
 
-	if cmd.Use != "send [content] [list]" {
-		t.Errorf("Expected Use to be 'send [content] [list]', got %s", cmd.Use)
+	if cmd.Use != "verify [content] [list]" {
+		t.Errorf("Expected Use to be 'verify [content] [list]', got %s", cmd.Use)
 	}
 
-	if cmd.Short != "Send campaign to recipients" {
-		t.Errorf("Expected Short to be 'Send campaign to recipients', got %s", cmd.Short)
+	if cmd.Short != "Verify DKIM signatures in rendered emails" {
+		t.Errorf("Expected Short to be 'Verify DKIM signatures in rendered emails', got %s", cmd.Short)
 	}
 
-	if cmd.Example != "paperboy send the-announcement customers" {
+	if cmd.Example != "paperboy verify the-announcement customers" {
 		t.Errorf("Expected specific example, got %s", cmd.Example)
 	}
 }
 
-func TestSendCmdFlags(t *testing.T) {
-	cmd := sendCmd()
-
-	serverFlag := cmd.Flags().Lookup("server")
-	if serverFlag == nil {
-		t.Fatal("Expected --server flag to be present")
-	}
-
-	if serverFlag.Usage != "URL of server" {
-		t.Errorf("Unexpected server flag usage: %s", serverFlag.Usage)
-	}
-
-	if serverFlag.DefValue != "" {
-		t.Errorf("Expected server flag default value to be empty, got %s", serverFlag.DefValue)
-	}
-}
-
-func TestSendCmdArgs(t *testing.T) {
-	cmd := sendCmd()
+func TestVerifyCmdArgs(t *testing.T) {
+	cmd := verifyCmd()
 
 	if cmd.Args == nil {
 		t.Fatal("Args function should not be nil")
@@ -74,8 +57,8 @@ func TestSendCmdArgs(t *testing.T) {
 	}
 }
 
-func TestSendCmdStructure(t *testing.T) {
-	cmd := sendCmd()
+func TestVerifyCmdStructure(t *testing.T) {
+	cmd := verifyCmd()
 
 	if cmd.RunE == nil {
 		t.Error("RunE function should not be nil")
@@ -86,8 +69,8 @@ func TestSendCmdStructure(t *testing.T) {
 	}
 }
 
-func TestSendCmdValidation(t *testing.T) {
-	cmd := sendCmd()
+func TestVerifyCmdValidation(t *testing.T) {
+	cmd := verifyCmd()
 
 	testCases := []struct {
 		name string

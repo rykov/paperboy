@@ -94,7 +94,7 @@ func newCmd() *cobra.Command {
 	cmd.AddCommand(&cobra.Command{
 		Use:     "list [path]",
 		Short:   "Create a new recipient list",
-		Example: "paperboy new list in-the-know",
+		Example: "paperboy new list customers",
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.LoadConfig(cmd.Context())

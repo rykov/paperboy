@@ -13,12 +13,12 @@ func sendCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "send [content] [list]",
 		Short:   "Send campaign to recipients",
-		Example: "paperboy send the-announcement in-the-know",
+		Example: "paperboy send the-announcement customers",
 		Args:    cobra.ExactArgs(2),
 		// Uncomment the following line if your bare application
 		// has an action associated with it:
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := config.LoadConfig(cmd.Context()) // Validate project
+			cfg, err := config.LoadConfig(cmd.Context())
 			if err != nil {
 				return err
 			}

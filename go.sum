@@ -30,8 +30,8 @@ github.com/charmbracelet/x/cellbuf v0.0.13 h1:/KBBKHuVRbq1lYx5BzEHBAFBP8VcQzJejZ
 github.com/charmbracelet/x/cellbuf v0.0.13/go.mod h1:xe0nKWGd3eJgtqZRaN9RjMtK7xUYchjzPr7q6kcvCCs=
 github.com/charmbracelet/x/exp/golden v0.0.0-20240806155701-69247e0abc2a h1:G99klV19u0QnhiizODirwVksQB91TJKV/UaTnACcG30=
 github.com/charmbracelet/x/exp/golden v0.0.0-20240806155701-69247e0abc2a/go.mod h1:wDlXFlCrmJ8J+swcL/MnGUuYnqgQdW9rhSD61oNMb6U=
-github.com/charmbracelet/x/exp/slice v0.0.0-20250919153222-1038f7e6fef4 h1:zXwT6La0lwA7i4LESGS137z0XRGIbIrX3TAEkRwvpCw=
-github.com/charmbracelet/x/exp/slice v0.0.0-20250919153222-1038f7e6fef4/go.mod h1:vqEfX6xzqW1pKKZUUiFOKg0OQ7bCh54Q2vR/tserrRA=
+github.com/charmbracelet/x/exp/slice v0.0.0-20250922100529-c9afca5d6f21 h1:hVZuJNnvv36ADwn18sG7tVq0jUGaaf+saT6mg3rKE+k=
+github.com/charmbracelet/x/exp/slice v0.0.0-20250922100529-c9afca5d6f21/go.mod h1:vqEfX6xzqW1pKKZUUiFOKg0OQ7bCh54Q2vR/tserrRA=
 github.com/charmbracelet/x/term v0.2.1 h1:AQeHeLZ1OqSXhrAWpYUtZyX1T3zVxfpZuEQMIQaGIAQ=
 github.com/charmbracelet/x/term v0.2.1/go.mod h1:oQ4enTYFV7QN4m0i9mzHrViD7TQKvNEEkHUMCmsxdUg=
 github.com/chris-ramon/douceur v0.2.0 h1:IDMEdxlEUUBYBKE4z/mJnFyVXox+MjuEVDJNN27glkU=

@@ -19,6 +19,7 @@ func New(build config.BuildInfo) *cobra.Command {
 	rootCmd.AddCommand(serverCmd())
 	rootCmd.AddCommand(versionCmd())
 	rootCmd.AddCommand(previewCmd())
+	rootCmd.AddCommand(verifyCmd())
 
 	var cfgFile string
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default: ./config.yaml)")
