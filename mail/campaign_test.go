@@ -180,8 +180,8 @@ Hello {{ .Recipient.Name }}!`
 	// Add a test recipient
 	campaign.Recipients = []*ctxRecipient{
 		{
-			Email: "john@example.com",
-			Name:  "John Doe",
+			"email": "john@example.com",
+			"name":  "John Doe",
 		},
 	}
 
@@ -233,8 +233,8 @@ Hello {{ .Recipient.Name }}!`
 	// Add a test recipient
 	campaign.Recipients = []*ctxRecipient{
 		{
-			Email: "jane@example.com",
-			Name:  "Jane Smith",
+			"email": "jane@example.com",
+			"name":  "Jane Smith",
 		},
 	}
 
@@ -285,8 +285,8 @@ Hello {{ .Recipient.Name }}!`
 	// Add a test recipient
 	campaign.Recipients = []*ctxRecipient{
 		{
-			Email: "test@example.com",
-			Name:  "Test User",
+			"email": "test@example.com",
+			"name":  "Test User",
 		},
 	}
 
@@ -329,8 +329,8 @@ Hello {{ .Recipient.Name }}!`
 	// Add a test recipient
 	campaign.Recipients = []*ctxRecipient{
 		{
-			Email: "test@example.com",
-			Name:  "Test User",
+			"email": "test@example.com",
+			"name":  "Test User",
 		},
 	}
 
@@ -369,8 +369,8 @@ Hello {{ .Recipient.Name }}!`
 	// Add a test recipient
 	campaign.Recipients = []*ctxRecipient{
 		{
-			Email: "test@example.com",
-			Name:  "Test User",
+			"email": "test@example.com",
+			"name":  "Test User",
 		},
 	}
 
@@ -560,7 +560,10 @@ Please find the attached report.`
 	}
 
 	// Add a test recipient
-	campaign.Recipients = []*ctxRecipient{{Email: "test@example.com", Name: "Test User"}}
+	campaign.Recipients = []*ctxRecipient{{
+		"email": "test@example.com",
+		"name":  "Test User",
+	}}
 
 	// Generate message
 	message, err := campaign.MessageFor(0)
@@ -615,7 +618,10 @@ This should fail due to missing attachment.`
 	}
 
 	// Add a test recipient
-	campaign.Recipients = []*ctxRecipient{{Email: "test@example.com", Name: "Test User"}}
+	campaign.Recipients = []*ctxRecipient{{
+		"email": "test@example.com",
+		"name":  "Test User",
+	}}
 
 	// Should fail when trying to attach non-existent file
 	_, err = campaign.MessageFor(0)
@@ -668,7 +674,10 @@ Simple email without attachments.`
 	}
 
 	// Add a test recipient
-	campaign.Recipients = []*ctxRecipient{{Email: "test@example.com", Name: "Test User"}}
+	campaign.Recipients = []*ctxRecipient{{
+		"email": "test@example.com",
+		"name":  "Test User",
+	}}
 
 	// Generate message (should work fine without attachments)
 	message, err := campaign.MessageFor(0)
@@ -727,7 +736,10 @@ Testing safe attachment access.`
 	}
 
 	// Add a test recipient
-	campaign.Recipients = []*ctxRecipient{{Email: "test@example.com", Name: "Test User"}}
+	campaign.Recipients = []*ctxRecipient{{
+		"email": "test@example.com",
+		"name":  "Test User",
+	}}
 
 	// Should work for legitimate file within AppFs
 	message, err := campaign.MessageFor(0)

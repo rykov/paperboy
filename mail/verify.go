@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/emersion/go-msgauth/dkim"
@@ -19,6 +20,11 @@ func VerifyCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
 
 	// Check for duplicate recipient email addresses
 	if err := checkDuplicateEmails(c.Recipients); err != nil {
+		return err
+	}
+
+	// Validate recipient parameters against schema if schema exists
+	if err := verifyRecipientSchema(cfg.AppFs, tmplFile, c.EmailMeta, c.Recipients); err != nil {
 		return err
 	}
 
@@ -76,7 +82,7 @@ func checkDuplicateEmails(recipients []*ctxRecipient) error {
 
 	for i, recipient := range recipients {
 		// Normalize email address: trim whitespace and convert to lowercase
-		email := strings.TrimSpace(strings.ToLower(recipient.Email))
+		email := strings.TrimSpace(strings.ToLower(recipient.Email()))
 
 		if email == "" {
 			return fmt.Errorf("recipient at index %d has empty email address", i)
@@ -84,10 +90,42 @@ func checkDuplicateEmails(recipients []*ctxRecipient) error {
 
 		if firstIndex, exists := seen[email]; exists {
 			return fmt.Errorf("duplicate email address found: %q (first seen at index %d, duplicate at index %d)",
-				recipient.Email, firstIndex, i)
+				recipient.Email(), firstIndex, i)
 		}
 
 		seen[email] = i
+	}
+
+	return nil
+}
+
+// verifyRecipientSchema validates recipients against their schema if it exists
+func verifyRecipientSchema(appFs *config.Fs, tmplFile string, campaign *ctxCampaign, recipients []*ctxRecipient) error {
+	// Extract template ID from file path
+	tmplID := strings.TrimSuffix(tmplFile, filepath.Ext(tmplFile))
+
+	// Load schema (custom if exists, default if no custom "to" template, or none)
+	schema, err := loadRecipientSchemaWithDefault(appFs, tmplID, campaign)
+	if err != nil {
+		return fmt.Errorf("failed to load recipient schema: %w", err)
+	}
+
+	// If no schema exists, skip validation
+	if schema == nil {
+		return nil
+	}
+
+	schemaName := strings.TrimSuffix(schema.Location, "#")
+	schemaName = strings.TrimPrefix(schemaName, "schema://")
+	fmt.Printf("Validating recipients with %s\n", schemaName)
+
+	// Validate each recipient against the schema
+	for i, recipient := range recipients {
+		// Convert to regular map for JSON schema validation
+		validationData := map[string]any(*recipient)
+		if err := schema.Validate(validationData); err != nil {
+			return fmt.Errorf("recipient schema validation failed: recipient %d: %w", i, err)
+		}
 	}
 
 	return nil

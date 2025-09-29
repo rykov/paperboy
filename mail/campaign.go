@@ -128,9 +128,8 @@ func (c *Campaign) renderMessage(m *mail.Msg, i int) error {
 func addMessageRecipient(m *mail.Msg, ctx *tmplContext) error {
 	toTmpl := ctx.Campaign.to
 	if toTmpl == "" {
-		toEmail := cast.ToString(ctx.Recipient.Email)
-		toName := cast.ToString(ctx.Recipient.Name)
-		return m.AddToFormat(toName, toEmail)
+		r := ctx.Recipient
+		return m.AddToFormat(r.Name(), r.Email())
 	}
 
 	tmpl, err := template.New("to").Parse(toTmpl)

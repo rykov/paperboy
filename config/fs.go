@@ -10,6 +10,7 @@ import (
 
 var (
 	contentExts = []string{".md"}
+	schemaExts  = []string{".schema"}
 	listExts    = []string{".yaml", ".yml"}
 )
 
@@ -41,6 +42,11 @@ func (f *Fs) AssetPath(name string) string {
 func (f *Fs) FindContentPath(name string) string {
 	paths := []string{f.ContentPath(name)}
 	return f.findFileWithExtension(paths, contentExts)
+}
+
+func (f *Fs) FindSchemaPath(name string) string {
+	paths := []string{f.ContentPath(name)}
+	return f.findFileWithExtension(paths, schemaExts)
 }
 
 func (f *Fs) FindListPath(name string) string {

@@ -28,19 +28,18 @@ func (c *renderContext) toFlatMap() map[string]interface{} {
 }
 
 // Recipient variable
-type ctxRecipient struct {
-	Name   string
-	Email  string
-	Params map[string]interface{}
+type ctxRecipient map[string]any
+
+func (r ctxRecipient) Name() string {
+	return cast.ToString(r["name"])
 }
 
-func newRecipient(data map[string]interface{}) ctxRecipient {
-	r := ctxRecipient{Params: keysToLower(data)}
-	r.Email, _ = r.Params["email"].(string)
-	r.Name, _ = r.Params["name"].(string)
-	delete(r.Params, "email")
-	delete(r.Params, "name")
-	return r
+func (r ctxRecipient) Email() string {
+	return cast.ToString(r["email"])
+}
+
+func newRecipient(data map[string]any) ctxRecipient {
+	return ctxRecipient(keysToLower(data))
 }
 
 // Campaign variable

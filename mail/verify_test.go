@@ -133,18 +133,18 @@ func TestCheckDuplicateEmails(t *testing.T) {
 		{
 			name: "no duplicates",
 			recipients: []*ctxRecipient{
-				{Email: "user1@example.com", Name: "User 1"},
-				{Email: "user2@example.com", Name: "User 2"},
-				{Email: "user3@example.com", Name: "User 3"},
+				{"email": "user1@example.com", "name": "User 1"},
+				{"email": "user2@example.com", "name": "User 2"},
+				{"email": "user3@example.com", "name": "User 3"},
 			},
 			expectError: false,
 		},
 		{
 			name: "exact duplicate emails",
 			recipients: []*ctxRecipient{
-				{Email: "user1@example.com", Name: "User 1"},
-				{Email: "user2@example.com", Name: "User 2"},
-				{Email: "user1@example.com", Name: "User 1 Duplicate"},
+				{"email": "user1@example.com", "name": "User 1"},
+				{"email": "user2@example.com", "name": "User 2"},
+				{"email": "user1@example.com", "name": "User 1 Duplicate"},
 			},
 			expectError: true,
 			errorMsg:    "duplicate email address found: \"user1@example.com\" (first seen at index 0, duplicate at index 2)",
@@ -152,8 +152,8 @@ func TestCheckDuplicateEmails(t *testing.T) {
 		{
 			name: "case-insensitive duplicates",
 			recipients: []*ctxRecipient{
-				{Email: "user1@example.com", Name: "User 1"},
-				{Email: "USER1@EXAMPLE.COM", Name: "User 1 Uppercase"},
+				{"email": "user1@example.com", "name": "User 1"},
+				{"email": "USER1@EXAMPLE.COM", "name": "User 1 Uppercase"},
 			},
 			expectError: true,
 			errorMsg:    "duplicate email address found: \"USER1@EXAMPLE.COM\" (first seen at index 0, duplicate at index 1)",
@@ -161,8 +161,8 @@ func TestCheckDuplicateEmails(t *testing.T) {
 		{
 			name: "whitespace normalized duplicates",
 			recipients: []*ctxRecipient{
-				{Email: "user1@example.com", Name: "User 1"},
-				{Email: " user1@example.com ", Name: "User 1 With Spaces"},
+				{"email": "user1@example.com", "name": "User 1"},
+				{"email": " user1@example.com ", "name": "User 1 With Spaces"},
 			},
 			expectError: true,
 			errorMsg:    "duplicate email address found: \" user1@example.com \" (first seen at index 0, duplicate at index 1)",
@@ -170,8 +170,8 @@ func TestCheckDuplicateEmails(t *testing.T) {
 		{
 			name: "empty email address",
 			recipients: []*ctxRecipient{
-				{Email: "user1@example.com", Name: "User 1"},
-				{Email: "", Name: "User 2"},
+				{"email": "user1@example.com", "name": "User 1"},
+				{"email": "", "name": "User 2"},
 			},
 			expectError: true,
 			errorMsg:    "recipient at index 1 has empty email address",
@@ -179,8 +179,8 @@ func TestCheckDuplicateEmails(t *testing.T) {
 		{
 			name: "whitespace-only email address",
 			recipients: []*ctxRecipient{
-				{Email: "user1@example.com", Name: "User 1"},
-				{Email: "   ", Name: "User 2"},
+				{"email": "user1@example.com", "name": "User 1"},
+				{"email": "   ", "name": "User 2"},
 			},
 			expectError: true,
 			errorMsg:    "recipient at index 1 has empty email address",
@@ -188,9 +188,9 @@ func TestCheckDuplicateEmails(t *testing.T) {
 		{
 			name: "mixed case and spacing normalization",
 			recipients: []*ctxRecipient{
-				{Email: "User1@Example.Com", Name: "User 1"},
-				{Email: " user1@example.com ", Name: "User 1 Normalized"},
-				{Email: "USER2@EXAMPLE.COM", Name: "User 2"},
+				{"email": "User1@Example.Com", "name": "User 1"},
+				{"email": " user1@example.com ", "name": "User 1 Normalized"},
+				{"email": "USER2@EXAMPLE.COM", "name": "User 2"},
 			},
 			expectError: true,
 			errorMsg:    "duplicate email address found: \" user1@example.com \" (first seen at index 0, duplicate at index 1)",
