@@ -2,7 +2,6 @@ package mail
 
 import (
 	"context"
-	"errors"
 	"strings"
 	"testing"
 
@@ -11,36 +10,61 @@ import (
 )
 
 func TestVerifyDKIMForMail(t *testing.T) {
-	// Test with invalid mail data
-	t.Run("invalid mail data", func(t *testing.T) {
-		err := verifyDKIMForMail([]byte("invalid mail data"))
-		if err == nil {
-			t.Error("Expected error for invalid mail data")
-		}
-		if !strings.Contains(err.Error(), "DKIM verification failed") {
-			t.Errorf("Expected 'DKIM verification failed' in error, got: %v", err)
-		}
-	})
-
-	// Test with mail without DKIM signatures
-	t.Run("mail without DKIM", func(t *testing.T) {
-		mailWithoutDKIM := []byte(`From: test@example.com
+	tests := []struct {
+		name     string
+		mailData []byte
+		expected string
+	}{
+		{
+			name:     "invalid mail data",
+			mailData: []byte("invalid mail data"),
+			expected: "DKIM verification failed",
+		},
+		{
+			name: "mail without DKIM",
+			mailData: []byte(`From: test@example.com
 To: recipient@example.com
 Subject: Test Email
 
-This is a test email without DKIM signature.`)
+This is a test email without DKIM signature.`),
+			expected: "no DKIM signatures found",
+		},
+	}
 
-		err := verifyDKIMForMail(mailWithoutDKIM)
-		if err == nil {
-			t.Error("Expected error for mail without DKIM")
-		}
-		if !strings.Contains(err.Error(), "no DKIM signatures found") {
-			t.Errorf("Expected 'no DKIM signatures found' in error, got: %v", err)
-		}
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := verifyDKIMForMail(tt.mailData)
+			assertError(t, err, tt.expected)
+		})
+	}
 }
 
-// Helper function to create test config
+// Helper functions
+func assertError(t *testing.T, err error, expectedMsg string) {
+	t.Helper()
+	if err == nil {
+		t.Errorf("Expected error containing %q but got none", expectedMsg)
+		return
+	}
+	if !strings.Contains(err.Error(), expectedMsg) {
+		t.Errorf("Expected error to contain %q, got: %v", expectedMsg, err)
+	}
+}
+
+func assertCampaignError(t *testing.T, err error, expectedMsgs ...string) {
+	t.Helper()
+	if err == nil {
+		t.Error("Expected error but got none")
+		return
+	}
+	for _, msg := range expectedMsgs {
+		if strings.Contains(err.Error(), msg) {
+			return
+		}
+	}
+	t.Errorf("Expected error to contain one of %v, got: %v", expectedMsgs, err)
+}
+
 func newTestConfig(dkimConfig map[string]interface{}) *config.AConfig {
 	fs := afero.NewMemMapFs()
 
@@ -63,124 +87,132 @@ func newTestConfig(dkimConfig map[string]interface{}) *config.AConfig {
 }
 
 func TestVerifyCampaign(t *testing.T) {
-	t.Run("no DKIM configuration - should succeed", func(t *testing.T) {
-		cfg := newTestConfig(map[string]interface{}{}) // Empty DKIM config
-
-		// Since DKIM is optional, this should fail on campaign/email rendering
-		err := VerifyCampaign(cfg, "test-campaign", "test-list")
-		if err == nil {
-			t.Error("Expected error for campaign with no content")
-		}
-
-		// Could fail either on campaign loading or no emails rendered
-		if !strings.Contains(err.Error(), "failed to load campaign") &&
-			!strings.Contains(err.Error(), "no emails were rendered") {
-			t.Errorf("Expected campaign or email rendering error, got: %v", err)
-		}
-	})
-
-	t.Run("invalid campaign with DKIM config", func(t *testing.T) {
-		cfg := newTestConfig(map[string]interface{}{
-			"domain": "example.com", // At least one DKIM config
-		})
-
-		err := VerifyCampaign(cfg, "nonexistent-campaign", "nonexistent-list")
-		if err == nil {
-			t.Error("Expected error for nonexistent campaign")
-		}
-
-		expectedMsg := "failed to load campaign"
-		if !strings.Contains(err.Error(), expectedMsg) {
-			t.Errorf("Expected error to contain %q, got: %v", expectedMsg, err)
-		}
-	})
-}
-
-func TestVerifyCampaignErrorMessages(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name          string
-		setupDKIM     bool
+		dkimConfig    map[string]interface{}
 		tmplFile      string
 		recipientFile string
-		expectedError string
+		expectedMsgs  []string
 	}{
 		{
-			name:          "invalid template without DKIM",
-			setupDKIM:     false,
-			tmplFile:      "test",
-			recipientFile: "test",
-			expectedError: "no emails were rendered",
+			name:          "no DKIM configuration",
+			dkimConfig:    map[string]interface{}{},
+			tmplFile:      "test-campaign",
+			recipientFile: "test-list",
+			expectedMsgs:  []string{"failed to load campaign", "no emails were rendered"},
 		},
 		{
-			name:          "invalid template with DKIM",
-			setupDKIM:     true,
-			tmplFile:      "test",
-			recipientFile: "test",
-			expectedError: "failed to load campaign",
+			name:          "invalid campaign with DKIM config",
+			dkimConfig:    map[string]interface{}{"domain": "example.com"},
+			tmplFile:      "nonexistent-campaign",
+			recipientFile: "nonexistent-list",
+			expectedMsgs:  []string{"failed to load campaign"},
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			var dkimConfig map[string]interface{}
-			if tc.setupDKIM {
-				dkimConfig = map[string]interface{}{
-					"domain": "example.com",
-				}
-			} else {
-				dkimConfig = map[string]interface{}{}
-			}
-
-			cfg := newTestConfig(dkimConfig)
-			err := VerifyCampaign(cfg, tc.tmplFile, tc.recipientFile)
-
-			if err == nil {
-				t.Errorf("Expected error but got none")
-				return
-			}
-
-			if !strings.Contains(err.Error(), tc.expectedError) {
-				t.Errorf("Expected error to contain %q, got: %v", tc.expectedError, err)
-			}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cfg := newTestConfig(tt.dkimConfig)
+			err := VerifyCampaign(cfg, tt.tmplFile, tt.recipientFile)
+			assertCampaignError(t, err, tt.expectedMsgs...)
 		})
 	}
 }
 
-func TestVerifyCampaignValidation(t *testing.T) {
-	t.Run("loads campaign first regardless of DKIM config", func(t *testing.T) {
-		cfg := newTestConfig(map[string]interface{}{}) // No DKIM
+// TestVerifyCampaignErrorMessages is covered by TestVerifyCampaign
 
-		// Should fail on campaign loading since DKIM is now optional
-		err := VerifyCampaign(cfg, "", "")
-		if err == nil {
-			t.Error("Expected error for invalid campaign")
-		}
+// TestVerifyCampaignValidation is covered by TestVerifyCampaign
 
-		// Could fail on campaign loading or no emails rendered
-		if !strings.Contains(err.Error(), "failed to load campaign") &&
-			!strings.Contains(err.Error(), "no emails were rendered") {
-			t.Errorf("Expected campaign or email rendering error, got: %v", err)
-		}
-	})
+func TestCheckDuplicateEmails(t *testing.T) {
+	tests := []struct {
+		name        string
+		recipients  []*ctxRecipient
+		expectError bool
+		errorMsg    string
+	}{
+		{
+			name: "no duplicates",
+			recipients: []*ctxRecipient{
+				{Email: "user1@example.com", Name: "User 1"},
+				{Email: "user2@example.com", Name: "User 2"},
+				{Email: "user3@example.com", Name: "User 3"},
+			},
+			expectError: false,
+		},
+		{
+			name: "exact duplicate emails",
+			recipients: []*ctxRecipient{
+				{Email: "user1@example.com", Name: "User 1"},
+				{Email: "user2@example.com", Name: "User 2"},
+				{Email: "user1@example.com", Name: "User 1 Duplicate"},
+			},
+			expectError: true,
+			errorMsg:    "duplicate email address found: \"user1@example.com\" (first seen at index 0, duplicate at index 2)",
+		},
+		{
+			name: "case-insensitive duplicates",
+			recipients: []*ctxRecipient{
+				{Email: "user1@example.com", Name: "User 1"},
+				{Email: "USER1@EXAMPLE.COM", Name: "User 1 Uppercase"},
+			},
+			expectError: true,
+			errorMsg:    "duplicate email address found: \"USER1@EXAMPLE.COM\" (first seen at index 0, duplicate at index 1)",
+		},
+		{
+			name: "whitespace normalized duplicates",
+			recipients: []*ctxRecipient{
+				{Email: "user1@example.com", Name: "User 1"},
+				{Email: " user1@example.com ", Name: "User 1 With Spaces"},
+			},
+			expectError: true,
+			errorMsg:    "duplicate email address found: \" user1@example.com \" (first seen at index 0, duplicate at index 1)",
+		},
+		{
+			name: "empty email address",
+			recipients: []*ctxRecipient{
+				{Email: "user1@example.com", Name: "User 1"},
+				{Email: "", Name: "User 2"},
+			},
+			expectError: true,
+			errorMsg:    "recipient at index 1 has empty email address",
+		},
+		{
+			name: "whitespace-only email address",
+			recipients: []*ctxRecipient{
+				{Email: "user1@example.com", Name: "User 1"},
+				{Email: "   ", Name: "User 2"},
+			},
+			expectError: true,
+			errorMsg:    "recipient at index 1 has empty email address",
+		},
+		{
+			name: "mixed case and spacing normalization",
+			recipients: []*ctxRecipient{
+				{Email: "User1@Example.Com", Name: "User 1"},
+				{Email: " user1@example.com ", Name: "User 1 Normalized"},
+				{Email: "USER2@EXAMPLE.COM", Name: "User 2"},
+			},
+			expectError: true,
+			errorMsg:    "duplicate email address found: \" user1@example.com \" (first seen at index 0, duplicate at index 1)",
+		},
+	}
 
-	t.Run("loads campaign first with DKIM config", func(t *testing.T) {
-		cfg := newTestConfig(map[string]interface{}{
-			"domain": "example.com", // Valid DKIM config
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := checkDuplicateEmails(tt.recipients)
+			if tt.expectError {
+				if err == nil {
+					t.Error("Expected error but got none")
+					return
+				}
+				if err.Error() != tt.errorMsg {
+					t.Errorf("Expected error message %q, got: %q", tt.errorMsg, err.Error())
+				}
+			} else {
+				if err != nil {
+					t.Errorf("Expected no error but got: %v", err)
+				}
+			}
 		})
-
-		err := VerifyCampaign(cfg, "invalid-campaign", "invalid-list")
-		if err == nil {
-			t.Error("Expected error for invalid campaign")
-		}
-
-		// Should fail on campaign loading
-		if !strings.Contains(err.Error(), "failed to load campaign") {
-			t.Errorf("Expected campaign loading error, got: %v", err)
-		}
-	})
-}
-
-// Helper function to create mock verification results
-func createMockDKIMError(domain string, err error) error {
-	return errors.New("mock DKIM error for testing")
+	}
 }

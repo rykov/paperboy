@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/emersion/go-msgauth/dkim"
 	"github.com/rykov/paperboy/config"
@@ -14,6 +15,11 @@ func VerifyCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
 	c, err := LoadCampaign(cfg, tmplFile, recipientFile)
 	if err != nil {
 		return fmt.Errorf("failed to load campaign: %w", err)
+	}
+
+	// Check for duplicate recipient email addresses
+	if err := checkDuplicateEmails(c.Recipients); err != nil {
+		return err
 	}
 
 	// Ensure dry run mode for verification
@@ -59,6 +65,29 @@ func verifyDKIMForMail(mailData []byte) error {
 	if len(vErrs) > 0 {
 		err := errors.Join(vErrs...)
 		return fmt.Errorf("DKIM verification errors: %w", err)
+	}
+
+	return nil
+}
+
+// checkDuplicateEmails verifies that there are no duplicate email addresses in the recipient list
+func checkDuplicateEmails(recipients []*ctxRecipient) error {
+	seen := make(map[string]int)
+
+	for i, recipient := range recipients {
+		// Normalize email address: trim whitespace and convert to lowercase
+		email := strings.TrimSpace(strings.ToLower(recipient.Email))
+
+		if email == "" {
+			return fmt.Errorf("recipient at index %d has empty email address", i)
+		}
+
+		if firstIndex, exists := seen[email]; exists {
+			return fmt.Errorf("duplicate email address found: %q (first seen at index %d, duplicate at index %d)",
+				recipient.Email, firstIndex, i)
+		}
+
+		seen[email] = i
 	}
 
 	return nil
