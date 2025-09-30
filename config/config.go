@@ -101,7 +101,7 @@ func (t TLSConfig) GetMinVersion() (uint16, error) {
 	case "1.3":
 		return tls.VersionTLS13, nil
 	default:
-		return 0, errors.New("Invalid TLS version")
+		return 0, errors.New("invalid TLS version")
 	}
 }
 

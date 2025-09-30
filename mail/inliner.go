@@ -26,7 +26,7 @@ func (c *Campaign) inlineStylesheets(layoutPath, body string) (string, error) {
 		str, exists := s.Attr("href")
 		if !exists {
 			badHTML, _ := goquery.OuterHtml(s)
-			err = fmt.Errorf("No href attribute for <link>: %s", badHTML)
+			err = fmt.Errorf("no href attribute for <link>: %s", badHTML)
 			return false
 		}
 

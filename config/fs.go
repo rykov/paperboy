@@ -104,8 +104,3 @@ func (f *Fs) IsFile(path string) bool {
 	s, err := f.Stat(path)
 	return err == nil && !s.IsDir()
 }
-
-func (f *Fs) isDir(dir string) bool {
-	s, err := f.Stat(dir)
-	return err == nil && s.IsDir()
-}

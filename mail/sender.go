@@ -137,9 +137,6 @@ type deliverer struct {
 	stop  bool
 	stopL sync.Mutex
 
-	// Go-Mail middleware
-	middleware []mail.Middleware
-
 	// Adds newConn()
 	sender
 }
@@ -234,7 +231,7 @@ func smtpDialer(cfg *config.SMTPConfig) (*mail.Client, error) {
 	if err != nil {
 		return nil, err
 	} else if surl.Host == "" {
-		return nil, fmt.Errorf("Invalid SMTP URL: %s", surl)
+		return nil, fmt.Errorf("invalid SMTP URL: %s", surl)
 	}
 
 	// Populate/validate scheme
@@ -242,7 +239,7 @@ func smtpDialer(cfg *config.SMTPConfig) (*mail.Client, error) {
 	if s := surl.Scheme; s == "" {
 		surl.Scheme = "smtps"
 	} else if s != "smtp" && s != "smtps" {
-		return nil, fmt.Errorf("Invalid SMTP URL scheme: %s", s)
+		return nil, fmt.Errorf("invalid SMTP URL scheme: %s", s)
 	}
 
 	// Authentication from URL

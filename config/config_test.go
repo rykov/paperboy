@@ -17,14 +17,14 @@ func TestDefaultConfig(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	version, err := cfg.ConfigFile.SMTP.TLS.GetMinVersion()
+	version, err := cfg.SMTP.TLS.GetMinVersion()
 	if err != nil {
 		t.Error(err)
 	}
 	if version != tls.VersionTLS12 {
 		t.Errorf("Invalid version: expected %d got %d", tls.VersionTLS12, version)
 	}
-	if cfg.ConfigFile.SMTP.TLS.InsecureSkipVerify {
+	if cfg.SMTP.TLS.InsecureSkipVerify {
 		t.Error("InsecureSkipVerify should be false")
 	}
 }
@@ -43,14 +43,14 @@ MinVersion = "1.0"
 		t.Fatal(err)
 	}
 
-	version, err := cfg.ConfigFile.SMTP.TLS.GetMinVersion()
+	version, err := cfg.SMTP.TLS.GetMinVersion()
 	if err != nil {
 		t.Error(err)
 	}
 	if version != tls.VersionTLS10 {
 		t.Errorf("Invalid version: expected %d got %d", tls.VersionTLS12, version)
 	}
-	if !cfg.ConfigFile.SMTP.TLS.InsecureSkipVerify {
+	if !cfg.SMTP.TLS.InsecureSkipVerify {
 		t.Error("InsecureSkipVerify should be true")
 	}
 }

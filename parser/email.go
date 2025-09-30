@@ -273,7 +273,7 @@ func determineDelims(firstLine []byte) (left, right []byte, err error) {
 	case 1:
 		return []byte(JSONLead), []byte("}"), nil
 	default:
-		err := fmt.Errorf("Unable to determine delims from %q", firstLine)
+		err := fmt.Errorf("unable to determine delims from %q", firstLine)
 		return nil, nil, err
 	}
 }

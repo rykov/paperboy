@@ -21,13 +21,13 @@ type Resolver struct {
 func (r *Resolver) RenderOne(ctx context.Context, args *RenderOneArgs) (*renderedEmail, error) {
 	i := strings.LastIndex(args.Recipient, "#")
 	if i < 0 {
-		return nil, fmt.Errorf("Please specify one recipient with \"#\"")
+		return nil, fmt.Errorf("please specify one recipient with \"#\"")
 	}
 
 	listID, recIDstr := args.Recipient[0:i], args.Recipient[i+1:]
 	recID, err := strconv.Atoi(recIDstr)
 	if err != nil {
-		return nil, fmt.Errorf("Specifier should be a number: %s", recIDstr)
+		return nil, fmt.Errorf("specifier should be a number: %s", recIDstr)
 	}
 
 	// Request config with context
@@ -38,7 +38,7 @@ func (r *Resolver) RenderOne(ctx context.Context, args *RenderOneArgs) (*rendere
 	if err != nil {
 		return nil, err
 	} else if len(campaign.Recipients) == 0 {
-		return nil, fmt.Errorf("No recipients in list %s", listID)
+		return nil, fmt.Errorf("no recipients in list %s", listID)
 	}
 
 	// Find message for specified recipient
@@ -80,7 +80,7 @@ func (e *renderedEmail) Text() string {
 }
 
 func (e *renderedEmail) HTML() *string {
-	if e.msg.HTML == nil || len(e.msg.HTML) == 0 {
+	if len(e.msg.HTML) == 0 {
 		return nil
 	}
 	out := string(e.msg.HTML)

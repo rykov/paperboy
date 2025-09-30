@@ -75,7 +75,7 @@ func TestInlineStylesheetsFailure(t *testing.T) {
 		<link rel="stylesheet"/>
 		<h1>Hello World</h1>
 	`)
-	if err == nil || !strings.Contains(err.Error(), "No href") {
+	if err == nil || !strings.Contains(err.Error(), "no href") {
 		t.Errorf("Should output an error if no href: %s", err)
 	}
 

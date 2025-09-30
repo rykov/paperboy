@@ -15,5 +15,10 @@ jobs:
       uses: actions/setup-go@v6
       with:
         go-version-file: 'go.mod'
+    - name: Install golangci-lint
+      uses: golangci/golangci-lint-action@v8
+      with:
+        version: latest
+        args: --disable errcheck
     - name: Run tests
       run: go test -race -mod=readonly ./...

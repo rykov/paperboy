@@ -16,14 +16,16 @@ import (
 	"strings"
 )
 
+type contextKey int
+
 const (
-	ctxZipFileKey = iota
+	ctxZipFileKey contextKey = iota
 )
 
 // MustSchemaHandler wraps the multipart GraphQL handler
 func MustSchemaHandler(schema string, resolver any) http.Handler {
 	s := graphql.MustParseSchema(schema, resolver)
-	return &handler{Handler: &relay.Handler{s}}
+	return &handler{Handler: &relay.Handler{Schema: s}}
 }
 
 type handler struct {
@@ -88,14 +90,14 @@ func parseMultipartGQL(r *http.Request) (params *gqlRequestParams, file *os.File
 		//fieldName := part.FormName()
 		//        fileName := part.FileName() // empty if this part isn't a file
 
-		switch {
-		case ct == "application/json":
+		switch ct {
+		case "application/json":
 			params = &gqlRequestParams{}
 			if err := json.NewDecoder(part).Decode(params); err != nil {
 				return nil, nil, err
 			}
 
-		case ct == "application/zip":
+		case "application/zip":
 			file, err = os.CreateTemp("", "paperboy-zip")
 			if err != nil {
 				return nil, nil, err

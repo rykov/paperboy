@@ -203,7 +203,7 @@ func walkWithIgnores(root string, ignores []string, fn fs.WalkDirFunc) error {
 		// Skip the root itself from matching
 		if rel != "." {
 			// patternmatcher expects slash-separated paths
-			matched, err := matcher.Matches(rel)
+			matched, err := matcher.MatchesOrParentMatches(rel)
 			if err != nil {
 				return fmt.Errorf("matching %q: %w", rel, err)
 			}

@@ -40,7 +40,7 @@ func VerifyCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
 	}
 
 	// Verify DKIM signature, if configured
-	if len(cfg.ConfigFile.DKIM) != 0 {
+	if len(cfg.DKIM) != 0 {
 		return verifyDKIMForMail(s.Mails[0])
 	}
 

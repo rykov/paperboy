@@ -62,7 +62,7 @@ func TestDegenerateCreatePageFrom(t *testing.T) {
 
 	for _, test := range tests {
 		for _, ending := range lineEndings {
-			test.content = strings.Replace(test.content, "\n", ending, -1)
+			test.content = strings.ReplaceAll(test.content, "\n", ending)
 			_, err := ReadFrom(strings.NewReader(test.content))
 			if err == nil {
 				t.Errorf("Content should return an err:\n%q\n", test.content)
@@ -124,9 +124,9 @@ func TestStandaloneCreatePageFrom(t *testing.T) {
 
 	for _, test := range tests {
 		for _, ending := range lineEndings {
-			test.content = strings.Replace(test.content, "\n", ending, -1)
-			test.frontMatter = strings.Replace(test.frontMatter, "\n", ending, -1)
-			test.bodycontent = strings.Replace(test.bodycontent, "\n", ending, -1)
+			test.content = strings.ReplaceAll(test.content, "\n", ending)
+			test.frontMatter = strings.ReplaceAll(test.frontMatter, "\n", ending)
+			test.bodycontent = strings.ReplaceAll(test.bodycontent, "\n", ending)
 
 			p := pageMust(ReadFrom(strings.NewReader(test.content)))
 
@@ -185,7 +185,7 @@ func TestPageShouldRender(t *testing.T) {
 
 	for _, test := range tests {
 		for _, ending := range lineEndings {
-			test.content = bytes.Replace(test.content, []byte("\n"), []byte(ending), -1)
+			test.content = bytes.ReplaceAll(test.content, []byte("\n"), []byte(ending))
 			if render := shouldRender(test.content); render != test.expected {
 
 				t.Errorf("Expected %s to shouldRender = %t, got: %t", test.content, test.expected, render)
@@ -213,7 +213,7 @@ func TestPageHasFrontMatter(t *testing.T) {
 	}
 	for _, test := range tests {
 		for _, ending := range lineEndings {
-			test.content = bytes.Replace(test.content, []byte("\n"), []byte(ending), -1)
+			test.content = bytes.ReplaceAll(test.content, []byte("\n"), []byte(ending))
 			if isFrontMatterDelim := isFrontMatterDelim(test.content); isFrontMatterDelim != test.expected {
 				t.Errorf("Expected %q isFrontMatterDelim = %t,  got: %t", test.content, test.expected, isFrontMatterDelim)
 			}
@@ -247,11 +247,11 @@ func TestExtractFrontMatter(t *testing.T) {
 
 	for _, test := range tests {
 		for _, ending := range lineEndings {
-			test.frontmatter = strings.Replace(test.frontmatter, "\n", ending, -1)
-			test.extracted = bytes.Replace(test.extracted, []byte("\n"), []byte(ending), -1)
+			test.frontmatter = strings.ReplaceAll(test.frontmatter, "\n", ending)
+			test.extracted = bytes.ReplaceAll(test.extracted, []byte("\n"), []byte(ending))
 			for _, delim := range delimiters {
-				test.frontmatter = strings.Replace(test.frontmatter, "---", delim, -1)
-				test.extracted = bytes.Replace(test.extracted, []byte("---"), []byte(delim), -1)
+				test.frontmatter = strings.ReplaceAll(test.frontmatter, "---", delim)
+				test.extracted = bytes.ReplaceAll(test.extracted, []byte("---"), []byte(delim))
 				line, err := peekLine(bufio.NewReader(strings.NewReader(test.frontmatter)))
 				if err != nil {
 					continue

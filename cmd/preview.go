@@ -37,7 +37,7 @@ func previewCmd() *cobra.Command {
 
 				// Wait for server and open preview
 				go func() {
-					if r, _ := <-serverReady; r {
+					if <-serverReady {
 						openPreview(cmd, cfg, args[0], args[1])
 					}
 				}()
@@ -57,7 +57,7 @@ func openPreview(cmd *cobra.Command, cfg *config.AConfig, content, list string) 
 	url := previewRoot + previewPath
 	var err error
 	if previewTestMode {
-		err = fmt.Errorf("Test mode")
+		err = fmt.Errorf("test mode")
 	} else {
 		switch runtime.GOOS {
 		case "darwin":
@@ -67,7 +67,7 @@ func openPreview(cmd *cobra.Command, cfg *config.AConfig, content, list string) 
 		case "windows":
 			err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
 		default:
-			err = fmt.Errorf("Unsupported platform")
+			err = fmt.Errorf("unsupported platform")
 		}
 	}
 
