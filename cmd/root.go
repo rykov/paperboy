@@ -13,6 +13,8 @@ func New(build config.BuildInfo) *cobra.Command {
 	config.Build = build
 
 	rootCmd := &cobra.Command{Use: "paperboy"}
+	rootCmd.CompletionOptions.HiddenDefaultCmd = true
+
 	rootCmd.AddCommand(newCmd())
 	rootCmd.AddCommand(initCmd())
 	rootCmd.AddCommand(sendCmd())
