@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.5.0 (30 Sep 2025)
+
+- Added "verify" command to validate campaigns and recipient lists
+- Added JSON Schema validation for recipient parameters
+- Extended DKIM private key encoding support
+- Security update for go-mail dependency
+- Upgraded UI to Tailwind CSS v4
+- Enabled golangci-lint
+
 ## v0.4.0 (22 Sep 2025)
 
 - Migrated to [wneessen/go-mail](github.com/wneessen/go-mail)
