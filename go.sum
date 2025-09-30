@@ -122,8 +122,8 @@ github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8
 github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
 github.com/urfave/negroni/v3 v3.1.1 h1:6MS4nG9Jk/UuCACaUlNXCbiKa0ywF9LXz5dGu09v8hw=
 github.com/urfave/negroni/v3 v3.1.1/go.mod h1:jWvnX03kcSjDBl/ShB0iHvx5uOs7mAzZXW+JvJ5XYAs=
-github.com/wneessen/go-mail v0.7.0 h1:/Wmgd5AVjp5PA+Ken5EFfr+QR83gmqHli9HcAhh0vnU=
-github.com/wneessen/go-mail v0.7.0/go.mod h1:+TkW6QP3EVkgTEqHtVmnAE/1MRhmzb8Y9/W3pweuS+k=
+github.com/wneessen/go-mail v0.7.1 h1:rvy63sp14N06/kdGqCYwW8Na5gDCXjTQM1E7So4PuKk=
+github.com/wneessen/go-mail v0.7.1/go.mod h1:+TkW6QP3EVkgTEqHtVmnAE/1MRhmzb8Y9/W3pweuS+k=
 github.com/wneessen/go-mail-middleware v0.1.0 h1:vcuHs8dmMVxqr6TXi/KdzLLwLc44vGLRV88YfQonUyY=
 github.com/wneessen/go-mail-middleware v0.1.0/go.mod h1:dskrqbIvWW4BygunbApcfEWVFBjWP3HDedTqpN1BtXs=
 github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e h1:JVG44RsyaB9T2KIHavMF/ppJZNG9ZpyihvCd0w101no=
