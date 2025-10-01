@@ -175,6 +175,9 @@ func LoadCampaign(cfg *config.AConfig, tmplID, listID string) (*Campaign, error)
 
 	// Load up recipient metadata
 	listFile := cfg.AppFs.FindListPath(listID)
+	if listFile == "" {
+		return nil, fmt.Errorf("list %s not found", listID)
+	}
 	who, err := parseRecipients(cfg.AppFs, listFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load campain's recipients: %w", err)
@@ -189,6 +192,9 @@ func LoadCampaign(cfg *config.AConfig, tmplID, listID string) (*Campaign, error)
 func LoadContent(cfg *config.AConfig, tmplID string) (*Campaign, error) {
 	// Load up template with frontmatter
 	tmplFile := cfg.AppFs.FindContentPath(tmplID)
+	if tmplFile == "" {
+		return nil, fmt.Errorf("campaign %s not found", tmplID)
+	}
 	email, err := parseTemplate(cfg.AppFs, tmplFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load campain's content: %w", err)
@@ -250,12 +256,20 @@ func parseRecipients(appFs *config.Fs, path string) ([]*ctxRecipient, error) {
 	fmt.Println("Loading recipients", path)
 	raw, err := afero.ReadFile(appFs, path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read %s: %w", path, err)
 	}
 
 	var data []map[string]interface{}
-	if err := yaml.Unmarshal(raw, &data); err != nil {
-		return nil, err
+	if ext := filepath.Ext(path); ext == ".csv" {
+		data, err = unmarshalCsvRecipients(&appFs.Config.CSV, raw)
+	} else if ext == ".yaml" || ext == ".yml" {
+		err = yaml.Unmarshal(raw, &data)
+	} else {
+		return nil, fmt.Errorf("unsupported format: %s", path)
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse recipients %s: %w", path, err)
 	}
 
 	return MapsToRecipients(data)

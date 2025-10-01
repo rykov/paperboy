@@ -56,6 +56,9 @@ type ConfigFile struct {
 	// Validation
 	DKIM map[string]interface{}
 
+	// CSV parsing
+	CSV CSVConfig
+
 	// Directories
 	AssetDir   string
 	ContentDir string
@@ -71,6 +74,11 @@ type ConfigFile struct {
 	ClientIgnores []string
 	ServerAuth    string
 	ServerPort    uint
+}
+
+// Configuration for CSV parsing
+type CSVConfig struct {
+	Separator string
 }
 
 // Initial blank config
@@ -150,6 +158,9 @@ func newViperConfig(fs afero.Fs) *viper.Viper {
 	// Delivery workers/rate
 	v.SetDefault("sendRate", 1)
 	v.SetDefault("workers", 3)
+
+	// Defaults (recipients)
+	v.SetDefault("csv.separator", ",")
 
 	// Server, Client, API
 	v.BindEnv("serverPort", "PORT")

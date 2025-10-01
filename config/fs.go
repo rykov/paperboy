@@ -11,7 +11,7 @@ import (
 var (
 	contentExts = []string{".md"}
 	schemaExts  = []string{".schema"}
-	listExts    = []string{".yaml", ".yml"}
+	listExts    = []string{".yaml", ".yml", ".csv"}
 )
 
 type Fs struct {
