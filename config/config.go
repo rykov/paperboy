@@ -1,13 +1,11 @@
 package config
 
 import (
-	"crypto/tls"
-
+	"github.com/rykov/paperboy/mail/send"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -52,7 +50,7 @@ type ConfigFile struct {
 	UnsubscribeURL string
 
 	// Delivery
-	SMTP   SMTPConfig
+	SMTP   send.SMTPConfig
 	DryRun bool
 
 	// Validation
@@ -73,36 +71,6 @@ type ConfigFile struct {
 	ClientIgnores []string
 	ServerAuth    string
 	ServerPort    uint
-}
-
-type SMTPConfig struct {
-	URL  string
-	User string
-	Pass string
-	TLS  *TLSConfig
-}
-
-type TLSConfig struct {
-	InsecureSkipVerify bool
-	MinVersion         string
-}
-
-func (t TLSConfig) GetMinVersion() (uint16, error) {
-	switch t.MinVersion {
-	case "":
-		// Not set, so let the tls package decide
-		return 0, nil
-	case "1.0":
-		return tls.VersionTLS10, nil
-	case "1.1":
-		return tls.VersionTLS11, nil
-	case "1.2":
-		return tls.VersionTLS12, nil
-	case "1.3":
-		return tls.VersionTLS13, nil
-	default:
-		return 0, errors.New("invalid TLS version")
-	}
 }
 
 // Initial blank config

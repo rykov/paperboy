@@ -9,6 +9,7 @@ import (
 
 	"github.com/emersion/go-msgauth/dkim"
 	"github.com/rykov/paperboy/config"
+	"github.com/rykov/paperboy/mail/send"
 )
 
 func VerifyCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
@@ -30,8 +31,13 @@ func VerifyCampaign(cfg *config.AConfig, tmplFile, recipientFile string) error {
 
 	// Ensure dry run mode for verification
 	cfg.DryRun = true
-	s := &testSender{}
-	if err := sendCampaignTo(s, cfg, c); err != nil {
+	s := send.NewTestSender()
+	q, err := newDefaultQueue(cfg, s, c)
+	if err != nil {
+		return fmt.Errorf("failed to start queue: %w", err)
+	}
+
+	if err := sendCampaignTo(cfg, q, c); err != nil {
 		return fmt.Errorf("failed to render emails: %w", err)
 	}
 
